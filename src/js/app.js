@@ -64,7 +64,7 @@ export function displayProfile(user, container = 'profile') {
   // Profile Image
   const profileImageElem = containerElem.querySelector('.profile-head .profile-image');
   if (profileImageElem) {
-    profileImageElem.style.backgroundImage = `url('${user.profile_image || 'assets/img/profile-placeholder.jpg'}')`;
+    profileImageElem.style.backgroundImage = `url('${user.profile_image || 'img/profile-placeholder.jpg'}')`;
   }
 
   // Cover Image
@@ -209,7 +209,7 @@ if (window.f7App !== undefined) {
       title: 'DriveLife',
       closeTimeout: 10000,
       closeOnClick: true,
-      icon: '<img src="assets/icons/favicon.png"/>',
+      icon: '<img src="icons/favicon.png"/>',
     },
     toast: {
       closeTimeout: 3000,
@@ -330,6 +330,43 @@ if (window.f7App !== undefined) {
   window.f7App = app;
 }
 
+// Action Sheet with Grid Layout
+var actionSheet = app.actions.create({
+  grid: true,
+  buttons: [
+    [{
+      text: '<div class="actions-grid-item">Add Post</div>',
+      icon: '<img src="img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
+      onClick: async function () {
+        const user = await getSessionUser();
+        if (user) {
+          sendRNMessage({
+            type: "createPost",
+            user_id: user.id,
+            page: 'create-post',
+          });
+        }
+      }
+    },
+    {
+      text: '<div class="actions-grid-item">Scan QR Code</div>',
+      icon: '<img src="img/icon-qr-code.svg" width="48" style="max-width: 100%;"/>',
+      onClick: function () {
+        openQRModal();
+      }
+    },
+    {
+      text: '<div class="actions-grid-item">My Vehicles</div>',
+      icon: '<img src="img/icon-vehicle-add.svg" width="48" style="max-width: 100%;"/>',
+      onClick: function () {
+        var view = app.views.current;
+        view.router.navigate('/profile-garage-edit/');
+      }
+    }
+    ],
+  ]
+});
+
 async function handleSSOSignIn() {
   $('.init-loader').show();
 
@@ -396,7 +433,7 @@ async function verifyUserEmail(token) {
     $('.app-landing-page').html(`
       <div class="verification-content">
         <div class="block">
-          <img src="assets/img/ce-logo-dark.png" />
+          <img src="img/ce-logo-dark.png" />
         <div class="verification-header">
           <h1>Email Verification</h1>
         </div>
@@ -649,43 +686,6 @@ networkErrors.onUpdated((data) => {
   }
 });
 
-// Action Sheet with Grid Layout
-var actionSheet = app.actions.create({
-  grid: true,
-  buttons: [
-    [{
-      text: '<div class="actions-grid-item">Add Post</div>',
-      icon: '<img src="assets/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
-      onClick: async function () {
-        const user = await getSessionUser();
-        if (user) {
-          sendRNMessage({
-            type: "createPost",
-            user_id: user.id,
-            page: 'create-post',
-          });
-        }
-      }
-    },
-    {
-      text: '<div class="actions-grid-item">Scan QR Code</div>',
-      icon: '<img src="assets/img/icon-qr-code.svg" width="48" style="max-width: 100%;"/>',
-      onClick: function () {
-        openQRModal();
-      }
-    },
-    {
-      text: '<div class="actions-grid-item">My Vehicles</div>',
-      icon: '<img src="assets/img/icon-vehicle-add.svg" width="48" style="max-width: 100%;"/>',
-      onClick: function () {
-        var view = app.views.current;
-        view.router.navigate('/profile-garage-edit/');
-      }
-    }
-    ],
-  ]
-});
-
 // Init slider
 new Swiper('.swiper-container', {
   pagination: {
@@ -719,8 +719,7 @@ app.popup.create({
 });
 
 $(document).on('click', '#open-action-sheet', function () {
-  console.log('open action sheet');
-
+  console.log('open action sheet', actionSheet);
   actionSheet.open();
 });
 

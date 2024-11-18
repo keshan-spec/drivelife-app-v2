@@ -3,7 +3,7 @@
     <div class="page-content env-padding">
       <div class="login-form">
         <div class="block">
-          <div class="section"><img src="assets/img/start01.jpg" />
+          <div class="section"><img src="img/start01.jpg" />
             <h1 class="">Welcome to DriveLife</h1>
             <h4>Early Access</h4>
           </div>

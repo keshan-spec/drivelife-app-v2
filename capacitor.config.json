@@ -1,0 +1,7 @@
+{
+  "appId": "com.app.carcalendar",
+  "appName": "DriveLife",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "loggingBehavior": "debug"
+}

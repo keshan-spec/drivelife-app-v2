@@ -258,7 +258,7 @@ function renderSearchResults(searchResults) {
             return `
                 <a class="item-link search-result item-content" href="${userLink}">
                     <div class="item-media">
-                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'assets/img/profile-placeholder.jpg'}')"></div>
+                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'img/profile-placeholder.jpg'}')"></div>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">${contentText}</div>
@@ -283,7 +283,7 @@ function renderSearchResults(searchResults) {
             return `
                 <a class="item-link search-result item-content" href="${userLink}">
                     <div class="item-media">
-                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'assets/img/profile-placeholder.jpg'}')"></div>
+                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'img/profile-placeholder.jpg'}')"></div>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">${contentText}</div>
@@ -358,7 +358,7 @@ function renderSearchResults(searchResults) {
                 return `
                 <a class="item-link search-result item-content" href="${userLink}">
                     <div class="item-media">
-                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'assets/img/profile-placeholder.jpg'}')"></div>
+                        <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'img/profile-placeholder.jpg'}')"></div>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">${contentText}</div>

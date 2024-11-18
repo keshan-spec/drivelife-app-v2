@@ -64,7 +64,6 @@
     left: 50%;
     width: 18px;
     height: 40px;
-    /* background: url('../assets/loader.gif') center center no-repeat; */
     background-size: contain;
     transform: translate(-50%, -50%);
     /* z-index: 1; */
@@ -244,7 +243,7 @@
     left: 50%;
     width: 18px;
     height: 40px;
-    background: url('../assets/loader.gif') center center no-repeat;
+    background: url('/loader.gif') center center no-repeat;
     background-size: contain;
     transform: translate(-50%, -50%);
     /* z-index: ; */
@@ -504,7 +503,7 @@
     display: none !important;
 }
 
-.owner-liked-comment{
+.owner-liked-comment {
     position: absolute;
     top: 0;
     right: -35px;
@@ -512,27 +511,27 @@
     align-items: center;
 }
 
-.owner-liked-comment .comment-profile-img{
+.owner-liked-comment .comment-profile-img {
     width: 17px;
     height: 17px;
     margin: 0px;
 }
 
-.comment-userlogin-link{
+.comment-userlogin-link {
     position: relative;
 }
 
-.owner-liked-comment .f7-icons{
+.owner-liked-comment .f7-icons {
     font-size: 12px !important;
 }
 
-.permission-title{
+.permission-title {
     font-size: 1rem !important;
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-.permission-title .f7-icons{
-    font-size:20px !important;
+.permission-title .f7-icons {
+    font-size: 20px !important;
 }

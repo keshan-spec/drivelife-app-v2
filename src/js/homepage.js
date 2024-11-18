@@ -411,14 +411,14 @@ async function displayPosts(posts, following = false) {
     if (post.user_id == user.id) {
       profile_link = `
       <a href="#" class="view-profile media-post-header">
-        <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'assets/img/profile-placeholder.jpg'}');"></div>
+        <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
         <div class="media-post-user">${post.username}</div>
         <div class="media-post-date">${date}</div>
       </a>`;
     } else {
       profile_link = `
       <a href="/profile-view/${post.user_id}" class="media-post-header">
-        <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'assets/img/profile-placeholder.jpg'}');"></div>
+        <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
         <div class="media-post-user">${post.username}</div>
         <div class="media-post-date">${date}</div>
       </a>`;
@@ -455,7 +455,8 @@ async function displayPosts(posts, following = false) {
                   style="text-align: center;"
                   onerror = "this.style.display='none';"
               />`}
-            </swiper-slide>`;}).join('')}
+            </swiper-slide>`;
+    }).join('')}
           </swiper-container>
           </div>
           ${post_actions}
@@ -560,7 +561,7 @@ function displayComments(comments, postId) {
                 <div class="comment" data-comment-id="${reply.id}" data-is-liked="${reply.liked}" data-owner-id="${reply.user_id}"
                   data-owner-name="${reply.user_login}">
 
-                  <a href="#" data-url="${reply.user_id == user.id ? '#' : `/profile-view/${reply.user_id}`}" class="${reply.user_id == user.id ? 'view-profile' : ''} comment-profile-img" style="background-image:url('${reply.profile_image || 'assets/img/profile-placeholder.jpg'}');">
+                  <a href="#" data-url="${reply.user_id == user.id ? '#' : `/profile-view/${reply.user_id}`}" class="${reply.user_id == user.id ? 'view-profile' : ''} comment-profile-img" style="background-image:url('${reply.profile_image || 'img/profile-placeholder.jpg'}');">
                   </a>
 
 
@@ -612,7 +613,7 @@ function displayComments(comments, postId) {
         data-owner-name="${comment.user_login}">
 
          <a href="#" data-url="${comment.user_id == user.id ? '#' : `/profile-view/${comment.user_id}`}" class="${comment.user_id == user.id ? 'view-profile' : ''} comment-profile-img" 
-         style="background-image:url('${comment.profile_image || 'assets/img/profile-placeholder.jpg'}');">
+         style="background-image:url('${comment.profile_image || 'img/profile-placeholder.jpg'}');">
          </a>
          
         <div class="comment-content-container">
@@ -621,7 +622,7 @@ function displayComments(comments, postId) {
                 ${comment.user_login}
                 ${comment.liked_by_owner ? `
                   <div class="owner-liked-comment">
-                    <div class="comment-profile-img" style="background-image:url('${comment.owner_profile_image || 'assets/img/profile-placeholder.jpg'}');"></div>
+                    <div class="comment-profile-img" style="background-image:url('${comment.owner_profile_image || 'img/profile-placeholder.jpg'}');"></div>
                     <i class="icon f7-icons text-red">heart_fill</i> 
                   </div>
                   `: ''}

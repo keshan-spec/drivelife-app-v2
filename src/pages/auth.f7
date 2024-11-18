@@ -3,15 +3,15 @@
         <div class="page-content no-padding" data-ptr-mousewheel="true">
             <div class="video-background-container">
                 <video autoplay loop muted playsinline poster>
-                    <source src="assets/video/video01.mp4" type="video/mp4" />
+                    <source src="video/video01.mp4" type="video/mp4" />
                 </video>
             </div>
 
             <div class="app-landing-page-container">
-                <img class="app-landing-page-logo" src="assets/img/logo-large.png" />
+                <img class="app-landing-page-logo" src="img/logo-large.png" />
                 <div class="app-landing-page-buttons">
                     <button id="sso-ce-button" class="button button-large button-fill margin-bottom">
-                        <img src="assets/icons/app-icon.webp" class="button-icon" />
+                        <img src="icons/app-icon.webp" class="button-icon" />
                         Sign In with CarEvents.com
                     </button>
                     <a href="/signup-step1/" class="button button-large button-fill margin-bottom">Sign Up</a>

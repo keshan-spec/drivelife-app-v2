@@ -70,7 +70,7 @@ export function displayProfile(user, container = 'profile') {
   // Profile Image
   const profileImageElem = containerElem.querySelector('.profile-head .profile-image');
   if (profileImageElem) {
-    profileImageElem.style.backgroundImage = `url('${user.profile_image || 'assets/img/profile-placeholder.jpg'}')`;
+    profileImageElem.style.backgroundImage = `url('${user.profile_image || 'img/profile-placeholder.jpg'}')`;
   }
 
   // Cover Image
@@ -236,7 +236,7 @@ export function createGarageContent(garages, currentList, pastList) {
         <a href="/profile-garage-vehicle-view/${vehicle.id}" class="item">
             <div class="imageWrapper">
                 <div class="image-square image-rounded"
-                    style="background-image:url('${vehicle.cover_photo || 'assets/img/placeholder1.jpg'}');">
+                    style="background-image:url('${vehicle.cover_photo || 'img/placeholder1.jpg'}');">
                     </div>
             </div>
             <div class="in">
@@ -349,7 +349,7 @@ export function displayFollowers(followersList, userFollowingList, container = '
     followerItem.innerHTML = `
       <div class="notification-left ${container == 'profile' ? 'follower-item' : ''}" data-url="/profile-view/${follower.ID}">
         <div class="image-square image-rounded"
-          style="background-image:url('${follower.profile_image || 'assets/img/profile-placeholder.jpg'}')"></div>
+          style="background-image:url('${follower.profile_image || 'img/profile-placeholder.jpg'}')"></div>
         <div class="notification-info">
           <div class="notification-text follower-name"><strong>${follower.user_login}</strong></div>
         </div>
@@ -723,7 +723,7 @@ async function updateProfilePage(data) {
   // Update the profile image
   const profileImageElement = document.querySelector('.vehicle-profile-image');
   if (profileImageElement) {
-    profileImageElement.style.backgroundImage = `url('${data.owner.profile_image || 'assets/img/profile-placeholder.jpg'}')`;
+    profileImageElement.style.backgroundImage = `url('${data.owner.profile_image || 'img/profile-placeholder.jpg'}')`;
 
     let profile_link = `/profile-view/${data.owner_id}`;
 

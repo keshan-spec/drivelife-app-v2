@@ -51,7 +51,7 @@
       <!-- Left Menu panel -->
       <div class="panel panel-left panel-push">
         <div class="block">
-          <img src="assets/img/ce-logo-dark.png" />
+          <img src="img/ce-logo-dark.png" />
           <p>Welcome to the DriveLife App by CarEvents.com</p>
 
           <p>This is currently an early access app.</p>

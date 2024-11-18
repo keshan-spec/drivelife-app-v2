@@ -1986,7 +1986,7 @@ swiper-container.event-listing {
 }
 
 .discover-view-event .swiper-container {
-    background-image: url('../assets/img/slider-bg.jpg');
+    background-image: url('/img/slider-bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

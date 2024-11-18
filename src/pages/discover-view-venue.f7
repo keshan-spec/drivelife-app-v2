@@ -12,7 +12,7 @@
           </a>
         </div>
         <div class="middle">
-          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+          <div class="header-logo"><img src="img/logo-dark.png" /></div>
         </div>
         <div class="right">
           <a href="#" class="link icon-only">
@@ -89,7 +89,7 @@
                 <div class="grid grid-cols-2 event-listing mt-2">
                   <a href="#" class="card event-item">
                     <div class="event-image position-relative">
-                      <div class="image-rectangle" style="background-image: url('assets/img/start01.jpg');"></div>
+                      <div class="image-rectangle" style="background-image: url('img/start01.jpg');"></div>
                       <div class="event-dates">
                         <div class="event-date-item">
                           <p>Feb</p>

@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <div class="middle">
-                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
                 </div>
                 <div class="right">
                     <a href="#" class="link icon-only open-qr-modal">
@@ -63,8 +63,7 @@
                                 <swiper-container slides-per-view="1" loop="true">
                                     <swiper-slide>
                                         <div class="featured-item">
-                                            <div class="featured-img"
-                                                style="background-image:url('/assets/img/event.jpeg')">
+                                            <div class="featured-img" style="background-image:url('/img/event.jpeg')">
                                             </div>
                                             <div class="featured-content">
                                                 <h2>Classic Motor Show</h2>

@@ -180,7 +180,7 @@ function populateUsersCard(data = []) {
             <a class="item-link search-result item-content" href="${linkTo}">
                 <div class="item-media">
                     <div class="image-square image-rounded"
-                        style="background-image:url('${user.thumbnail || 'assets/img/profile-placeholder.jpg'}')">
+                        style="background-image:url('${user.thumbnail || 'img/profile-placeholder.jpg'}')">
                     </div>
                 </div>
                 <div class="item-inner">

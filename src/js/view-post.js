@@ -79,14 +79,14 @@ export function displayPost(post) {
   if (post.user_id == user.id) {
     profile_link = `
   <a href="#" class="view-profile media-post-header">
-    <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'assets/img/profile-placeholder.jpg'}');"></div>
+    <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
     <div class="media-post-user">${post.username}</div>
     <div class="media-post-date">${date}</div>
   </a>`;
   } else {
     profile_link = `
   <a href="/profile-view/${post.user_id}" class="media-post-header">
-    <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'assets/img/profile-placeholder.jpg'}');"></div>
+    <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
     <div class="media-post-user">${post.username}</div>
     <div class="media-post-date">${date}</div>
   </a>`;
@@ -121,7 +121,8 @@ export function displayPost(post) {
                     onerror = "this.style.display='none';"
                   />`}
               </swiper-slide>
-            `;}).join('')}
+            `;
+  }).join('')}
       </swiper-container>
       </div>
       ${post_actions}

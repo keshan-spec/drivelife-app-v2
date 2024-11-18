@@ -190,7 +190,7 @@ function createNotificationItem(notification, user) {
 
     const imageDiv = document.createElement('a');
     imageDiv.className = 'image-square image-rounded';
-    imageDiv.style.backgroundImage = `url('${notification.entity.initiator_data.profile_image || 'assets/img/profile-placeholder.jpg'}')`;
+    imageDiv.style.backgroundImage = `url('${notification.entity.initiator_data.profile_image || 'img/profile-placeholder.jpg'}')`;
     imageDiv.href = `/profile-view/${notification.entity.user_id}`;
 
     const infoDiv = document.createElement('div');

@@ -9,7 +9,7 @@
           </a>
         </div>
         <div class="middle">
-          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+          <div class="header-logo"><img src="img/logo-dark.png" /></div>
         </div>
         <div class="right">
           <a href="#" class="link icon-only open-qr-modal">
@@ -63,15 +63,14 @@
 
         <div class="profile-links-external d-flex">
           <a class="profile-link social-link link external " id="instagram" target="_blank"
-            href="https://www.instagram.com/"><img src="assets/img/icon-instagram.svg" /> <span>Instagram</span></a>
+            href="https://www.instagram.com/"><img src="img/icon-instagram.svg" /> <span>Instagram</span></a>
           <a class="profile-link social-link link external " id="facebook" target="_blank"
-            href="https://www.facebook.com"><img src="assets/img/icon-facebook.svg" /> <span>Facebook</span></a>
+            href="https://www.facebook.com"><img src="img/icon-facebook.svg" /> <span>Facebook</span></a>
           <a class="profile-link social-link link external " id="tiktok" target="_blank"
-            href="https://www.tiktok.com"><img src="assets/img/icon-tiktok.svg" /> <span>Tiktok</span></a>
+            href="https://www.tiktok.com"><img src="img/icon-tiktok.svg" /> <span>Tiktok</span></a>
           <a class="profile-link social-link link external " id="youtube" target="_blank"
-            href="https://www.youtube.com"><img src="assets/img/icon-youtube.svg" /> <span>YouTube</span></a>
-          <a class="profile-link social-link popup-open" data-popup=".links-popup"><img
-              src="assets/img/icon-link.svg?v=1.4" />
+            href="https://www.youtube.com"><img src="img/icon-youtube.svg" /> <span>YouTube</span></a>
+          <a class="profile-link social-link popup-open" data-popup=".links-popup"><img src="img/icon-link.svg?v=1.4" />
             <span>More</span></a>
         </div>
       </div>
