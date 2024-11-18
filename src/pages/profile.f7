@@ -1,0 +1,220 @@
+<template>
+  <div class="page" data-name="profile">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="#" class="link icon-only panel-open" data-panel="left">
+            <i class="icon f7-icons">bars</i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only open-qr-modal">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="/notifications/" class="link icon-only">
+            <div class="notification-count"></div>
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="page-content no-swipeback profile-landing-page infinite-scroll-content my-profile ptr-content ptr-watch-scrollable"
+      data-infinite-distance="50" data-ptr-distance="120">
+      <div class="ptr-preloader">
+        <div class="preloader"></div>
+        <div class="ptr-arrow"></div>
+      </div>
+      <div class="profile-background" style="background-color: gray;"></div>
+
+      <div class="profile-head">
+        <div class="profile-image" style="background-color: gray;"></div>
+        <div class="profile-user-info">
+          <div class="profile-usernames">
+            <h3 class="name profile-username">@</h3>
+            <h5 class="subtext profile-name"></h5>
+          </div>
+
+
+          <div class="profile-followers popup-open" data-popup=".followers-popup">
+            <h3></h3>
+            <h5 class="subtext">Followers</h5>
+          </div>
+
+          <div class="profile-posts">
+            <h3></h3>
+            <h5 class="subtext">Posts</h5>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+
+      <div class="profile-links">
+        <div class="profile-links-edit d-flex">
+          <!-- <a class="profile-link popup-open" data-popup=".edit-profile-popup">Edit Profile</a> -->
+          <a class="profile-link" href="/profile-edit/">Edit Profile</a>
+          <a class="profile-link dark-bg" href="/profile-garage-edit/">Edit Garage</a>
+        </div>
+
+        <div class="profile-links-external d-flex">
+          <a class="profile-link social-link link external " id="instagram" target="_blank"
+            href="https://www.instagram.com/"><img src="assets/img/icon-instagram.svg" /> <span>Instagram</span></a>
+          <a class="profile-link social-link link external " id="facebook" target="_blank"
+            href="https://www.facebook.com"><img src="assets/img/icon-facebook.svg" /> <span>Facebook</span></a>
+          <a class="profile-link social-link link external " id="tiktok" target="_blank"
+            href="https://www.tiktok.com"><img src="assets/img/icon-tiktok.svg" /> <span>Tiktok</span></a>
+          <a class="profile-link social-link link external " id="youtube" target="_blank"
+            href="https://www.youtube.com"><img src="assets/img/icon-youtube.svg" /> <span>YouTube</span></a>
+          <a class="profile-link social-link popup-open" data-popup=".links-popup"><img
+              src="assets/img/icon-link.svg?v=1.4" />
+            <span>More</span></a>
+        </div>
+      </div>
+
+      <div class="profile-lower">
+        <div class="profile-tabs">
+          <a href="#profile-posts-tab" class="tab-link tab-link-active" id="my-posts">Posts</a>
+          <a href="#profile-garage-tab" class="tab-link" id="my-garage">Garage</a>
+          <a href="#profile-tags-tab" class="tab-link" id="my-tags">Tags</a>
+        </div>
+
+        <swiper-container class="tabs">
+          <swiper-slide id="profile-posts-tab" class="tab tab-active">
+            <div class="swiper-inner-container">
+              <div class="profile-grid" id="profile-grid-posts">
+                <!-- Content generates here -->
+              </div>
+
+              <!-- Preloader for infinite scroll -->
+              <div class="infinite-scroll-preloader posts-tab">
+                <div class="preloader"></div>
+              </div>
+            </div>
+          </swiper-slide>
+
+          <swiper-slide id="profile-garage-tab" class="tab ">
+            <div class="swiper-inner-container">
+              <div class="listview-title garage-sub-title">Current Vehicles</div>
+
+              <ul class="listview image-listview media transparent flush pt-1 current-vehicles-list">
+                <!-- Content generates here -->
+              </ul>
+
+              <div class="listview-title garage-sub-title mt-2">Past Vehicles</div>
+              <ul class="listview image-listview media transparent flush pt-1 past-vehicles-list">
+                <!-- Content generates here -->
+              </ul>
+
+            </div>
+          </swiper-slide>
+
+          <swiper-slide id="profile-tags-tab" class="tab">
+            <div class="swiper-inner-container">
+              <div class="profile-grid" id="profile-grid-tags">
+                <!-- Content generates here -->
+              </div>
+
+              <!-- Preloader for infinite scroll -->
+              <div class="infinite-scroll-preloader tags-tab">
+                <div class="preloader"></div>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+    </div>
+
+    <div class="popup links-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">More Links</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="block profile-external-links">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Slider -->
+    <div class="popup edit-profile-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Edit Profile</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                  <li><a href="/profile-edit-images/">Edit Profile Images</a></li>
+                  <li><a href="/profile-edit-socials/">Manage Social Links</a></li>
+                  <li><a href="/profile-edit-mydetails/">My Details</a></li>
+                  <li><a href="/profile-edit-username/">Username</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- * Edit Profile Slider -->
+
+    <!-- Followers Slider -->
+    <div class="popup followers-popup three-quarter-popup">
+      <div class="page">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="title">Followers</div>
+            <div class="right">
+              <!-- Link to close popup -->
+              <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+            </div>
+          </div>
+        </div>
+        <div class="page-content">
+          <div class="notification-list profile-followers-list">
+            <!-- Follower -->
+            <div class="notification-item">
+              <div class="notification-left">
+                <div class="notification-text">No followers</div>
+              </div>
+            </div>
+            <!-- * Follower -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- * Followers Slider -->
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

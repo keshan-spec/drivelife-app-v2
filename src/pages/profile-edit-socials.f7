@@ -1,0 +1,106 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-edit-socials">
+
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action" id="save-profile-socials">
+            Save
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="page-content">
+
+      <div class="block-title">Social Links</div>
+
+      <div class="list list-strong-ios list-dividers-ios inset-ios">
+        <form>
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Instagram</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_instagram" placeholder="Enter Instagram Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Facebook</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_facebook" placeholder="Enter Facebook Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">TikTok</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_tiktok" placeholder="Enter Tiktok Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">YouTube</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_youtube" placeholder="Enter YouTube Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Mivia</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_mivia" placeholder="Enter Mivia Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Custodian Garage / Car link</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="social_custodian" placeholder="Enter Custodian Username" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </form>
+      </div>
+
+      <div class="block-title">Other Links</div>
+      <div class="list list-strong-ios list-dividers-ios inset-ios social-other-links">
+        <ul></ul>
+
+        <div class="button-add-link">
+          <div class="button button-fill margin-bottom popup-open" data-popup=".add-link-popup">Add Link</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

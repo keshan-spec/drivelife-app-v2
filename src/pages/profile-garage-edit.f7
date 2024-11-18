@@ -1,0 +1,45 @@
+<template>
+  <div class="page" data-name="profile-garage-edit">
+
+    <div class="navbar navbar-nologo">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="/profile-garage-vehicle-add/" class="top-right-action">
+            + Add
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="page-content">
+      <div class="garage-list profile-landing-page">
+
+        <div class="listview-title garage-sub-title">Current Vehicles</div>
+        <ul class="listview image-listview media transparent flush pt-1" id="garage-edit-current-list">
+
+        </ul>
+
+        <div class="listview-title garage-sub-title">Past Vehicles</div>
+        <ul class="listview image-listview media transparent flush pt-1" id="garage-edit-past-list">
+
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

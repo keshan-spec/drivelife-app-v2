@@ -1,0 +1,37 @@
+<template>
+    <div class="page no-toolbar" data-name="profile-edit-account-settings">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="top-right-action">
+                        Save
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="block-title">Delete your account</div>
+            <div class="list list-strong-ios list-dividers-ios inset-ios">
+                <p>If you would like to completely remove your account, please click below. Please note, it is not
+                    possible to restore an account once it has been deleted.</p>
+                <p><button class="button button-fill color-red account-delete">Delete Account</button></p>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default () => {
+        return $render;
+    }
+</script>

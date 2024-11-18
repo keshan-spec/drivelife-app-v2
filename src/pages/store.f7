@@ -1,0 +1,41 @@
+<template>
+  <div class="page" data-name="store">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="#" class="link icon-only panel-open" data-panel="left">
+            <i class="icon f7-icons">bars</i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only open-qr-modal">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="/notifications/" class="link icon-only">
+            <div class="notification-count"></div>
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="store-coming-soon text-center">
+        <i class="icon f7-icons">cart</i>
+        <h2>Coming Soon</h2>
+        <p>We're just putting the finishing touches on our store - Check back soon for a world of automotive merch,
+          clothing and more!</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

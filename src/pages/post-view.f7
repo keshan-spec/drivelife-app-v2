@@ -1,0 +1,46 @@
+<template>
+    <div class="page" data-name="post-view">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="link icon-only open-qr-modal">
+                        <i class="icon f7-icons">qrcode</i>
+                    </a>
+                    <a href="/notifications/" class="link icon-only">
+                        <div class="notification-count"></div>
+                        <i class="icon f7-icons">bell</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div id="post-view-container">
+                <div class="loading-fullscreen post-view">
+                    <div class="preloader preloader-central">
+                        <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default () => {
+        return $render;
+    }
+</script>

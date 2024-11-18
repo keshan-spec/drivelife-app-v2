@@ -1,0 +1,60 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-edit-images">
+
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action" id="save-profile-images">
+            Save
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content profile-edit-images">
+      <div class="block-title">Profile Image</div>
+      <div class="list list-strong-ios list-dividers-ios inset-ios">
+        <div class="custom-file-upload profile" id="fileUpload">
+          <input type="file" id="fileuploadInput" name="profile_image" />
+          <label for="fileuploadInput">
+          </label>
+          <span>
+            <i class="icon f7-icons">cloud_upload</i>
+            <small>Tap to Upload</small>
+          </span>
+        </div>
+      </div>
+
+      <div class="block-title">Cover Image</div>
+      <div class="list list-strong-ios list-dividers-ios inset-ios">
+        <div class="custom-file-upload cover" id="fileUpload">
+          <input type="file" id="fileuploadInput1" name="cover_image" />
+          <label for="fileuploadInput1">
+          </label>
+          <span>
+            <i class="icon f7-icons">cloud_upload</i>
+            <small>Tap to Upload</small>
+          </span>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

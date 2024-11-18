@@ -1,0 +1,48 @@
+<template>
+  <div class="page" data-name="profile-edit">
+
+    <div class="navbar navbar-nologo">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only open-qr-modal">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="#" class="link icon-only">
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="page-content">
+      <div class="block">
+        <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+          <ul>
+            <li><a href="/profile-edit-images/">Edit Profile Images</a></li>
+            <li><a href="/profile-edit-socials/">Manage Social Links</a></li>
+            <li><a href="/profile-edit-mydetails/">My Details</a></li>
+            <li><a href="/profile-edit-username/">Username</a></li>
+            <li><a href="/profile-edit-account-settings/">Account Settings</a></li>
+            <li><a href="/app-permissions/">App Permissions</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

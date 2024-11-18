@@ -1,0 +1,65 @@
+<template>
+  <div class="page no-swipeback" data-name="home">
+    <div class="navbar navbar-large">
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="#" class="link icon-only panel-open" data-panel="left">
+            <i class="icon f7-icons">bars</i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="../assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only open-qr-modal">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="/notifications/" class="link icon-only">
+            <div class="notification-count"></div>
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="social-tabs toolbar toolbar-bottom tabbar">
+      <div class="toolbar-inner">
+        <a href="#tab-latest" class="tab-link tab-link-active" data-type="latest">Latest</a>
+        <a href="#tab-following" class="tab-link" data-type="following">Following</a>
+      </div>
+    </div>
+
+    <div class="page-content ptr-content ptr-watch-scrollable home-page social-content infinite-scroll-content"
+      data-ptr-distance="130" data-ptr-mousewheel="true">
+      <div class="ptr-preloader">
+        <div class="preloader"></div>
+        <div class="ptr-arrow"></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab tab-active" id="tab-latest">
+          <div class="data virtual-list list-virtual-latest">
+
+          </div>
+          <div class="infinite-scroll-preloader home-posts">
+            <div class="preloader"></div>
+          </div>
+        </div>
+
+        <div class="tab" id="tab-following">
+          <div class="data virtual-list list-virtual-following"></div>
+
+          <div class="infinite-scroll-preloader home-following-posts">
+            <div class="preloader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

@@ -1,0 +1,152 @@
+<template>
+  <div class="page" data-name="search">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only open-qr-modal">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="#" class="link icon-only">
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page content-->
+    <div class="page-content infinite-scroll-content">
+      <div class="discovery-wrap">
+        <div class="searchbar">
+          <div class="searchbar-inner">
+            <div class="searchbar-input-wrap">
+              <input type="search" placeholder="Search" class="discover-search" id="discover-search"
+                aria-autocomplete="none" />
+              <i class="searchbar-icon"></i>
+              <!-- <span class="input-clear-button"></span> -->
+            </div>
+            <span class="searchbar-disable-button if-not-aurora">Cancel</span>
+          </div>
+          <ul id="search-history" class="search-history"></ul> <!-- Container for the search history -->
+        </div>
+
+        <div class="tabbar-nav pt-1">
+          <ul>
+            <li><a href="#top-results" class="tab-link tab-link-active" data-type="all">Top</a></li>
+            <li><a href="#events-results" class="tab-link" data-type="events">Events</a></li>
+            <li><a href="#venues-results" class="tab-link" data-type="venues">Venues</a></li>
+            <li><a href="#users-results" class="tab-link" data-type="users">Users</a></li>
+            <li><a href="#vehicles-results" class="tab-link" data-type="vehicles">Vehicles</a></li>
+          </ul>
+        </div>
+
+        <div class="tabs">
+          <!-- Tab - Top Results -->
+          <div class="tab tab-active" id="top-results">
+            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+              <div class="loading-fullscreen search-view">
+                <div class="preloader preloader-central">
+                  <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                      class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                      class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                      class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                      class="preloader-inner-line"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab - Events -->
+          <div class="tab" id="events-results">
+            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+              <ul>
+                <div class="loading-fullscreen search-view">
+                  <div class="preloader preloader-central">
+                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span>
+                    </span>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+
+
+          <!-- Tab - Venues -->
+          <div class="tab" id="venues-results">
+            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+              <ul>
+                <div class="loading-fullscreen search-view">
+                  <div class="preloader preloader-central">
+                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span>
+                    </span>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tab - Users -->
+          <div class="tab" id="users-results">
+            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+              <ul>
+                <div class="loading-fullscreen search-view">
+                  <div class="preloader preloader-central">
+                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span>
+                    </span>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tab - Vehicles -->
+          <div class="tab" id="vehicles-results">
+            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+              <ul>
+                <div class="loading-fullscreen search-view">
+                  <div class="preloader preloader-central">
+                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                        class="preloader-inner-line"></span>
+                    </span>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- Page content-->
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

@@ -1,0 +1,58 @@
+<template>
+    <div class="page" data-name="notifications">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Page content-->
+        <div class="page-content notification-page ptr-content ptr-watch-scrollable" data-infinite-distance="50"
+            data-ptr-distance="120">
+            <div class="ptr-preloader">
+                <div class="preloader"></div>
+                <div class="ptr-arrow"></div>
+            </div>
+
+            <div class="notification-wrap">
+                <div class="">
+                    <div class="app-notification-title" data-title="Recent" data-id="recent"></div>
+                    <div class="notification-list" id="recent">
+
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="app-notification-title" data-title="Last Week" data-id="last-week"></div>
+                    <div class="notification-list" id="this-week">
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="app-notification-title" data-title="Last 30 days" data-id="last-30"></div>
+                    <div class="notification-list" id="last-30-days">
+                    </div>
+                </div>
+
+                <div class="load-more-notifications btn btn-primary hidden" data-page="1" data-total-pages="NaN">Load
+                    more
+                </div>
+            </div>
+        </div>
+        <!-- Page content-->
+    </div>
+</template>
+<script>
+    export default () => {
+        return $render;
+    }
+</script>

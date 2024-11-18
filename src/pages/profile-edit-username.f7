@@ -1,0 +1,53 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-edit-username">
+
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action" id="save-username">
+            Save
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="block-title">Change Username
+        <div class="item-input-info change-username-info">Your username can be changed every 30 days</div>
+      </div>
+
+      <div class="list list-strong-ios list-dividers-ios inset-ios">
+        <form>
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner profile-edit-view">
+                <div class="item-title item-label">Username</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="username" placeholder="Enter desired Username" id="lowercaseInput" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </form>
+        <br />
+        <div class="item-input-info change-username-info" id="username-editable"></div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

@@ -1,0 +1,85 @@
+<template>
+  <div class="page no-toolbar no-swipeback" data-name="signup-step4">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <!-- <i class="icon icon-back"></i> -->
+          </a>
+        </div>
+        <div class="right">
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <div class="login-form">
+        <div class="section">
+          <h1>Your Profile</h1>
+          <h4>Which best describes you?<br /><em>Unlock app features based on your requirements</em></h4>
+        </div>
+
+        <form id="interest-selection-form">
+          <div class="list list-strong-ios list-dividers-ios inset-ios" id="user-interests">
+            <ul>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="0" checked />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Car Owner / Enthusiast</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="1" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Photographer / Videographer</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="3" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Event Organiser</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="4" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Automotive Venue</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="5" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Automotive Business</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="interest" value="6" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Car Club</div>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="login-buttons">
+            <button type="submit" class="button button-large button-fill margin-bottom">Next</button>
+          </div>
+        </form>
+
+
+      </div>
+
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

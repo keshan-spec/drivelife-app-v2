@@ -1,0 +1,31 @@
+<template>
+  <div class="page no-navbar no-toolbar no-swipeback" data-name="signup-complete">
+    <div class="page-content env-padding">
+      <div class="login-form">
+        <div class="block">
+          <div class="section"><img src="assets/img/start01.jpg" />
+            <h1 class="">Welcome to DriveLife</h1>
+            <h4>Early Access</h4>
+          </div>
+          <p>Brought to you be CarEvents.com, DriveLife brings to you a world of car events, venues, media and more.</p>
+          <p>This is currently an early access app and will be updated with tonnes of new features in the coming weeks,
+            including video and gallery uploading, our online store and more.</p>
+          <p>Thank you for joining us on a journey to empower car enthusiasts!</p>
+        </div>
+        <div class="login-buttons">
+          <button type="submit" class="button button-large button-fill margin-bottom" id="signup-complete-car">
+            Add your first car
+          </button>
+          <button type="submit" class="button button-large button-fill margin-bottom button-grey" id="signup-complete">
+            Explore
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

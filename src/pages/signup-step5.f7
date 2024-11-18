@@ -1,0 +1,62 @@
+<template>
+  <div class="page" data-name="signup-step5">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="right">
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <div class="login-form">
+        <div class="section">
+          <h1>Your Profile</h1>
+          <h4>Set your profile images</h4>
+        </div>
+
+        <div class="block-title">Profile Image</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <div class="custom-file-upload profile" id="fileUpload">
+            <input type="file" id="fileuploadInput" name="profile_image" />
+            <label for="fileuploadInput">
+            </label>
+            <span>
+              <i class="icon f7-icons">cloud_upload</i>
+              <small>Tap to Upload</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="block-title">Cover Image</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <div class="custom-file-upload cover" id="fileUpload">
+            <input type="file" id="fileuploadInput1" name="cover_image" />
+            <label for="fileuploadInput1">
+            </label>
+            <span>
+              <i class="icon f7-icons">cloud_upload</i>
+              <small>Tap to Upload</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="login-buttons">
+          <button type="submit" class="button button-large button-fill margin-bottom" id="update-profile-images-signup">
+            Next
+          </button>
+          <a href="/signup-complete/" class="button button-large button-fill margin-bottom button-grey">Skip</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

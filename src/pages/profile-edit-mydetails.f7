@@ -1,0 +1,130 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-edit-mydetails">
+
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action" id="save-details">
+            Save
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="block-title">Your Details</div>
+
+      <div class="list list-strong-ios list-dividers-ios inset-ios">
+        <form>
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">First Name *</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="first_name" placeholder="Enter first name" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Last Name *</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="last_name" placeholder="Enter last name" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input" id="email-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Email * <span class="error-message" id="email-verify-span">Email not
+                    verified</span></div>
+                <div class="item-input-wrap">
+                  <input type="text" name="email" placeholder="Enter email" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Tel No</div>
+                <div class="item-input-wrap">
+                  <input type="text" name="tel_no" placeholder="Enter tel no" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </form>
+      </div>
+
+      <div class="block-title">Password</div>
+
+      <div class="list list-strong-ios list-dividers-ios inset-ios change-password">
+        <form>
+          <ul>
+            <li class="accordion-item">
+              <a class="item-link item-content">
+                <div class="item-inner">
+                  <div class="item-title password-toggle-title">Change Password</div>
+                </div>
+              </a>
+              <div class="accordion-item-content">
+                <div>
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Current Password *</div>
+                        <div class="item-input-wrap">
+                          <input type="password" name="current_password" placeholder="Enter Current Password" />
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Password *</div>
+                        <div class="item-input-wrap">
+                          <input type="password" name="password" placeholder="Enter Password" />
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Confirm Password *</div>
+                        <div class="item-input-wrap">
+                          <input type="password" name="confirm_password" placeholder="Confirm Password" />
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="button-add-link">
+                  <div class="button button-large button-fill margin-bottom" id="update_password">Update Password</div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

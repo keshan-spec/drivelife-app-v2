@@ -1,0 +1,119 @@
+<template>
+    <div class="page" data-name="app-permissions">
+        <div class="navbar navbar-nologo">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="link icon-only open-qr-modal">
+                        <i class="icon f7-icons">qrcode</i>
+                    </a>
+                    <a href="#" class="link icon-only">
+                        <i class="icon f7-icons">bell</i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="list list-strong list-outline-ios list-dividers-ios inset-md accordion-list">
+                <ul>
+                    <li class="accordion-item">
+                        <a class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title permission-title">
+                                    <i class="icon f7-icons">camera</i>
+                                    Camera Permissions
+                                </div>
+                            </div>
+                        </a>
+                        <div class="accordion-item-content">
+                            <div class="block">
+                                <p>
+                                    This app uses the camera to allow you to take photos to create posts, and scan QR
+                                    codes.
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="accordion-item">
+                        <a class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title permission-title">
+                                    <i class="icon f7-icons">location</i>
+                                    Location Permissions
+                                </div>
+                            </div>
+                        </a>
+                        <div class="accordion-item-content">
+                            <div class="block">
+                                <p>
+                                    This app uses accurate location data to allow users to browse and search for
+                                    events/venues by
+                                    proximity.
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="accordion-item">
+                        <a class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title permission-title">
+                                    <i class="icon f7-icons">photo</i>
+                                    Photos & Videos Permissions
+                                </div>
+                            </div>
+                        </a>
+                        <div class="accordion-item-content">
+                            <div class="block">
+                                <p>
+                                    This app uses photo library permissions to access images and videos for posts.
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="accordion-item">
+                        <a class="item-link item-content">
+                            <div class="item-inner">
+                                <div class="item-title permission-title">
+                                    <i class="icon f7-icons">bell</i>
+                                    Notification Permissions
+                                </div>
+                            </div>
+                        </a>
+                        <div class="accordion-item-content">
+                            <div class="block">
+                                <p>
+                                    This app uses notifications to alert you of new messages, likes, comments, and other
+                                    activity.
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- button to update settings -->
+            <div class="block">
+                <div class="row">
+                    <div class="col-100">
+                        <button class="button button-fill button-large update-permissions">Update Permissions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default () => {
+        return $render;
+    }
+</script>

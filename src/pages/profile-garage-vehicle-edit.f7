@@ -1,0 +1,258 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-garage-vehicle-edit">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action" id="submit-vehicle-form">
+            Save
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="loading-fullscreen">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
+      <form id="vehicleForm">
+        <input type="hidden" name="garage_id" value="" />
+
+        <div class="block-title">Vehicle Image</div>
+
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <div class="custom-file-upload" id="fileUpload">
+            <input type="file" id="fileuploadInput" name="vehicle_image" />
+            <label for="fileuploadInput">
+            </label>
+            <span>
+              <i class="icon f7-icons">cloud_upload</i>
+              <small>Tap to Upload</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="block-title">Vehicle Details</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Vehicle Make *</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select class="input-with-value" name="vehicle_make" required>
+                    <option disabled selected value="0">Please Select</option>
+                    <option value="Acura">Acura</option>
+                    <option value="Alfa Romeo">Alfa Romeo</option>
+                    <option value="Aston Martin">Aston Martin</option>
+                    <option value="Audi">Audi</option>
+                    <option value="Alpine ">Alpine</option>
+                    <option value="Bentley">Bentley</option>
+                    <option value="BMW">BMW</option>
+                    <option value="Bugatti">Bugatti</option>
+                    <option value="Buick">Buick</option>
+                    <option value="Cadillac">Cadillac</option>
+                    <option value="Chevrolet">Chevrolet</option>
+                    <option value="Chrysler">Chrysler</option>
+                    <option value="Citroën">Citroën</option>
+                    <option value="Dodge">Dodge</option>
+                    <option value="Ferrari">Ferrari</option>
+                    <option value="Fiat">Fiat</option>
+                    <option value="Ford">Ford</option>
+                    <option value="GMC">GMC</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Infiniti">Infiniti</option>
+                    <option value="Jaguar">Jaguar</option>
+                    <option value="Jeep">Jeep</option>
+                    <option value="Kia">Kia</option>
+                    <option value="Lamborghini">Lamborghini</option>
+                    <option value="Land Rover">Land Rover</option>
+                    <option value="Lexus">Lexus</option>
+                    <option value="Lotus">Lotus</option>
+                    <option value="Lincoln">Lincoln</option>
+                    <option value="Maserati">Maserati</option>
+                    <option value="Mazda">Mazda</option>
+                    <option value="McLaren">McLaren</option>
+                    <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    <option value="Mini">Mini</option>
+                    <option value="Mitsubishi">Mitsubishi</option>
+                    <option value="Nissan">Nissan</option>
+                    <option value="Peugeot">Peugeot</option>
+                    <option value="Porsche">Porsche</option>
+                    <option value="Ram">Ram</option>
+                    <option value="Renault">Renault</option>
+                    <option value="Rolls-Royce">Rolls-Royce</option>
+                    <option value="Saab">Saab</option>
+                    <option value="Subaru">Subaru</option>
+                    <option value="Suzuki">Suzuki</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="TVR">TVR</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="Volvo">Volvo</option>
+                  </select>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Model *</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="Your vehicle model" name="vehicle_model" required />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Variant</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="Add any vehicle variant info" name="vehicle_variant" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Registration</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="Your vehicle reg" name="vehicle_reg" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Colour</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="Your vehicle colour" name="vehicle_colour" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Short description -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Short Description</div>
+                <div class="item-input-wrap">
+                  <textarea name="vehicle_description" placeholder="Add a short description of your vehicle"
+                    maxlength="200"></textarea>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="block-title">Ownership Dates</div>
+
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <ul>
+
+            <!-- Input -->
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Ownership *</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+                  <select class="input-with-value" name="vehicle_ownership">
+                    <option value="current">Current Vehicle</option>
+                    <option value="past">Past Vehicle</option>
+                  </select>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li>
+              <div class="item-content item-input">
+                <div class="item-inner">
+                  <div class="item-title item-label">Owned From</div>
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="Select date" readonly="readonly" id="owned-from"
+                      name="vehicle_owned_from" />
+                  </div>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+            <!-- Input -->
+            <li>
+              <div class="item-content item-input" id="owned-to-block">
+                <div class="item-inner">
+                  <div class="item-title item-label">Owned To</div>
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="Select date" readonly="readonly" id="owned-to"
+                      name="vehicle_owned_to" />
+                  </div>
+                </div>
+              </div>
+            </li>
+            <!-- * Input -->
+
+          </ul>
+        </div>
+
+
+
+        <div class="block-title">Vehicle Tagging</div>
+
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <ul>
+            <li class="toggle-inline">
+              <div>Allow this vehicle to be discovered & tagged via it's registration</div>
+              <div>
+                <label class="toggle">
+                  <input type="checkbox" name="vehicle_tagging" />
+                  <span class="toggle-icon"></span>
+                </label>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+
+
+
+        <div class="block">
+          <button class="mt-4 button button-large button-fill color-red" id="delete-vehicle" type="button">Delete
+            Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

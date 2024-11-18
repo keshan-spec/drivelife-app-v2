@@ -1,0 +1,326 @@
+<template>
+  <div id="app">
+    <div class="views tabs safe-areas app-landing-page">
+      <div class="init-loader">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="init-loader light">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="toolbar toolbar-bottom tabbar-icons footer">
+        <div class="toolbar-inner">
+          <a href="#view-social" class="footer-links tab-link tab-link-active start-link">
+            <i class="icon f7-icons">house</i>
+            <span class="tabbar-label">Home</span>
+          </a>
+          <a href="#view-discover" class="footer-links tab-link">
+            <i class="icon f7-icons">search</i>
+            <span class="tabbar-label">Discover</span>
+          </a>
+          <a class="tab-link" id="open-action-sheet">
+            <i class="icon f7-icons">plus_app</i>
+            <span class="tabbar-label">Add</span>
+          </a>
+          <a href="#view-store" class="footer-links tab-link">
+            <i class="icon f7-icons">cart</i>
+            <span class="tabbar-label">Store</span>
+          </a>
+          <a href="#view-profile" class="footer-links tab-link view-profile-link">
+            <i class="icon f7-icons">person_circle</i>
+            <span class="tabbar-label">Profile</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Left Menu panel -->
+      <div class="panel panel-left panel-push">
+        <div class="block">
+          <img src="assets/img/ce-logo-dark.png" />
+          <p>Welcome to the DriveLife App by CarEvents.com</p>
+
+          <p>This is currently an early access app.</p>
+
+          <p>Over the coming months, we will be adding all your favourite features from the CarEvents.com website,
+            including adding new events, venues, car clubs and more.</p>
+
+          <p>To report any bugs or request any features, please email: <a
+              href="mailto:app@carevents.com">app@carevents.com</a></p>
+        </div>
+
+        <div class="block">
+          <p>v3.2.1</p>
+        </div>
+
+        <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
+      </div>
+
+      <div id="view-home" class="view view-init view-main tab tab-active">
+        <div class="page" data-name="home">
+          <div class="page-content">
+            <div class="preloader preloader-central">
+              <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                  class="preloader-inner-line"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-social" class="view view-init tab" data-name="social" data-url="/social/">
+      </div>
+
+      <div id="view-discover" class="view view-init tab" data-name="discover" data-url="/discover/">
+      </div>
+
+      <div id="view-store" class="view view-init tab" data-name="store" data-url="/store/">
+      </div>
+
+      <div id="view-profile" class="view view-init tab" data-name="profile" data-url="/profile/">
+      </div>
+
+      <div id="view-profile-edit" class="view view-init tab" data-name="profile-edit" data-url="/profile-edit/">
+      </div>
+
+      <div id="view-auth" class="view view-init tab" data-name="auth" data-url="/auth/">
+      </div>
+
+      <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
+      </div>
+
+      <div id="view-profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
+        data-url="/profile-garage-edit/">
+      </div>
+
+      <div id="profile-view" class="view view-init tab" data-name="profile-view" data-url="/profile-view/1">
+      </div>
+
+      <div id="post-view" class="view view-init tab" data-name="post-view" data-url="/post-view/-1">
+      </div>
+
+      <div id="profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
+        data-url="/profile-garage-edit/">
+      </div>
+      <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
+        data-url="/profile-garage-vehicle-view/-1">
+      </div>
+
+      <div id="discover-view-venue" class="view view-init tab" data-name="discover-view-venue"
+        data-url="/discover-view-venue/-1">
+      </div>
+
+      <div id="discover-view-event" class="view view-init tab" data-name="discover-view-event"
+        data-url="/discover-view-event/-1">
+      </div>
+
+      <div id="search" class="view view-init tab" data-name="search" data-url="/search/">
+      </div>
+
+      <!-- <div id="view-profile-edit-images" class="view view-init tab" data-name="profile-edit-images"
+            data-url="/profile-edit-images/">
+          </div>
+    
+          <div id="view-profile-edit-mydetails" class="view view-init tab" data-name="profile-edit-mydetails"
+            data-url="/profile-edit-mydetails/">
+          </div>
+    
+          <div id="view-profile-edit-socials" class="view view-init tab" data-name="profile-edit-socials"
+            data-url="/profile-edit-socials/">
+          </div>
+    
+          <div id="view-profile-edit-username" class="view view-init tab" data-name="profile-edit-username"
+            data-url="/profile-edit-username/">
+          </div>
+    
+          <div id="view-profile-garage-vehicle-add" class="view view-init tab" data-name="profile-garage-vehicle-add"
+            data-url="/profile-garage-vehicle-add/">
+          </div> -->
+    </div>
+
+    <!-- Comments Slider -->
+    <div class="popup comments-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title" style="left: 145.5px;">Comments</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-content">
+            <div class="comments-list" id="comments-list">
+              <div class="preloader"></div>
+            </div>
+
+            <form id="comment-form">
+              <!-- replying to -->
+              <span class="replying-to hidden"></span>
+              <div class="toolbar messagebar">
+                <div class="toolbar-inner">
+                  <div class="messagebar-area">
+                    <textarea class="resizable" name="comment" placeholder="Message"></textarea>
+                  </div>
+                  <button type="submit" class="link icon-only demo-send-message-link"><i
+                      class="icon f7-icons">arrow_up_circle_fill</i></button>
+                  <!-- <a class="link icon-only demo-send-message-link"><i class="icon f7-icons">arrow_up_circle_fill</i></a> -->
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup share-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Share This</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                  <li>
+                    <a href="#" id="copy-link" target="_blank"><i class="icon f7-icons">link</i>
+                      Copy
+                      Link
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" id="share-post-email" target="_blank"><i class="icon f7-icons">envelope</i>
+                      Share via Email
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Post Slider -->
+    <div class="popup edit-post-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Post Options</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                  <li>
+                    <a href="#" target="_blank" id="edit-post">
+                      <i class="icon f7-icons">pencil</i>
+                      Edit Post
+                    </a>
+                  </li>
+
+                  <li><a href="#" target="_blank" id="delete-post"><i class="icon f7-icons">delete_right</i> Delete
+                      Post</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Edit Post Slider -->
+
+    <!-- Add Link Slider -->
+    <div class="popup add-link-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Add Link</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <form>
+                  <ul>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Link Title</div>
+                        <div class="item-input-wrap">
+                          <input type="text" name="custom_link_title" placeholder="E.g. My Website" />
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input">
+                      <div class="item-inner">
+                        <div class="item-title item-label">Link URL</div>
+                        <div class="item-input-wrap">
+                          <input type="text" name="custom_link_url" placeholder="E.g. https://www.mylink.com" />
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <div class="button-add-link">
+                    <div class="button button-large button-fill margin-bottom" id="add-link-btn">
+                      Save</div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

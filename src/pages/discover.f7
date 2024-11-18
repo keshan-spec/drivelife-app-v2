@@ -1,0 +1,397 @@
+<template>
+    <div class="page" data-name="discover">
+
+
+        <!-- Top Navbar -->
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="#" class="link icon-only panel-open" data-panel="left">
+                        <i class="icon f7-icons">bars</i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="link icon-only open-qr-modal">
+                        <i class="icon f7-icons">qrcode</i>
+                    </a>
+                    <a href="/notifications/" class="link icon-only">
+                        <div class="notification-count"></div>
+                        <i class="icon f7-icons">bell</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page content-->
+        <div class="page-content discover-page infinite-scroll-content ptr-content ptr-watch-scrollable"
+            data-ptr-distance="130" data-ptr-mousewheel="true">
+            <div class="ptr-preloader">
+                <div class="preloader"></div>
+                <div class="ptr-arrow"></div>
+            </div>
+
+            <div class="discovery-wrap">
+                <form class="searchbar">
+                    <div class="searchbar-inner">
+                        <div class="searchbar-input-wrap">
+                            <input type="search" placeholder="Search" class="discover-search" />
+                            <i class="searchbar-icon"></i>
+                            <!-- <span class="input-clear-button"></span> -->
+                        </div>
+                        <span class="searchbar-disable-button if-not-aurora">Cancel</span>
+                    </div>
+                </form>
+
+                <div class="tabbar-nav pt-1">
+                    <ul>
+                        <!-- <li><a href="#featured" class="tab-link" data-id="featured">Featured</a></li> -->
+                        <li><a href="#events" class="tab-link  tab-link-active" data-id="events">Events</a></li>
+                        <li><a href="#venues" class="tab-link" data-id="venues">Venues</a></li>
+                        <li><a href="#users" class="tab-link" data-id="users">Users</a></li>
+                        <li><a href="#vehicles" class="tab-link" data-id="vehicles">Vehicles</a></li>
+                    </ul>
+                </div>
+
+                <div class="container mt-15 mb-15">
+                    <div class="tabs">
+                        <div class="tab hidden" id="featured">
+                            <div class="featured-section">
+                                <swiper-container slides-per-view="1" loop="true">
+                                    <swiper-slide>
+                                        <div class="featured-item">
+                                            <div class="featured-img"
+                                                style="background-image:url('/assets/img/event.jpeg')">
+                                            </div>
+                                            <div class="featured-content">
+                                                <h2>Classic Motor Show</h2>
+                                                <p>8th - 10th November</p>
+                                                <a href="/discover-view-event/62012" class="btn btn-primary ">See
+                                                    More</a>
+                                            </div>
+                                        </div>
+                                    </swiper-slide>
+                                </swiper-container>
+                            </div>
+
+                            <div class="trending-section">
+                                <h2 class="section-title mt-3 mb-2">Trending Events</h2>
+                                <swiper-container class="event-listing" slides-per-view="2" loop="true"
+                                    id="trending-events">
+                                    <div class="infinite-scroll-preloader">
+                                        <div class="preloader"></div>
+                                    </div>
+                                </swiper-container>
+                            </div>
+
+                            <div class="trending-section">
+                                <h2 class="section-title mt-3 mb-2">Trending Venues</h2>
+                                <swiper-container class="event-listing" slides-per-view="2" loop="true"
+                                    id="trending-venues">
+                                    <div class="infinite-scroll-preloader">
+                                        <div class="preloader"></div>
+                                    </div>
+                                </swiper-container>
+                            </div>
+                        </div>
+
+                        <div class="tab tab-active" id="events">
+                            <div class="filter-bar mb-2">
+                                <div class="filter-item popup-open" data-popup=".filter-bydate-popup">
+                                    <span>Date</span>
+                                    <i class="icon f7-icons">chevron_down</i>
+                                </div>
+                                <div class="filter-item popup-open" data-popup=".filter-bycategory-popup">
+                                    <span>Category </span>
+                                    <i class="icon f7-icons">chevron_down</i>
+                                </div>
+                                <div class="filter-item popup-open" data-popup=".filter-bylocation-popup">
+                                    <span>Location </span>
+                                    <i class="icon f7-icons">chevron_down</i>
+                                </div>
+                            </div>
+
+                            <div class="trending-section">
+                                <div class="grid grid-cols-2 event-listing" id="filtered-events-tab">
+                                    <!-- content populates here -->
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="infinite-scroll-preloader events-tab">
+                                <div class="preloader"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab" id="venues">
+                            <div class="filter-bar mb-2">
+                                <div class="filter-item popup-open" data-popup=".filter-bylocation-popup">
+                                    <span>Location </span>
+                                    <i class="icon f7-icons">chevron_down</i>
+                                </div>
+                            </div>
+                            <div class="trending-section">
+                                <div class="grid grid-cols-2 event-listing" id="filtered-venues-tab">
+
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="infinite-scroll-preloader venues-tab">
+                                <div class="preloader"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab" id="users">
+                            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+                                <ul id="users-tab">
+
+                                </ul>
+                                <br />
+                                <div class="infinite-scroll-preloader users-tab">
+                                    <div class="preloader"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab" id="vehicles">
+                            <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+                                <ul id="vehicles-tab">
+
+                                </ul>
+                                <br />
+                                <div class="infinite-scroll-preloader vehicles-tab">
+                                    <div class="preloader"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter - Date - Slider -->
+            <div class="popup filter-bydate-popup three-quarter-popup">
+                <div class="view view-init tab" data-name="filter-bydate" data-url="/discover/">
+                    <div class="page">
+                        <div class="navbar">
+                            <div class="navbar-inner">
+                                <div class="title">Filter by Date</div>
+                                <div class="right">
+                                    <!-- Link to close popup -->
+                                    <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-content">
+
+                            <div class="block-title">Quick Options</div>
+                            <div class="list" id="date-filters">
+                                <ul>
+                                    <li>
+                                        <label class="item-checkbox item-content">
+                                            <input type="checkbox" name="anytime" value="anytime" checked />
+                                            <i class="icon icon-checkbox"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">Anytime</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-checkbox item-content">
+                                            <input type="checkbox" name="today" value="today" />
+                                            <i class="icon icon-checkbox"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">Today</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-checkbox item-content">
+                                            <input type="checkbox" name="tomorrow" value="tomorrow" />
+                                            <i class="icon icon-checkbox"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">Tomorrow</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-checkbox item-content">
+                                            <input type="checkbox" name="this_weekend" value="this-weekend" />
+                                            <i class="icon icon-checkbox"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">This Weekend</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="block-title">Select Date Range</div>
+                            <div class="list">
+                                <ul>
+                                    <li>
+                                        <div class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Owned From</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text" placeholder="Select date" readonly="readonly"
+                                                        id="date_from" name="date_from" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content item-input">
+                                            <div class="item-inner">
+                                                <div class="item-title item-label">Owned To</div>
+                                                <div class="item-input-wrap">
+                                                    <input type="text" placeholder="Select date" readonly="readonly"
+                                                        id="date_to" name="date_to" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="popup-lower-button">
+                                <button class="button button-large button-fill margin-bottom apply-filters">Apply
+                                    Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- * Filter - Date - Slider -->
+
+            <!-- Filter - Category - Slider -->
+            <div class="popup filter-bycategory-popup three-quarter-popup">
+                <div class="view view-init tab" data-name="filter-bycategory" data-url="/discover/">
+                    <div class="page">
+                        <div class="navbar">
+                            <div class="navbar-inner">
+                                <div class="title">Filter by Category</div>
+                                <div class="right">
+                                    <!-- Link to close popup -->
+                                    <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-content">
+                            <form class="list mt-2" id="category-filters">
+                                <ul>
+                                    <li>
+                                        <label class="item-checkbox item-content">
+                                            <input type="checkbox" name="all" value="0" checked />
+                                            <i class="icon icon-checkbox"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">All</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </form>
+                            <div class="popup-lower-button">
+                                <button class="button button-large button-fill margin-bottom apply-filters">Apply
+                                    Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- * Filter - Category - Slider -->
+
+            <!-- Filter - Location - Slider -->
+            <div class="popup filter-bylocation-popup three-quarter-popup">
+                <div class="view view-init tab" data-name="filter-bylocation" data-url="/discover/">
+                    <div class="page">
+                        <div class="navbar">
+                            <div class="navbar-inner">
+                                <div class="title">Filter by Location</div>
+                                <div class="right">
+                                    <!-- Link to close popup -->
+                                    <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-content">
+                            <div class="block location-field">
+                                <p>Location</p>
+                                <input type="text" placeholder="Enter Location" id="autocomplete" />
+                                <input type="hidden" id="lat" />
+                                <input type="hidden" id="lng" />
+                            </div>
+
+                            <div class="list mt2" id="location-filters">
+                                <ul>
+                                    <li>
+                                        <label class="item-radio item-radio-icon-start item-content">
+                                            <input type="radio" name="location" value="national" checked />
+                                            <i class="icon icon-radio"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">National</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-radio item-radio-icon-start item-content">
+                                            <input type="radio" name="location" value="near-me" />
+                                            <i class="icon icon-radio"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">Nearby</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-radio item-radio-icon-start item-content">
+                                            <input type="radio" name="location" value="25-miles" />
+                                            <i class="icon icon-radio"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">25 Miles</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-radio item-radio-icon-start item-content">
+                                            <input type="radio" name="location" value="50-miles" />
+                                            <i class="icon icon-radio"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">50 Miles</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="item-radio item-radio-icon-start item-content">
+                                            <input type="radio" name="location" value="100-miles" />
+                                            <i class="icon icon-radio"></i>
+                                            <div class="item-inner">
+                                                <div class="item-title">100 Miles</div>
+                                            </div>
+                                        </label>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+
+                            <div class="popup-lower-button">
+                                <button class="button button-large button-fill margin-bottom apply-filters">Apply
+                                    Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- * Filter - Location - Slider -->
+        </div>
+    </div>
+</template>
+<script>
+    export default () => {
+        return $render;
+    }
+</script>

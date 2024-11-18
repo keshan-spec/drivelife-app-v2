@@ -1,0 +1,89 @@
+<template>
+  <div class="page no-toolbar no-swipeback" data-name="signup-step3">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <!-- <i class="icon icon-back"></i> -->
+          </a>
+        </div>
+        <div class="right">
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+
+      <div class="login-form">
+        <div class="section">
+          <h1>About You</h1>
+          <h4>What type of content revs your engine?<br /><em>Tick all that apply</em></h4>
+        </div>
+
+        <form id="car-selection-form">
+          <div class="list list-strong-ios list-dividers-ios inset-ios">
+            <ul>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="0" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Sports Cars / Supercars / Exotics</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="1" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">JDM & Modded</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="2" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Classic Cars</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="3" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Electric Cars</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="4" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Hotrods & Dragsters</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="5" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Race Cars</div>
+                </label>
+              </li>
+              <li>
+                <label class="item-checkbox item-checkbox-icon-start item-content">
+                  <input type="checkbox" name="car_type" value="6" />
+                  <i class="icon icon-checkbox"></i>
+                  <div class="item-title">Motorbikes</div>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="login-buttons">
+            <button type="submit" class="button button-large button-fill margin-bottom">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>

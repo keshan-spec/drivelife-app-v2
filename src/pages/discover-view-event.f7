@@ -1,0 +1,161 @@
+<template>
+  <div class="page" data-name="discover-view-event">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="assets/img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only">
+            <i class="icon f7-icons">qrcode</i>
+          </a>
+          <a href="#" class="link icon-only">
+            <i class="icon f7-icons">bell</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page content-->
+    <div class="page-content">
+      <div class="loading-fullscreen">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="discover-view-event view-event">
+        <div class="event-detail-img-box">
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="swiper-image" style="background-color: gray;"></div>
+              </div>
+              <div class="swiper-slide">
+                <div class="swiper-image" style="background-color: gray;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="event-detail">
+            <div class="event-detail-title"></div>
+            <div class="event-time-address-wrap mt-3 mb-2">
+              <div class="event-time-address">
+                <i class="f7-icons">calendar</i>
+                <span>
+                  <div class="skeleton-block" style="width: 100px"></div>
+                </span>
+              </div>
+              <div class="event-time-address">
+                <i class="f7-icons">clock</i>
+                <span>
+                  <div class="skeleton-block" style="width: 100px"></div>
+                </span>
+              </div>
+              <div class="event-time-address">
+                <i class="f7-icons">placemark_fill</i>
+                <span>
+                  <div class="skeleton-block" style="width: 300px"></div>
+                </span>
+              </div>
+            </div>
+            <div class="event-list-btn mt-1">
+              <div class="btn w-100 bg-dark"><i class="f7-icons">tickets</i> Buy tickets</div>
+            </div>
+            <div class="event-list-btn d-flex">
+              <div class="btn btn-primary w-100" id="favourite_event" style="display: none;"><i
+                  class="f7-icons">heart_fill</i> Favourite</div>
+              <div class="btn btn-primary w-100 popup-open" data-popup=".share-listing-popup">
+                <i class="f7-icons">paperplane_fill</i> Share
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="listing-tabs">
+            <a href="#tab-about" class="tab-link tab-link-active">About</a>
+            <a href="#tab-entry-details" class="tab-link">Entry & Tickets</a>
+          </div>
+
+          <swiper-container class="tabs">
+            <swiper-slide id="tab-about" class="tab tab-active">
+              <div class="swiper-inner-container">
+                <div class="event-des-wrap">
+                  <p>
+                  <div class="skeleton-block" style="width: 95%;padding: .5rem; margin-bottom: 5px;"></div>
+                  <div class="skeleton-block" style="width: 95%;padding: .5rem; margin-bottom: 5px;"></div>
+                  <div class="skeleton-block" style="width: 95%;padding: .5rem; margin-bottom: 5px;"></div>
+                  <div class="skeleton-block" style="width: 95%;padding: .5rem; margin-bottom: 5px;"></div>
+                  </p>
+                </div>
+              </div>
+            </swiper-slide>
+            <swiper-slide id="tab-entry-details" class="tab">
+              <div class="swiper-inner-container">
+                <div class="event-des-wrap entry-details">
+                  <p>
+                  <div class="skeleton-block" style="width: 200px"></div>
+                  </p>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper-container>
+        </div>
+      </div>
+    </div>
+    <!-- Page content-->
+
+    <!-- Share Slider -->
+    <div class="popup share-listing-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Share This</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                  <li><a href="#" target="_blank" id="copy-event-link"><i class="icon f7-icons">link</i> Copy Link</a>
+                  </li>
+                  <li><a href="#" target="_blank" id="share-email-event-link"><i class="icon f7-icons">envelope</i>
+                      Share via Email</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- * Share Slider -->
+
+  </div>
+</template>
+<script>
+  export default () => {
+    return $render;
+  }
+</script>
