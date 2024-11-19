@@ -274,7 +274,7 @@ networkErrors.onUpdated((data) => {
 });
 
 /* Native listeners */
-CapacitorApp.addListener('backButton', async (event) => {
+CapacitorApp.addListener('backButton', async () => {
   const { platform } = await Device.getInfo();
   if (platform !== 'android') {
     return;
@@ -282,6 +282,11 @@ CapacitorApp.addListener('backButton', async (event) => {
 
   try {
     var view = app.views.current;
+
+    if (view.history.includes('/auth/')) {
+      CapacitorApp.minimizeApp();
+      return true;
+    }
 
     var leftp = app.panel.left && app.panel.left.opened;
     var rightp = app.panel.right && app.panel.right.opened;
@@ -298,7 +303,7 @@ CapacitorApp.addListener('backButton', async (event) => {
         view.router.back();
         return false;
       } else {
-        CapacitorApp.exitApp();
+        CapacitorApp.minimizeApp();
         return true;
       }
     } else {
@@ -311,7 +316,6 @@ CapacitorApp.addListener('backButton', async (event) => {
       return false;
     }
   } catch (error) {
-    alert(error);
     console.log(error);
   }
 });
