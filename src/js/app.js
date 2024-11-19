@@ -32,6 +32,7 @@ import {
 
 import { App as CapacitorApp } from '@capacitor/app';
 import { Device } from '@capacitor/device';
+import { getCurrentPosition } from './native.js';
 
 var app;
 var toolbarEl;
@@ -89,27 +90,12 @@ if (window.f7App !== undefined) {
         if (!isAuthenticated) {
           this.views.main.router.navigate('/auth/');
         } else {
+          getCurrentPosition();
           $('.init-loader').hide();
           $('.start-link').click();
         }
 
         await handleQRCode();
-
-        const deeplink = getQueryParameter('deeplink');
-        if (deeplink) {
-          // get the page from the deeplink and navigate to it
-          // ex; http://localhost:3000/post-view/308
-          // get the /post-view/308 and navigate to it
-          let path = deeplink.split('/').slice(3).join('/');
-
-          if (!path.startsWith('/')) {
-            path = `/${path}`;
-          }
-
-          this.views.main.router.navigate(path);
-          // remove the query parameter from the URL
-          window.history.pushState({}, document.title, window.location.pathname);
-        }
       },
       pageInit: function (page) {
         if (page.name === 'profile') {
@@ -320,6 +306,20 @@ CapacitorApp.addListener('backButton', async () => {
   }
 });
 
+/* Deep linking */
+CapacitorApp.addListener('appUrlOpen', async (data) => {
+  const url = data.url;
+
+  let path = url.split('/').slice(3).join('/');
+
+  if (!path.startsWith('/')) {
+    path = `/${path}`;
+  }
+
+  const view = app.views.current;
+  view.router.navigate(path);
+});
+
 /* Helper functions */
 export function showToast(message, type = 'Message', position = 'bottom') {
   app.toast.create({
@@ -401,5 +401,13 @@ async function maybeRedirectToProfile(qrCode) {
     $('.init-loader').hide();
   }
 }
+
+/* Initialize Popups/Modals/Swipers */
+new Swiper('.swiper-container', {
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+});
 
 export default app;

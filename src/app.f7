@@ -371,6 +371,31 @@
           ],
         ]
       });
+
+
+      $f7.popup.create({
+        el: '.share-popup',
+        swipeToClose: 'to-bottom'
+      });
+
+      $f7.popup.create({
+        el: '.edit-post-popup',
+        swipeToClose: 'to-bottom'
+      });
+
+      // Comments Popup
+      $f7.popup.create({
+        el: '.comments-popup',
+        swipeToClose: 'to-bottom',
+        swipeHandler: '.comments-popup .navbar'
+      });
+
+      // Followers Popup
+      $f7.popup.create({
+        el: '.followers-popup',
+        swipeToClose: 'to-bottom',
+        swipeHandler: '.followers-popup .navbar'
+      });
     });
 
     // $on('pageBeforeRemove', () => {
