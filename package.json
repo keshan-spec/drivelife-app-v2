@@ -24,7 +24,9 @@
   ],
   "dependencies": {
     "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.1",
     "@capacitor/cli": "^6.1.2",
+    "@capacitor/device": "^6.0.1",
     "@capacitor/ios": "^6.1.2",
     "dom7": "^4.0.6",
     "framework7": "^8.3.4",
@@ -34,6 +36,7 @@
     "swiper": "^11.1.14"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "postcss-preset-env": "^10.1.0",

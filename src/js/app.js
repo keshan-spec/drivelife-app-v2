@@ -16,24 +16,13 @@ import store from './store.js';
 
 // Import main app component
 import App from '../app.f7';
-
-// Helpers
-import {
-  getSessionUser,
-} from './api/auth.js';
-
 import {
   getIDFromQrCode
 } from './api/scanner.js';
 
-
 import {
   displayProfile
 } from './profile.js';
-
-import {
-  sendRNMessage
-} from './api/consts.js';
 
 import { getQueryParameter, handleSSOSignIn, verifyUserEmail } from './utils.js';
 import {
@@ -41,13 +30,15 @@ import {
   openQRModal
 } from './qr.js';
 
+import { App as CapacitorApp } from '@capacitor/app';
+import { Device } from '@capacitor/device';
+
 var app;
 var toolbarEl;
 
 var userStore = store.getters.user;
 var notificationCountStore = store.getters.getNotifCount;
 var networkErrors = store.getters.checkPoorNetworkError;
-
 
 if (window.f7App !== undefined) {
   app = window.f7App;
@@ -282,6 +273,48 @@ networkErrors.onUpdated((data) => {
   }
 });
 
+/* Native listeners */
+CapacitorApp.addListener('backButton', async (event) => {
+  const { platform } = await Device.getInfo();
+  if (platform !== 'android') {
+    return;
+  }
+
+  try {
+    var view = app.views.current;
+
+    var leftp = app.panel.left && app.panel.left.opened;
+    var rightp = app.panel.right && app.panel.right.opened;
+
+    if (leftp || rightp) {
+      app.panel.close();
+      return false;
+    } else if ($('.modal-in').length > 0) {
+      app.dialog.close();
+      app.popup.close();
+      return false;
+    } else if (view.history[0] == '/social/') {
+      if (view.history.length > 1) {
+        view.router.back();
+        return false;
+      } else {
+        CapacitorApp.exitApp();
+        return true;
+      }
+    } else {
+      if (view.history.length < 2) {
+        $('.tab-link[href="#view-home"]').click();
+        return;
+      }
+
+      view.router.back();
+      return false;
+    }
+  } catch (error) {
+    alert(error);
+    console.log(error);
+  }
+});
 
 /* Helper functions */
 export function showToast(message, type = 'Message', position = 'bottom') {
