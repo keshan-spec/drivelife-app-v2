@@ -1,27 +1,27 @@
 import {
     API_URL,
     TIMEOUT_MS_HIGHER
-} from "./consts.js"
-import store from "../store.js"
+} from "./consts.js";
+import store from "../store.js";
 
 export const getSessionUser = async () => {
     // get session from somewhere    
     if (store.state.user) {
-        return store.state.user
+        return store.state.user;
     }
 
     // check in local storage
-    const session = window.localStorage.getItem('token')
+    const session = window.localStorage.getItem('token');
     if (session) {
-        return session
+        return session;
     }
 
-    return null
-}
+    return null;
+};
 
 export const getUserDetails = async (token) => {
     try {
-        let url = `${API_URL}/wp-json/app/v2/get-user-profile/`
+        let url = `${API_URL}/wp-json/app/v2/get-user-profile/`;
         let response = await fetch(url, {
             method: "GET",
             mode: 'cors',
@@ -29,22 +29,22 @@ export const getUserDetails = async (token) => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             },
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        if (response.status !== 200) throw new Error(data.message)
-        return data
+        if (response.status !== 200) throw new Error(data.message);
+        return data;
     } catch (error) {
-        console.error('Error fetching user details:', error)
-        return null
+        console.error('Error fetching user details:', error);
+        return null;
     }
-}
+};
 
 export const verifyUser = async (credentials) => {
     try {
         // Convert the credentials object to a URL query string
-        const queryParams = new URLSearchParams(credentials).toString()
+        const queryParams = new URLSearchParams(credentials).toString();
 
         // Make a GET request with the query parameters
         const response = await fetch(`${API_URL}/wp-json/ticket_scanner/v1/verify_user/?${queryParams}`, {
@@ -53,19 +53,19 @@ export const verifyUser = async (credentials) => {
             headers: {
                 "Content-Type": "application/json",
             },
-        })
+        });
 
         if (response.ok) {
-            return await response.json()
+            return await response.json();
         } else {
-            console.error('Failed to verify user:', response.statusText)
-            return null
+            console.error('Failed to verify user:', response.statusText);
+            return null;
         }
     } catch (error) {
-        console.error(error)
-        return error
+        console.error(error);
+        return error;
     }
-}
+};
 
 export const verifyEmail = async (token) => {
     try {
@@ -77,20 +77,20 @@ export const verifyEmail = async (token) => {
             body: JSON.stringify({
                 token
             }),
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error verifying email:', error)
-        return null
+        console.error('Error verifying email:', error);
+        return null;
     }
-}
+};
 
 export const sendEmailVerification = async () => {
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/resend-verification-email`, {
             method: "POST",
@@ -100,15 +100,15 @@ export const sendEmailVerification = async () => {
             body: JSON.stringify({
                 user_id: user.id,
             }),
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error sending email verification:', error)
-        return null
+        console.error('Error sending email verification:', error);
+        return null;
     }
-}
+};
 
 export const handleSignUp = async (user) => {
     try {
@@ -118,27 +118,27 @@ export const handleSignUp = async (user) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(user),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
         if (response.status !== 201) {
             return {
                 success: false,
                 message: data.message,
                 code: data.code,
-            }
+            };
         }
 
-        return data
+        return data;
     } catch (error) {
-        return error
+        return error;
     }
-}
+};
 
 export const updateUsername = async (username, user_id = null) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         if (!user_id) {
@@ -147,12 +147,12 @@ export const updateUsername = async (username, user_id = null) => {
                 success: false,
                 message: 'User id not provided'
             };
-            user_id = user.id
+            user_id = user.id;
         }
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/update-username`, {
             method: "POST",
@@ -164,10 +164,10 @@ export const updateUsername = async (username, user_id = null) => {
                 username
             }),
             signal
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -178,7 +178,7 @@ export const updateUsername = async (username, user_id = null) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};
 
 export const updateContentIds = async (content_ids, user_id) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-selected-content`, {
@@ -190,11 +190,11 @@ export const updateContentIds = async (content_ids, user_id) => {
             user_id,
             content_ids
         }),
-    })
+    });
 
-    const data = await response.json()
-    return data
-}
+    const data = await response.json();
+    return data;
+};
 
 export const updateAboutUserIds = async (content_ids, user_id) => {
     const response = await fetch(`${API_URL}/wp-json/app/v1/update-about-content`, {
@@ -206,23 +206,23 @@ export const updateAboutUserIds = async (content_ids, user_id) => {
             user_id,
             content_ids
         }),
-    })
+    });
 
-    const data = await response.json()
-    return data
-}
+    const data = await response.json();
+    return data;
+};
 
 export const updatePassword = async (new_password, old_password) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/update-password`, {
             method: "POST",
@@ -235,10 +235,10 @@ export const updatePassword = async (new_password, old_password) => {
                 old_password
             }),
             signal
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -249,19 +249,19 @@ export const updatePassword = async (new_password, old_password) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};
 
 export const updateUserDetails = async (details, email_changed) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         const user = await getSessionUser();
         if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/update-user-details`, {
             method: "POST",
@@ -292,30 +292,30 @@ export const updateUserDetails = async (details, email_changed) => {
 
 export const getUserById = async (id) => {
     try {
-        let url = `${API_URL}/wp-json/app/v2/get-user-profile-next?user_id=${id}`
+        let url = `${API_URL}/wp-json/app/v2/get-user-profile-next?user_id=${id}`;
         let response = await fetch(url, {
             method: "GET",
             cache: 'force-cache',
             headers: {
                 "Content-Type": "application/json",
             },
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        if (response.status !== 200) throw new Error(data.message)
-        return data
+        if (response.status !== 200) throw new Error(data.message);
+        return data;
     } catch (error) {
-        console.error('Error fetching user details:', error)
-        return null
+        console.error('Error fetching user details:', error);
+        return null;
     }
-}
+};
 
 export const getUserNotifications = async (load_old_notifications = false) => {
     try {
-        const user = await getSessionUser()
+        const user = await getSessionUser();
         if (!user || !user.id) {
-            throw new Error('Session user not found')
+            return null;
         }
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-notifications`, {
@@ -327,19 +327,19 @@ export const getUserNotifications = async (load_old_notifications = false) => {
                 user_id: user.id,
                 load_old_notifications
             }),
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error fetching user notifications:', error)
-        return null
+        console.error('Error fetching user notifications:', error);
+        return null;
     }
-}
+};
 
 export const getNotificationCount = async () => {
-    const user = await getSessionUser()
-    if (!user || !user.id) return
+    const user = await getSessionUser();
+    if (!user || !user.id) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/get-new-notifications-count`, {
         method: "POST",
@@ -353,7 +353,7 @@ export const getNotificationCount = async () => {
 
     const data = await response.json();
     return data;
-}
+};
 
 export const markMultipleNotificationsAsRead = async (notificationIds) => {
     const user = await getSessionUser();
@@ -374,8 +374,8 @@ export const markMultipleNotificationsAsRead = async (notificationIds) => {
 };
 
 export const deleteUserAccount = async (password) => {
-    const user = await getSessionUser()
-    if (!user || !user.id) return
+    const user = await getSessionUser();
+    if (!user || !user.id) return;
 
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/delete_account`, {
@@ -387,21 +387,21 @@ export const deleteUserAccount = async (password) => {
                 user_id: user.id,
                 password
             }),
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         return {
             success: false,
             message: 'Oops, unable to delete your account. Please try again later.'
-        }
+        };
     }
-}
+};
 
 export async function maybeSetUserLocation(coords) {
-    const user = await getSessionUser()
-    if (!user || !user.id) return
+    const user = await getSessionUser();
+    if (!user || !user.id) return;
 
     let data = {
         coords: {
@@ -417,7 +417,7 @@ export async function maybeSetUserLocation(coords) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-    })
+    });
 
     let json = await response.json();
     console.log('Response from server: ', json);

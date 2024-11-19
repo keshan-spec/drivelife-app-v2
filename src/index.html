@@ -21,15 +21,13 @@
   <meta name="msapplication-tap-highlight" content="no">
   <title>DriveLife</title>
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" href="icons/favicon.png">
 
-  <link rel="preload" as="image" href="img/icon-add-post.svg">
-  <link rel="preload" as="image" href="img/icon-qr-code.svg">
-  <link rel="preload" as="image" href="img/icon-vehicle-add.svg">
 
+  <!-- built styles file will be auto injected -->
   <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqDMSFVfl-tOgqaj4ZqA5I3HnobrIK6jg&loading=async&libraries=places&v=weekly">
     </script>
@@ -40,11 +38,9 @@
 <body>
   <div id="app"></div>
 
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
   <script type="module" src="./js/app.js"></script>
 
-  <script src="js/qr-scanner.js" type="module"></script>
+  <script src="./js/qr-scanner.js" type="module"></script>
 
   <script src="./js/authentication.js" type="module"></script>
   <script src="./js/homepage.js" type="module"></script>

@@ -84,8 +84,8 @@ export const fetchEvent = async (eventId) => {
 };
 
 export const fetchTrendingEvents = async (page, paginate = false, filters = null) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         const user = await getSessionUser();
@@ -235,7 +235,7 @@ export const maybeFollowVenue = async (venueId) => {
 
     const data = await response.json();
     return data;
-}
+};
 
 export const fetchVenue = async (venueId) => {
     const user = await getSessionUser();
@@ -260,7 +260,7 @@ export const fetchVenue = async (venueId) => {
     }
 
     return data;
-}
+};
 
 export const fetchTrendingUsers = async (page, is_vehicle = false) => {
     try {

@@ -703,7 +703,7 @@ const store = createStore({
       window.localStorage.removeItem('token');
       window.location.reload();
 
-      window.ReactNativeWebView.postMessage(JSON.stringify({
+      window?.ReactNativeWebView?.postMessage(JSON.stringify({
         type: "signOut",
         user_id: null,
         page: 'auth',

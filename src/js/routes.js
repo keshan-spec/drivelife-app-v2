@@ -1,5 +1,6 @@
 import StorePage from '../pages/store.f7';
 import HomePage from '../pages/home.f7';
+import AppPage from '../app.f7';
 import NotificationsPage from '../pages/notifications.f7';
 import AuthPage from '../pages/auth.f7';
 import SignInPage from '../pages/login.f7';
@@ -34,7 +35,7 @@ import NotFoundPage from '../pages/404.f7';
 var routes = [
   {
     path: '/',
-    component: HomePage,
+    component: AppPage,
   },
   {
     path: '/social/',
@@ -53,10 +54,6 @@ var routes = [
     options: {
       animate: false,
     },
-  },
-  {
-    path: '/signin/',
-    component: SignInPage,
   },
   {
     path: '/signup-step1/',

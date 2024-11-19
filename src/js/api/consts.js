@@ -16,8 +16,8 @@ export const sendRNMessage = ({
     }
 
     try {
-        if (window !== undefined && window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({
+        if (window !== undefined && window.ReactNativeWebView !== undefined) {
+            window.ReactNativeWebView?.postMessage(JSON.stringify({
                 type,
                 page,
                 user_id,

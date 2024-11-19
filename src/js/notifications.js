@@ -76,75 +76,80 @@ userStore.onUpdated((data) => {
 });
 
 notificationsStore.onUpdated(async (data) => {
-    if (data.success) {
-        const notifications = data.data;
-
-        const recentContainer = document.getElementById('recent');
-        const thisWeekContainer = document.getElementById('this-week');
-        const last30DaysContainer = document.getElementById('last-30-days');
-
-        if (refreshed) {
-            if (recentContainer) {
-                recentContainer.innerHTML = '';
-            }
-
-            if (thisWeekContainer) {
-                thisWeekContainer.innerHTML = '';
-            }
-
-            if (last30DaysContainer) {
-                last30DaysContainer.innerHTML = '';
-            }
-            refreshed = false;
-        }
-
-        var user = await getSessionUser();
-
-        document.querySelectorAll('.app-notification-title').forEach(elem => {
-            if (elem.getAttribute('data-id') === 'last-30') {
-                if (notifications.last_30_days.length > 0) {
-                    elem.innerHTML = elem.getAttribute('data-title');
-                } else {
-                    elem.innerHTML = '';
-                }
-                return;
-            }
-            elem.innerHTML = elem.getAttribute('data-title');
-        });
-
-        if (!notifications.recent.length && !notifications.is_paginated) {
-            recentContainer.innerHTML = '<p class="text-center">No recent notifications</p>';
-        }
-
-        if (!notifications.last_week.length && !notifications.has_more_notifications) {
-            thisWeekContainer.innerHTML = '<p class="text-center">No notifications from this week</p>';
-        }
-
-        notifications.last_30_days.forEach(notification => {
-            const notificationItem = createNotificationItem(notification, user);
-            last30DaysContainer.appendChild(notificationItem);
-        });
-
-        notifications.recent.forEach(notification => {
-            const notificationItem = createNotificationItem(notification, user);
-            recentContainer.appendChild(notificationItem);
-        });
-
-        notifications.last_week.forEach(notification => {
-            const notificationItem = createNotificationItem(notification, user);
-            thisWeekContainer.appendChild(notificationItem);
-        });
-
-        // add a load more button at the end
-        if ((notifications.recent.length >= 0 || notifications.last_week.length >= 0) && (notifications.has_more_notifications)) {
-            $('.load-more-notifications').removeClass('hidden');
-        } else {
-            $('.load-more-notifications').addClass('hidden');
-        }
-    } else {
-        console.log('Unable to get notifications', data);
+    if (!data || !data.success) {
         $('.notification-wrap').html(`<p class="text-center">${data?.message || 'Unable to get notifications'}</p>`);
+        return;
     }
+
+
+    // if (data && data?.success === true) {
+    const notifications = data.data;
+
+    const recentContainer = document.getElementById('recent');
+    const thisWeekContainer = document.getElementById('this-week');
+    const last30DaysContainer = document.getElementById('last-30-days');
+
+    if (refreshed) {
+        if (recentContainer) {
+            recentContainer.innerHTML = '';
+        }
+
+        if (thisWeekContainer) {
+            thisWeekContainer.innerHTML = '';
+        }
+
+        if (last30DaysContainer) {
+            last30DaysContainer.innerHTML = '';
+        }
+        refreshed = false;
+    }
+
+    var user = await getSessionUser();
+
+    document.querySelectorAll('.app-notification-title').forEach(elem => {
+        if (elem.getAttribute('data-id') === 'last-30') {
+            if (notifications.last_30_days.length > 0) {
+                elem.innerHTML = elem.getAttribute('data-title');
+            } else {
+                elem.innerHTML = '';
+            }
+            return;
+        }
+        elem.innerHTML = elem.getAttribute('data-title');
+    });
+
+    if (!notifications.recent.length && !notifications.is_paginated) {
+        recentContainer.innerHTML = '<p class="text-center">No recent notifications</p>';
+    }
+
+    if (!notifications.last_week.length && !notifications.has_more_notifications) {
+        thisWeekContainer.innerHTML = '<p class="text-center">No notifications from this week</p>';
+    }
+
+    notifications.last_30_days.forEach(notification => {
+        const notificationItem = createNotificationItem(notification, user);
+        last30DaysContainer.appendChild(notificationItem);
+    });
+
+    notifications.recent.forEach(notification => {
+        const notificationItem = createNotificationItem(notification, user);
+        recentContainer.appendChild(notificationItem);
+    });
+
+    notifications.last_week.forEach(notification => {
+        const notificationItem = createNotificationItem(notification, user);
+        thisWeekContainer.appendChild(notificationItem);
+    });
+
+    // add a load more button at the end
+    if ((notifications.recent.length >= 0 || notifications.last_week.length >= 0) && (notifications.has_more_notifications)) {
+        $('.load-more-notifications').removeClass('hidden');
+    } else {
+        $('.load-more-notifications').addClass('hidden');
+    }
+    // } else {
+    //     console.log('Unable to get notifications', data);
+    // }
 });
 
 $(document).on('click', '.load-more-notifications', async function (e) {

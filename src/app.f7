@@ -33,7 +33,7 @@
             <i class="icon f7-icons">search</i>
             <span class="tabbar-label">Discover</span>
           </a>
-          <a class="tab-link" id="open-action-sheet">
+          <a class="tab-link" id="open-action-sheet" @click=${openGrid}>
             <i class="icon f7-icons">plus_app</i>
             <span class="tabbar-label">Add</span>
           </a>
@@ -320,7 +320,64 @@
 </template>
 
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+  } from './js/api/auth.js';
+
+  import {
+    sendRNMessage
+  } from './js/api/consts.js';
+
+  export default (props, { $on, $f7, $el }) => {
+    let actionsGrid;
+
+    const openGrid = () => {
+      actionsGrid.open();
+    };
+
+    $on('pageInit', () => {
+      actionsGrid = $f7.actions.create({
+        grid: true,
+        buttons: [
+          [{
+            text: '<div class="actions-grid-item">Add Post</div>',
+            icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
+            onClick: async function () {
+              const user = await getSessionUser();
+              if (user) {
+                sendRNMessage({
+                  type: "createPost",
+                  user_id: user.id,
+                  page: 'create-post',
+                });
+              }
+            }
+          },
+          {
+            text: '<div class="actions-grid-item" id="scar-qr-code">Scan QR Code</div>',
+            icon: '<img src="/img/icon-qr-code.svg" width="48" style="max-width: 100%;"/>',
+            onClick: function () {
+
+            }
+          },
+          {
+            text: '<div class="actions-grid-item">My Vehicles</div>',
+            icon: '<img src="/img/icon-vehicle-add.svg" width="48" style="max-width: 100%;"/>',
+            onClick: function () {
+              var view = $f7.views.current;
+              view.router.navigate('/profile-garage-edit/');
+            }
+          }
+          ],
+        ]
+      });
+    });
+
+    // $on('pageBeforeRemove', () => {
+    //   actionsGrid.destroy();
+    // });
+
     return $render;
   }
+
 </script>
