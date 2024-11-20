@@ -43,9 +43,6 @@ function initAutocomplete() {
 
 function fillInAddress() {
     const place = autocomplete.getPlace();
-
-    console.log(place);
-
     document.getElementById('lat').value = place.geometry.location.lat();
     document.getElementById('lng').value = place.geometry.location.lng();
 }
@@ -499,42 +496,7 @@ filteredVenuesStore.onUpdated((data) => {
     }
 });
 
-$(document).on('page:init', '.page[data-name="discover"]', function (e) {
-    //SEARCH BAR
-    $('.discover-search').on('mousedown', function (event) {
-        event.preventDefault();
-        app.views.discover.router.navigate('/search/');
-    });
-
-    const dateFilters = document.querySelector('#date-filters ul');
-    const locationFilters = document.querySelector('#location-filters ul');
-
-    // Event listener for checkbox selection
-    dateFilters.addEventListener('change', function (e) {
-        const targetCheckbox = e.target;
-
-        // Uncheck all checkboxes except the one that was clicked
-        if (targetCheckbox.type === "checkbox") {
-            [...dateFilters.querySelectorAll('input[type="checkbox"]')].forEach(checkbox => {
-                if (checkbox !== targetCheckbox) {
-                    checkbox.checked = false;
-                }
-            });
-        }
-    });
-
-    locationFilters.addEventListener('change', function (e) {
-        const targetCheckbox = e.target;
-
-        // Uncheck all checkboxes except the one that was clicked
-        if (targetCheckbox.type === "checkbox") {
-            [...locationFilters.querySelectorAll('input[type="checkbox"]')].forEach(checkbox => {
-                if (checkbox !== targetCheckbox) {
-                    checkbox.checked = false;
-                }
-            });
-        }
-    });
+$(document).on('page:afterin', '.page[data-name="discover"]', function (e) {
 
     initAutocomplete();
 });

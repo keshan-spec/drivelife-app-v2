@@ -391,6 +391,32 @@
 <script>
     export default (props, { $, $on, $f7 }) => {
         $on('pageInit', () => {
+            //SEARCH BAR
+            $('.discover-search').on('mousedown', function (event) {
+                event.preventDefault();
+                $f7.views.discover.router.navigate('/search/');
+            });
+
+            const dateFilters = $('#date-filters ul input[type="checkbox"]');
+
+            // Event listener for checkbox selection
+            dateFilters.on('change', function () {
+                const targetCheckbox = this;
+
+                if (targetCheckbox.checked) {
+                    // Uncheck all other checkboxes
+                    dateFilters.each(function () {
+                        if (this !== targetCheckbox) {
+                            this.checked = false;
+                        }
+                    });
+                } else {
+                    // Prevent unchecking of the current checkbox
+                    targetCheckbox.checked = true;
+                }
+            });
+
+
             //Date Filters
             $f7.calendar.create({
                 inputEl: '#date-from',
