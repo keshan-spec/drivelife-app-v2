@@ -1,5 +1,4 @@
 import { Geolocation } from '@capacitor/geolocation';
-import { App as CapacitorApp } from '@capacitor/app';
 
 export const getCurrentPosition = async () => {
     if (await checkPermission()) {
@@ -7,7 +6,7 @@ export const getCurrentPosition = async () => {
             enableHighAccuracy: true,
         });
 
-        alert(`Latitude: ${coordinates.coords.latitude}, Longitude: ${coordinates.coords.longitude}`);
+        // TODO: Update the user db with location
     }
 };
 

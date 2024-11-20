@@ -3,8 +3,6 @@ import $ from 'dom7';
 import store from './store.js';
 import app from './app.js';
 
-var toolbarEl = $('.footer')[0];
-
 // Helpers
 import {
     handleSignUp,
@@ -32,7 +30,7 @@ $(document).on('click', '#sso-ce-button', function (e) {
     window.open(loginUrl, '_blank');
 });
 
-// Handle login form submission
+// Handle login form submission;
 $(document).on('submit', '.login-screen-content form', async function (e) {
     e.preventDefault();
 
@@ -73,7 +71,6 @@ $(document).on('submit', '.login-screen-content form', async function (e) {
             app.views.main.router.navigate('/');
             $('.start-link').click();
 
-            toolbarEl.style.display = 'block';
             return;
         }
     } catch (error) {
@@ -394,8 +391,6 @@ $(document).on('click', '#signup-complete', async function (e) {
     await handleSignUpComplete(() => {
         app.views.main.router.navigate('/');
         $('.start-link').click();
-
-        toolbarEl.style.display = 'block';
     });
 });
 

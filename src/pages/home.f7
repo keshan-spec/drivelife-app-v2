@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  export default () => {
+  export default (props, { $, $on, $f7 }) => {
     return $render;
   }
 </script>

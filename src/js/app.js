@@ -90,7 +90,6 @@ if (window.f7App !== undefined) {
         if (!isAuthenticated) {
           this.views.main.router.navigate('/auth/');
         } else {
-          getCurrentPosition();
           $('.init-loader').hide();
           $('.start-link').click();
         }
@@ -235,6 +234,8 @@ $(document).on('click', '#scar-qr-code', function (e) {
 /* Store event listeners */
 userStore.onUpdated(async (data) => {
   if (data && data.id && !data.external_refresh && !data.refreshed) {
+    getCurrentPosition();
+
     store.dispatch('getPosts', {
       page: 1,
       reset: true
