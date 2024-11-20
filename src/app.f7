@@ -328,7 +328,7 @@
     sendRNMessage
   } from './js/api/consts.js';
 
-  export default (props, { $on, $f7, $el }) => {
+  export default (props, { $, $on, $f7 }) => {
     let actionsGrid;
 
     const openGrid = () => {
@@ -354,10 +354,10 @@
             }
           },
           {
-            text: '<div class="actions-grid-item" id="scar-qr-code">Scan QR Code</div>',
+            text: '<div class="actions-grid-item">Scan QR Code</div>',
             icon: '<img src="/img/icon-qr-code.svg" width="48" style="max-width: 100%;"/>',
             onClick: function () {
-
+              $('.open-qr-modal').click();
             }
           },
           {

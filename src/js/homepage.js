@@ -129,73 +129,6 @@ export function loadVideos() {
   });
 }
 
-// export function loadVideos() {
-//   var videos = document.querySelectorAll('video.video-js');
-
-//   // Function to resume videos if needed (optional)
-//   function playVisibleVideos() {
-//     videos.forEach(function (video) {
-//       var observer = new IntersectionObserver(function (entries) {
-//         entries.forEach(function (entry) {
-//           if (entry.isIntersecting) {
-//             video.play();
-//           }
-//         });
-//       }, { threshold: 0.5 });
-//       observer.observe(video);
-//     });
-//   }
-
-//   // Listen for visibility change
-//   document.addEventListener('visibilitychange', function () {
-//     if (document.hidden) {
-//       // Pause all videos when the user changes tabs or minimizes
-//       pauseAllVideos();
-//     } else {
-//       // Optionally resume videos if visible
-//       playVisibleVideos();
-//     }
-//   });
-
-//   // Loop through each video element
-//   videos.forEach(function (video) {
-//     var videoSrc = video.getAttribute('data-src');
-
-//     if (Hls.isSupported()) {
-//       var hls = new Hls();
-//       hls.loadSource(videoSrc);
-//       hls.attachMedia(video);
-//       hls.on(Hls.Events.MANIFEST_PARSED, function () {
-//       });
-//     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-//       video.src = videoSrc;
-//       video.addEventListener('loadedmetadata', function () {
-//       });
-//     }
-
-//     // Set up IntersectionObserver to pause/play videos based on visibility
-//     var observer = new IntersectionObserver(function (entries) {
-//       entries.forEach(function (entry) {
-//         if (entry.isIntersecting) {
-//           video.play();
-//         } else {
-//           video.pause();
-//         }
-//       });
-//     }, { threshold: 0.5 });
-
-//     observer.observe(video);
-
-//     video.addEventListener('play', function () {
-//       video.removeAttribute('controls'); // Hide controls
-//     });
-
-//     video.addEventListener('click', function () {
-//       video.setAttribute('controls', 'controls');
-//     });
-//   });
-// }
-
 postsStore.onUpdated(async (data) => {
   totalPostPages = data.total_pages;
 
@@ -258,32 +191,31 @@ $(document).on('infinite', '.infinite-scroll-content.home-page', async function 
   isFetchingPosts = false;
 });
 
-$(document).on('page:beforein', '.page[data-name="social"]', function (e) {
-  const ptrContent = app.ptr.get('.ptr-content.home-page');
+$(document).on('ptr:refresh', '.ptr-content.home-page', async function (e) {
+  refreshed = true;
 
-  ptrContent.on('refresh', async function () {
-    refreshed = true;
-    const storeName = activeTab === 'following' ? 'getFollowingPosts' : 'getPosts';
+  const storeName = activeTab === 'following' ? 'getFollowingPosts' : 'getPosts';
 
-    if (isFetchingPosts) return;
+  if (isFetchingPosts) return;
 
-    isFetchingPosts = true;
+  isFetchingPosts = true;
 
-    if (activeTab === 'following') {
-      currentFollowingPostsPage = 1;
-    } else {
-      currentPostsPage = 1;
-    }
+  if (activeTab === 'following') {
+    currentFollowingPostsPage = 1;
+  } else {
+    currentPostsPage = 1;
+  }
 
-    await store.dispatch(storeName, {
-      page: 1,
-      clear: true
-    });
-
-    isFetchingPosts = false;
-    app.ptr.done();
+  await store.dispatch(storeName, {
+    page: 1,
+    clear: true
   });
 
+  isFetchingPosts = false;
+  app.ptr.get('.ptr-content.home-page').done();
+});
+
+$(document).on('page:beforein', '.page[data-name="social"]', function (e) {
   app.toolbar.show('.toolbar.toolbar-bottom', true);
 });
 

@@ -549,7 +549,7 @@ img.image-square {
 .comments-list {
     display: block;
     width: 95%;
-    height: 98%;
+    height: 89%;
     overflow: auto;
     padding: 0;
     margin: 20px auto 0 auto !important;

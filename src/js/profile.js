@@ -375,7 +375,6 @@ export function displayFollowers(followersList, userFollowingList, container = '
   });
 }
 
-
 $(document).on('click', '.follower-item', async function (e) {
   const view = app.views.current;
 

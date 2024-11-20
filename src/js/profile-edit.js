@@ -16,6 +16,7 @@ import {
 import app, {
     showToast
 } from "./app.js";
+import { openSettings } from "./native.js";
 import store from "./store.js";
 
 import $ from 'dom7';
@@ -857,8 +858,5 @@ app.dialog.passwordConfirm = function (text, title, callback) {
 
 // --------------- Edit App Permissions Page ---------------
 $(document).on('click', '.update-permissions', async function () {
-    sendRNMessage({
-        type: "openSettings",
-        page: "settings",
-    });
+    openSettings();
 });

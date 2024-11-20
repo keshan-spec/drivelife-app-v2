@@ -8,9 +8,10 @@ import {
 } from './api/scanner.js';
 import app, { showToast } from "./app.js";
 import store from "./store.js";
-import { sendRNMessage } from './api/consts.js';
 
 import $ from 'dom7';
+import { Html5Qrcode } from "html5-qrcode";
+import { openSettings } from './native.js';
 
 var html5QrCode;
 let defaultConfig = {
@@ -140,10 +141,7 @@ async function checkCameraPermissions() {
     } catch (error) {
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
             app.dialog.confirm('You need to grant camera permissions to scan QR codes', 'Camera Permissions', function () {
-                sendRNMessage({
-                    type: "openSettings",
-                    page: "qr",
-                });
+                openSettings();
             });
         } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
             showToast('No camera found on this device');
@@ -168,8 +166,8 @@ export async function openQRModal() {
     );
 }
 
-
 $(document).on('click', '.open-qr-modal', function () {
+    console.log('Opening QR modal');
     openQRModal();
 });
 

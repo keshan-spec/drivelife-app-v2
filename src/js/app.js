@@ -7,7 +7,8 @@ import Swiper from 'swiper';
 
 // Import Icons and App Custom Styles
 import '../css/icons.css';
-import '../css/app.css';
+import '../css/custom.css';
+import '../css/custom-kesh.css';
 
 // Import Routes
 import routes from './routes.js';
@@ -27,7 +28,6 @@ import {
 import { getQueryParameter, handleSSOSignIn, verifyUserEmail } from './utils.js';
 import {
   openModal,
-  openQRModal
 } from './qr.js';
 
 import { App as CapacitorApp } from '@capacitor/app';
@@ -221,14 +221,6 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
   setTimeout(() => {
     $('.init-loader').hide();
   }, 300);
-});
-
-$(document).on('click', '#scar-qr-code', function (e) {
-  try {
-    openQRModal();
-  } catch (error) {
-    console.log(error);
-  }
 });
 
 /* Store event listeners */
