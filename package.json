@@ -1,21 +1,21 @@
 {
   "name": "drivelife-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "DriveLife App",
   "repository": "",
   "license": "UNLICENSED",
   "scripts": {
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development vite",
+    "build": "cross-env NODE_ENV=production vite build",
+    "postinstall": "cpy --flat ./node_modules/framework7-icons/fonts/*.* ./src/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./src/fonts/",
     "open:android": "npx cap open android",
     "open:ios": "npx cap open ios",
-    "run:android": "npm run build && npx cap sync && npx cap run android",
-    "run:ios": "npm run build && npx cap run ios",
+    "run:android": "npm run sync && npx cap run android",
+    "run:ios": "npm run sync && npx cap run ios",
     "sync": "npm run build && npx cap sync",
-    "assets": "npx capacitor-assets generate",
-    "build": "cross-env NODE_ENV=production vite build",
-    "postinstall": "cpy --flat ./node_modules/framework7-icons/fonts/*.* ./src/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./src/fonts/"
+    "assets": "npx capacitor-assets generate"
   },
   "browserslist": [
     "IOS >= 15",

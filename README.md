@@ -1,30 +1,5 @@
 # DriveLife App
 
-## Framework7 CLI Options
-
-Framework7 app created with following options:
-
-```
-{
-  "cwd": "C:\\Users\\kesha\\Desktop\\drivelife-app",
-  "type": [
-    "web"
-  ],
-  "name": "DriveLife App",
-  "framework": "core",
-  "template": "blank",
-  "bundler": "vite",
-  "cssPreProcessor": false,
-  "theming": {
-    "customColor": false,
-    "color": "#007aff",
-    "darkMode": false,
-    "iconFonts": true
-  },
-  "customBuild": false
-}
-```
-
 ## Install Dependencies
 
 First of all we need to install dependencies, run in terminal
@@ -38,36 +13,28 @@ npm install
 * 🔧 `dev` - run development server
 * 🔧 `build` - build web app for production
 
-## Vite
+## Capacitor Set up
 
-There is a [Vite](https://vitejs.dev) bundler setup. It compiles and bundles all "front-end" resources. You should work only with files located in `/src` folder. Vite config located in `vite.config.js`.
-## Assets
+To set up capacitor, after install the dependencies, run `npx cap add ${platform}`, for instance, `npx cap add android`. This will create the relative native folder(s). 
 
-Assets (icons, splash screens) source images located in `assets-src` folder. To generate your own icons and splash screen images, you will need to replace all assets in this directory with your own images (pay attention to image size and format), and run the following command in the project directory:
+Now, once you've done developing, run `npm run run:${platform}` to build, sync, and run the app on an emulator or on a device. 
 
-```
-framework7 assets
-```
+### Assets
 
-Or launch UI where you will be able to change icons and splash screens:
+Assets (icons, splash screens) source images located in `assets` folder. To generate the custom splash screen and icons, run the below command, it will create the necessary files and move them to the `android/` or `ios/App/` directories.
 
 ```
-framework7 assets --ui
+npm run assets
 ```
 
+<hr/>
 
+## Permissions and other configs
 
-## Documentation & Resources
+### Android 
+We will need to copy over the configs for each native build manually when starting fresh, for android its the `android/app/src/main/AndroidManifest.xml`. We need to add the permissions and deep linking intents. I've left a copy of the manifest in `android-example`. 
 
-* [Framework7 Core Documentation](https://framework7.io/docs/)
-
-
-
-* [Framework7 Icons Reference](https://framework7.io/icons/)
-* [Community Forum](https://forum.framework7.io)
-
-## Support Framework7
-
-Love Framework7? Support project by donating or pledging on:
-- Patreon: https://patreon.com/framework7
-- OpenCollective: https://opencollective.com/framework7
+### IOS
+For IOS, it can be a little more complicated, there are multiple files that need to be updated. 
+`ios/App/Podfile`, `ios/App/{App Name}/Info.plist`, and `ios/App/{App Name}/{App Name}.entitlements`.
+Each files templates are in `ios-examples`.
