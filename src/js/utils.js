@@ -178,3 +178,27 @@ export function isAndroid() {
         return navigator.userAgent.match(toMatchItem);
     });
 }
+
+/* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+export function detectDoubleTapClosure(callback) {
+    let lastTap = 0;
+    let timeout;
+
+    return function detectDoubleTap(event) {
+
+        const curTime = new Date().getTime();
+        const tapLen = curTime - lastTap;
+        if (tapLen < 500 && tapLen > 0) {
+            event.preventDefault();
+
+            // pass the event target to the callback
+            callback(event.target);
+        } else {
+            timeout = setTimeout(() => {
+                clearTimeout(timeout);
+            }, 500);
+        }
+
+        lastTap = curTime;
+    };
+}

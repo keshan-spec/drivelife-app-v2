@@ -143,7 +143,7 @@ $(document).on('click', '#favourite_event', async function () {
 
 $(document).on('click', '#copy-event-link', function () {
     const eventId = $(this).attr('data-event-id');
-    const eventLink = `${window.location.origin}/discover-view-event/${eventId}`;
+    const eventLink = `https://app.mydrivelife.com/discover-view-event/${eventId}`;
 
     navigator.clipboard.writeText(eventLink);
 
@@ -156,7 +156,7 @@ $(document).on('click', '#copy-event-link', function () {
 
 $(document).on('click', '#share-email-event-link', function () {
     const eventId = $(this).attr('data-event-id');
-    const eventLink = `${window.location.origin}/discover-view-event/${eventId}`;
+    const eventLink = `https://app.mydrivelife.com/discover-view-event/${eventId}`;
 
     window.open(`mailto:?subject=Event Link&body=${eventLink}`, '_blank');
 });

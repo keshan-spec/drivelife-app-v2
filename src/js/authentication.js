@@ -68,9 +68,10 @@ $(document).on('submit', '.login-screen-content form', async function (e) {
                 token: response.token
             });
 
-            app.views.main.router.navigate('/');
-            $('.start-link').click();
-
+            // app.views.main.router.navigate('/');
+            // $('.start-link').click();
+            // reload page
+            window.location.reload();
             return;
         }
     } catch (error) {
@@ -389,8 +390,10 @@ const handleSignUpComplete = async (onLogin) => {
 // Signup complete
 $(document).on('click', '#signup-complete', async function (e) {
     await handleSignUpComplete(() => {
-        app.views.main.router.navigate('/');
-        $('.start-link').click();
+        // app.views.main.router.navigate('/');
+        // $('.start-link').click();
+        // reload page
+        window.location.reload();
     });
 });
 

@@ -4,6 +4,7 @@ import app, {
 import store from "./store.js";
 
 import {
+  detectDoubleTapClosure,
   formatPostDate
 } from './utils.js';
 import {
@@ -223,30 +224,6 @@ $(document).on('page:beforein', '.page[data-name="social"]', function (e) {
 $(document).on('page:beforeout', '.page[data-name="social"]', function () {
   pauseAllVideos();
 });
-
-/* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-export function detectDoubleTapClosure(callback) {
-  let lastTap = 0;
-  let timeout;
-
-  return function detectDoubleTap(event) {
-
-    const curTime = new Date().getTime();
-    const tapLen = curTime - lastTap;
-    if (tapLen < 500 && tapLen > 0) {
-      event.preventDefault();
-
-      // pass the event target to the callback
-      callback(event.target);
-    } else {
-      timeout = setTimeout(() => {
-        clearTimeout(timeout);
-      }, 500);
-    }
-
-    lastTap = curTime;
-  };
-}
 
 // event listener for tab change
 $(document).on('click', '.social-tabs .tab-link', async function (e) {
@@ -720,6 +697,20 @@ $(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapC
   passive: false
 });
 
+$(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
+  const parent = e.closest('.media-post');
+  const postId = parent.getAttribute('data-post-id');
+  const isLiked = parent.getAttribute('data-is-liked') === 'true';
+
+  if (isLiked) {
+    return;
+  }
+
+  togglePostLike(postId);
+}), {
+  passive: false
+});
+
 // media-post-video click
 $(document).on('click', '.media-post-video', function () {
   if (this.paused) {
@@ -763,12 +754,12 @@ $(document).on('click', '.media-post-share', function () {
   // set the post id as a data attribute 
   const postId = $(this).closest('.media-post').attr('data-post-id');
   $('.share-popup').attr('data-post-id', postId);
-  $('#copy-link').attr('data-clipboard-text', `${window.location.origin}/post-view/${postId}`);
+  $('#copy-link').attr('data-clipboard-text', `https://app.mydrivelife.com/post-view/${postId}`);
 });
 
 $(document).on('click', '#share-post-email', function () {
   const postId = $(this).closest('.popup').attr('data-post-id');
-  const postLink = `${window.location.origin}/post-view/${postId}`;
+  const postLink = `https://app.mydrivelife.com/post-view/${postId}`;
 
   // open the email composer
   window.open(`mailto:?subject=Check out this post&body=${postLink}`);

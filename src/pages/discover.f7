@@ -1,7 +1,5 @@
 <template>
     <div class="page" data-name="discover">
-
-
         <!-- Top Navbar -->
         <div class="navbar">
             <div class="navbar-bg"></div>
@@ -389,8 +387,43 @@
         </div>
     </div>
 </template>
+
 <script>
-    export default () => {
+    export default (props, { $, $on, $f7 }) => {
+        $on('pageInit', () => {
+            //Date Filters
+            $f7.calendar.create({
+                inputEl: '#date-from',
+                openIn: 'customModal',
+                header: true,
+                footer: true,
+            });
+
+            $f7.calendar.create({
+                inputEl: '#date-to',
+                openIn: 'customModal',
+                header: true,
+                footer: true,
+            });
+
+            //Filter Date Popup
+            $f7.popup.create({
+                el: '.filter-bydate-popup',
+                swipeToClose: 'to-bottom'
+            });
+
+            //Filter Category Popup
+            $f7.popup.create({
+                el: '.filter-bycategory-popup',
+                swipeToClose: 'to-bottom'
+            });
+
+            //Filter Location Popup
+            $f7.popup.create({
+                el: '.filter-bylocation-popup',
+                swipeToClose: 'to-bottom'
+            });
+        });
         return $render;
     }
 </script>

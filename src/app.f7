@@ -320,14 +320,6 @@
 </template>
 
 <script>
-  import {
-    getSessionUser,
-  } from './js/api/auth.js';
-
-  import {
-    sendRNMessage
-  } from './js/api/consts.js';
-
   export default (props, { $, $on, $f7 }) => {
     let actionsGrid;
 
@@ -343,14 +335,7 @@
             text: '<div class="actions-grid-item">Add Post</div>',
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
-              const user = await getSessionUser();
-              if (user) {
-                sendRNMessage({
-                  type: "createPost",
-                  user_id: user.id,
-                  page: 'create-post',
-                });
-              }
+              // const user = await getSessionUser();
             }
           },
           {

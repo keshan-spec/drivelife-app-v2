@@ -1,22 +1,25 @@
 import $ from 'dom7';
 import Framework7 from 'framework7/bundle';
+import Swiper from 'swiper';
+
+import { App as CapacitorApp } from '@capacitor/app';
+import { Device } from '@capacitor/device';
 
 // Import F7 Styles
 import 'framework7/css/bundle';
-import Swiper from 'swiper';
 
 // Import Icons and App Custom Styles
 import '../css/icons.css';
 import '../css/custom.css';
 import '../css/custom-kesh.css';
 
-// Import Routes
 import routes from './routes.js';
-// Import Store
 import store from './store.js';
 
 // Import main app component
 import App from '../app.f7';
+
+// Import API functions
 import {
   getIDFromQrCode
 } from './api/scanner.js';
@@ -30,8 +33,6 @@ import {
   openModal,
 } from './qr.js';
 
-import { App as CapacitorApp } from '@capacitor/app';
-import { Device } from '@capacitor/device';
 import { getCurrentPosition } from './native.js';
 
 var app;
@@ -161,6 +162,8 @@ if (window.f7App !== undefined) {
 
   window.f7App = app;
 }
+
+console.log('App initialized');
 
 $(document).on('click', '#goto-app', function (e) {
   // remove the query parameter from the URL

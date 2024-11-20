@@ -6,12 +6,12 @@ import {
   formatPostDate
 } from "./utils.js";
 import store from "./store.js";
-import { detectDoubleTapClosure, loadVideos, togglePostLike } from "./homepage.js";
 
 import $ from 'dom7';
+
 var containerWidth = window.innerWidth;
 
-export function displayPost(post) {
+function displaySinglePost(post) {
   const postsContainer = document.getElementById('post-view-container');
   postsContainer.innerHTML = ''; // Clear any existing posts
 
@@ -138,7 +138,6 @@ export function displayPost(post) {
 `;
 
   postsContainer.insertAdjacentHTML('beforeend', postItem);
-  loadVideos();
 }
 
 $(document).on('page:beforein', '.page[data-name="post-view"]', async function (e) {
@@ -186,33 +185,32 @@ $(document).on('page:beforein', '.page[data-name="post-view"]', async function (
     $('.loading-fullscreen.post-view').hide();
   }
 
-  displayPost(cachedData);
+  displaySinglePost(cachedData);
 
   if (commentId) {
     $('.media-post-comment').click();
-  }
 
+    setTimeout(() => {
+      // find .comment data-comment-id="${comment.id}" and animate it to glow#
+      if (commentId) {
+        const comment = $(`.comment[data-comment-id="${commentId}"]`);
+        console.log('Comment:', comment);
 
-  setTimeout(() => {
-    // find .comment data-comment-id="${comment.id}" and animate it to glow#
-    if (commentId) {
-      const comment = $(`.comment[data-comment-id="${commentId}"]`);
-      console.log('Comment:', comment);
+        if (comment.length > 0) {
+          comment.addClass('target-highlight');
+          // Scroll to the comment
+          document.querySelector(`.comment[data-comment-id="${commentId}"]`).scrollIntoView({
+            behavior: 'smooth', // Optional, adds smooth scrolling
+            block: 'start', // Aligns the element to the top of the view
+            inline: 'nearest' // Aligns the element horizontally in the viewport
+          });
 
-      if (comment.length > 0) {
-        comment.addClass('target-highlight');
-        // Scroll to the comment
-        document.querySelector(`.comment[data-comment-id="${commentId}"]`).scrollIntoView({
-          behavior: 'smooth', // Optional, adds smooth scrolling
-          block: 'start', // Aligns the element to the top of the view
-          inline: 'nearest' // Aligns the element horizontally in the viewport
-        });
+        }
 
+        setTimeout(() => {
+          comment.removeClass('target-highlight');
+        }, 3000);
       }
-
-      setTimeout(() => {
-        comment.removeClass('target-highlight');
-      }, 3000);
-    }
-  }, 2000);
+    }, 2000);
+  }
 });

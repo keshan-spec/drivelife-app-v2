@@ -64,6 +64,24 @@ const renderResult = (result) => {
     }
 };
 
+async function checkCameraPermissions() {
+    try {
+        // Check if the user has granted camera permissions
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop()); // Close the stream after checking
+        return true;
+    } catch (error) {
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+            app.dialog.confirm('You need to grant camera permissions to scan QR codes', 'Camera Permissions', function () {
+                openSettings();
+            });
+        } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+            showToast('No camera found on this device');
+        }
+        return false;
+    }
+}
+
 // Function to create and open the modal with default content
 export function openModal() {
     const myModal = app.dialog.create({
@@ -91,6 +109,21 @@ export function openModal() {
 
     // Open the modal
     myModal.open();
+}
+
+export async function openQRModal() {
+    const permissionGranted = await checkCameraPermissions();
+    if (!permissionGranted) return;
+
+    openModal();
+
+    html5QrCode = new Html5Qrcode("reader");
+    html5QrCode?.start(
+        { facingMode: "environment" },
+        defaultConfig,
+        onScanSuccess,
+        onScanFailure
+    );
 }
 
 // on link profile
@@ -132,41 +165,7 @@ $(document).on('click', '#unlink-profile', async function () {
     }
 });
 
-async function checkCameraPermissions() {
-    try {
-        // Check if the user has granted camera permissions
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop()); // Close the stream after checking
-        return true;
-    } catch (error) {
-        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-            app.dialog.confirm('You need to grant camera permissions to scan QR codes', 'Camera Permissions', function () {
-                openSettings();
-            });
-        } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-            showToast('No camera found on this device');
-        }
-        return false;
-    }
-}
-
-export async function openQRModal() {
-    const permissionGranted = await checkCameraPermissions();
-    if (!permissionGranted) return;
-
-    openModal();
-
-    html5QrCode = new Html5Qrcode("reader");
-
-    html5QrCode?.start(
-        { facingMode: "environment" },
-        defaultConfig,
-        onScanSuccess,
-        onScanFailure
-    );
-}
-
-$(document).on('click', '.open-qr-modal', function () {
+$(document).on('click', '.open-qr-modal', async function () {
     console.log('Opening QR modal');
     openQRModal();
 });
@@ -186,5 +185,8 @@ store.getters.scannedData.onUpdated((data) => {
         }
 
         document.getElementById('custom-modal-content').innerHTML = html;
+    } else {
+        // close the modal
+        app.dialog.close();
     }
 });

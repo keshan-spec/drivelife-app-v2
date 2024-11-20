@@ -131,7 +131,7 @@ $(document).on('click', '.event-time-address span a', function (e) {
 
 $(document).on('click', '#copy-venue-link', function () {
     const venueId = $(this).attr('data-venue-id');
-    const eventLink = `${window.location.origin}/discover-view-venue/${venueId}`;
+    const eventLink = `https://app.mydrivelife.com/discover-view-venue/${venueId}`;
 
     navigator.clipboard.writeText(eventLink);
 
@@ -144,7 +144,7 @@ $(document).on('click', '#copy-venue-link', function () {
 // #share-email-venue-link click event
 $(document).on('click', '#share-email-venue-link', function () {
     const venueId = $(this).attr('data-venue-id');
-    const eventLink = `${window.location.origin}/discover-view-venue/${venueId}`;
+    const eventLink = `https://app.mydrivelife.com/discover-view-venue/${venueId}`;
 
     window.open(`mailto:?subject=Check out this venue&body=${eventLink}`);
 });

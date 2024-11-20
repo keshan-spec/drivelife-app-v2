@@ -1,5 +1,3 @@
-
-
 import {
   getNotificationCount,
   getSessionUser,
@@ -7,29 +5,31 @@ import {
   getUserNotifications,
   markMultipleNotificationsAsRead
 } from './api/auth.js';
+
 import {
   sendRNMessage
 } from './api/consts.js';
+
 import {
   fetchTrendingEvents,
   fetchTrendingUsers,
   fetchTrendingVenues,
   fetchEventCats
 } from './api/discover.js';
+
 import {
   getPostsForGarage,
   getUserGarage
 } from './api/garage.js';
+
 import {
   fetchPosts,
   getPostsForUser
 } from './api/posts.js';
+
 import { getFollowersForUser } from './api/profile.js';
 
 import { createStore } from 'framework7';
-
-// import Framework7 from 'framework7/bundle';
-// var createStore = Framework7.createStore;
 
 const DEFAULT_SEARCH_RESULTS = {
   events: {
