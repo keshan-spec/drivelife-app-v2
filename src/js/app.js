@@ -77,15 +77,7 @@ if (window.f7App !== undefined) {
       init: async function () {
         toolbarEl = $('.footer')[0];
 
-        const verifyToken = getQueryParameter('verifyToken');
-        if (verifyToken) {
-          await verifyUserEmail(verifyToken);
-          return;
-        }
-
-        await handleSSOSignIn(); // SSO with CarEvents
         await store.dispatch('checkAuth');
-
         const isAuthenticated = store.getters.isAuthenticated.value;
 
         if (!isAuthenticated) {
@@ -304,15 +296,39 @@ CapacitorApp.addListener('backButton', async () => {
 
 /* Deep linking */
 CapacitorApp.addListener('appUrlOpen', async (data) => {
+  const view = app.views.current;
   const url = data.url;
-
   let path = url.split('/').slice(3).join('/');
+
+  // SSO with CarEvents
+  const ceToken = handleSSOSignIn(url);
+  if (ceToken) {
+    $('.init-loader').show();
+
+    await store.dispatch('login', {
+      token: ceToken
+    });
+
+    window.location.reload();
+    return;
+  }
+
+  // Verify user email
+  if (path.includes('verifyToken')) {
+    const token = path.split('?verifyToken=')[1];
+    await verifyUserEmail(token);
+    return;
+  }
+
+  // Handle root url
+  if (!path || path === '') {
+    return;
+  }
 
   if (!path.startsWith('/')) {
     path = `/${path}`;
   }
 
-  const view = app.views.current;
   view.router.navigate(path);
 });
 

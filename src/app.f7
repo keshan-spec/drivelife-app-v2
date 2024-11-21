@@ -103,8 +103,8 @@
       <div id="view-auth" class="view view-init tab" data-name="auth" data-url="/auth/">
       </div>
 
-      <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
-      </div>
+      <!-- <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
+      </div> -->
 
       <div id="view-profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
         data-url="/profile-garage-edit/">
@@ -119,40 +119,20 @@
       <div id="profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
         data-url="/profile-garage-edit/">
       </div>
-      <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
+      <!-- <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
         data-url="/profile-garage-vehicle-view/-1">
-      </div>
-
+      </div> -->
+      <!-- 
       <div id="discover-view-venue" class="view view-init tab" data-name="discover-view-venue"
         data-url="/discover-view-venue/-1">
       </div>
 
       <div id="discover-view-event" class="view view-init tab" data-name="discover-view-event"
         data-url="/discover-view-event/-1">
-      </div>
+      </div> -->
 
       <div id="search" class="view view-init tab" data-name="search" data-url="/search/">
       </div>
-
-      <!-- <div id="view-profile-edit-images" class="view view-init tab" data-name="profile-edit-images"
-            data-url="/profile-edit-images/">
-          </div>
-    
-          <div id="view-profile-edit-mydetails" class="view view-init tab" data-name="profile-edit-mydetails"
-            data-url="/profile-edit-mydetails/">
-          </div>
-    
-          <div id="view-profile-edit-socials" class="view view-init tab" data-name="profile-edit-socials"
-            data-url="/profile-edit-socials/">
-          </div>
-    
-          <div id="view-profile-edit-username" class="view view-init tab" data-name="profile-edit-username"
-            data-url="/profile-edit-username/">
-          </div>
-    
-          <div id="view-profile-garage-vehicle-add" class="view view-init tab" data-name="profile-garage-vehicle-add"
-            data-url="/profile-garage-vehicle-add/">
-          </div> -->
     </div>
 
     <!-- Comments Slider -->

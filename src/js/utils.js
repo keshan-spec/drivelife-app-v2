@@ -137,30 +137,32 @@ export async function verifyUserEmail(token) {
     }
 }
 
-export async function handleSSOSignIn() {
+export function handleSSOSignIn(url) {
     // SSO with CarEvents
-    const ceToken = getQueryParameter('token');
-    if (ceToken) {
-        $('.init-loader').show();
+    let path = url.split('/').slice(3).join('/');
 
-        // remove the query parameter from the URL
-        window.history.pushState({}, document.title, window.location.pathname);
-        window.localStorage.setItem('token', ceToken);
+    // get token= 
+    if (path) {
+        path = path.split('?token=')[1];
+    }
+
+    const ceToken = path;
+
+    if (ceToken) {
+        return ceToken;
     }
 
     // check if deeplink url has ?token= query parameter
     // if it does, save the token in the local storage
     const deeplink = getQueryParameter('deeplink');
     if (deeplink) {
-        $('.init-loader').show();
-
         const token = deeplink.split('?token=')[1];
         if (token) {
-            window.localStorage.setItem('token', token);
-            // remove the query parameter from the URL
-            window.history.pushState({}, document.title, window.location.pathname);
+            return token;
         }
     }
+
+    return false;
 }
 
 export function isAndroid() {
