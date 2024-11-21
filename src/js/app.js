@@ -33,7 +33,7 @@ import {
   openModal,
 } from './qr.js';
 
-import { getCurrentPosition } from './native.js';
+import { addListeners, getCurrentPosition, getDeliveredNotifications, registerNotifications } from './native.js';
 
 var app;
 var toolbarEl;
@@ -221,16 +221,22 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
 /* Store event listeners */
 userStore.onUpdated(async (data) => {
   if (data && data.id && !data.external_refresh && !data.refreshed) {
-    getCurrentPosition();
-
     store.dispatch('getPosts', {
       page: 1,
       reset: true
     });
+
     store.dispatch('getFollowingPosts', {
       page: 1,
       reset: true
     });
+
+
+    await registerNotifications();
+    await getCurrentPosition();
+
+    addListeners();
+    getDeliveredNotifications();
   }
 });
 

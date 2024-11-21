@@ -433,6 +433,8 @@ $(document).on('page:init', '.page[data-name="signup-step4"]', function (e) {
 
 // logout-button
 $(document).on('click', '.logout-button', async function (e) {
+    $('.init-loader').show();
+
     app.dialog.close();
     app.popup.close();
     app.panel.close();

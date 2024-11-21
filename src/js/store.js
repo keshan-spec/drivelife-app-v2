@@ -21,6 +21,7 @@ import {
   getPostsForGarage,
   getUserGarage
 } from './api/garage.js';
+import { associateDeviceWithUser, setUserAsInactive } from './api/native.js';
 
 import {
   fetchPosts,
@@ -696,18 +697,24 @@ const store = createStore({
         console.error('Login failed', error);
       }
     },
-    logout({
+    setDeviceToken({
+      state
+    }, {
+      token
+    }) {
+      associateDeviceWithUser(token);
+      state.user.fcmToken = token;
+    },
+    async logout({
       state
     }) {
+      if (state.user && state.user.fcmToken) {
+        await setUserAsInactive(state.user.fcmToken);
+      }
+
       state.user = null;
       window.localStorage.removeItem('token');
       window.location.reload();
-
-      window?.ReactNativeWebView?.postMessage(JSON.stringify({
-        type: "signOut",
-        user_id: null,
-        page: 'auth',
-      }));
     },
     async updateUserDetails({
       state
