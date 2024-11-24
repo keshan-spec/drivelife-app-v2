@@ -35,13 +35,14 @@ import NotFoundPage from '../pages/404.f7';
 var routes = [
   {
     path: '/',
-    component: AppPage,
-  },
-  {
-    path: '/social/',
     component: HomePage,
     keepAlive: true,
   },
+  // {
+  //   path: '/social/',
+  //   component: HomePage,
+  //   keepAlive: true,
+  // },
   {
     path: '/notifications/',
     component: NotificationsPage,

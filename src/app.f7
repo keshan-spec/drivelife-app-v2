@@ -70,7 +70,7 @@
         <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
       </div>
 
-      <div id="view-home" class="view view-init view-main tab tab-active">
+      <!-- <div id="view-home" class="view view-init view-main tab tab-active">
         <div class="page" data-name="home">
           <div class="page-content">
             <div class="preloader preloader-central">
@@ -83,9 +83,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div id="view-social" class="view view-init tab" data-name="social" data-url="/social/">
+      <div id="view-social" class="view view-init view-main tab tab-active" data-name="social" data-url="/">
       </div>
 
       <div id="view-discover" class="view view-init tab" data-name="discover" data-url="/discover/">
