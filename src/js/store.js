@@ -7,7 +7,7 @@ import {
 } from './api/auth.js';
 
 import {
-  sendRNMessage
+  sendRNMessage,
 } from './api/consts.js';
 
 import {
@@ -22,6 +22,7 @@ import {
   getUserGarage
 } from './api/garage.js';
 import { associateDeviceWithUser, setUserAsInactive } from './api/native.js';
+import { getPersistedAuth, persistAuth } from './api/persisted-auth.js';
 
 import {
   fetchPosts,
@@ -676,6 +677,14 @@ const store = createStore({
       token
     }) {
       try {
+        const persistedAuth = await getPersistedAuth();
+
+        if (persistedAuth) {
+          state.user = persistedAuth.user_data;
+          window.localStorage.setItem('token', token);
+          return;
+        }
+
         const userDetails = await getUserDetails(token);
 
         if (!userDetails || !userDetails.success) {
@@ -685,6 +694,8 @@ const store = createStore({
 
         window.localStorage.setItem('token', token);
         state.user = userDetails.user;
+
+        persistAuth(userDetails.user);
 
         setTimeout(() => {
           sendRNMessage({
@@ -714,6 +725,10 @@ const store = createStore({
 
       state.user = null;
       window.localStorage.removeItem('token');
+
+      // Clear the persisted user data
+      persistAuth(null);
+
       window.location.reload();
     },
     async updateUserDetails({
@@ -730,6 +745,8 @@ const store = createStore({
 
         if (!userDetails || !userDetails.success) {
           window.localStorage.removeItem('token');
+          // Clear the persisted user data
+          persistAuth(null);
           throw new Error('User not found');
         }
 
@@ -739,6 +756,9 @@ const store = createStore({
           refreshed: true,
           external_refresh: external,
         };
+
+        // Persist the user data
+        persistAuth(userDetails.user);
       } catch (error) {
         console.error('Login failed', error);
       }
@@ -752,6 +772,7 @@ const store = createStore({
         });
       } else {
         window.localStorage.removeItem('token');
+        persistAuth(null);
       }
     },
     async getPosts({

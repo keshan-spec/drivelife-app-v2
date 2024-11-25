@@ -4,6 +4,9 @@ export const TIMEOUT_MS_LOW = 15 * 1000; // 15 seconds
 export const TIMEOUT_MS_HIGH = 30 * 1000; // 30 seconds
 export const TIMEOUT_MS_HIGHER = 60 * 1000; // 60 seconds
 
+export const USER_DATA_KEY = 'dlu_cstore';
+export const LAST_FETCHED_KEY = 'last_fetched';
+
 export const sendRNMessage = ({
     page,
     type,
