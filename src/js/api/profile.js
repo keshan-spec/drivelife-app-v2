@@ -1,7 +1,7 @@
 import {
     API_URL,
     TIMEOUT_MS_HIGHER
-} from "./consts.js"
+} from "./consts.js";
 import {
     getSessionUser
 } from "./auth.js";
@@ -64,26 +64,24 @@ export const removeProfileLink = async (linkId) => {
     });
 
     const data = await response.json();
-    console.log(response);
-
     if (response.status !== 200 || data.error) {
-        return false
+        return false;
     }
 
     return true;
 };
 
 export const updateUserDetails = async (details, email_changed) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         const user = await getSessionUser();
         if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/update-user-details`, {
             method: "POST",
@@ -113,8 +111,8 @@ export const updateUserDetails = async (details, email_changed) => {
 };
 
 export const updateProfileImage = async (image, user_id = null) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         const user = await getSessionUser();
@@ -127,11 +125,11 @@ export const updateProfileImage = async (image, user_id = null) => {
         if (!userID) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
 
-        const response = await fetch(`${API_URL}/wp-json/app/v1/update-profile-image`, {
+        const response = await fetch(`${API_URL}/wp-json/app/v2/update-profile-image`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -158,8 +156,8 @@ export const updateProfileImage = async (image, user_id = null) => {
 };
 
 export const updateCoverImage = async (image, user_id = null) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
         const user = await getSessionUser();
@@ -172,10 +170,10 @@ export const updateCoverImage = async (image, user_id = null) => {
         if (!userID) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGHER)
+            controller.abort();
+        }, TIMEOUT_MS_HIGHER);
 
-        const response = await fetch(`${API_URL}/wp-json/app/v1/update-cover-image`, {
+        const response = await fetch(`${API_URL}/wp-json/app/v2/update-cover-image`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -237,7 +235,7 @@ export const removeTagFromPost = async (tagId) => {
 
     const data = await response.json();
     return data;
-}
+};
 
 export const approvePostTag = async (tagId, tagType) => {
     const user = await getSessionUser();
@@ -259,7 +257,7 @@ export const approvePostTag = async (tagId, tagType) => {
 
     const data = await response.json();
     return data;
-}
+};
 
 export const getFollowersForUser = async (profileId) => {
     const user = await getSessionUser();
@@ -277,7 +275,7 @@ export const getFollowersForUser = async (profileId) => {
 
     const data = await response.json();
     return data;
-}
+};
 
 export const removeFollower = async (followerId) => {
     const user = await getSessionUser();
@@ -298,4 +296,4 @@ export const removeFollower = async (followerId) => {
 
     const data = await response.json();
     return data;
-}
+};

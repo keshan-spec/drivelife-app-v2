@@ -295,7 +295,7 @@ export const getUserById = async (id) => {
         let url = `${API_URL}/wp-json/app/v2/get-user-profile-next?user_id=${id}`;
         let response = await fetch(url, {
             method: "GET",
-            cache: 'force-cache',
+            // cache: 'force-cache',
             headers: {
                 "Content-Type": "application/json",
             },

@@ -24,6 +24,15 @@
             </div>
 
             <div class="notification-wrap">
+                <div class="preloader preloader-central preloader-notif">
+                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                            class="preloader-inner-line"></span>
+                    </span>
+                </div>
+
                 <div class="">
                     <div class="app-notification-title" data-title="Recent" data-id="recent"></div>
                     <div class="notification-list" id="recent">
@@ -57,33 +66,9 @@
         let notificationInterval = null;
         const userStore = store.getters.user;
 
-        $on('pageInit', (e, page) => {
-            userStore.onUpdated((data) => {
-                if (data && data.id) {
-                    store.dispatch('notificationCount');
-                    store.dispatch('fetchNotifications', {
-                        load_more: false
-                    });
+        // $on('pageInit', (e, page) => {
 
-                    // fetch notifications every 1 min
-                    // create an interval to fetch notifications every 1 min
-                    if (!notificationInterval) {
-                        notificationInterval = setInterval(() => {
-                            store.dispatch('notificationCount');
-                        }, 60000 * 2);
-                    } else {
-                        clearInterval(notificationInterval);
-                        notificationInterval = setInterval(() => {
-                            store.dispatch('notificationCount');
-                        }, 60000 * 2); // 2 mins
-                    }
-                }
-
-                if (!data || !data.id) {
-                    clearInterval(notificationInterval);
-                }
-            });
-        });
+        // });
         return $render;
     }
 </script>

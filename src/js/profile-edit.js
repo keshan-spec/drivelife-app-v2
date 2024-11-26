@@ -375,7 +375,6 @@ $(document).on('click', '#save-profile-images', async function () {
         }
 
         const responses = await Promise.all(promises);
-        console.log('responses', responses);
 
         app.preloader.hide();
 

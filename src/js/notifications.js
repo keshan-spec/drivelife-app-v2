@@ -16,6 +16,32 @@ var refreshed = false;
 var userStore = store.getters.user;
 let notificationInterval = null;
 
+userStore.onUpdated((data) => {
+    if (data && data.id) {
+        store.dispatch('notificationCount');
+        // store.dispatch('fetchNotifications', {
+        //     load_more: false
+        // });
+
+        // fetch notifications every 1 min
+        // create an interval to fetch notifications every 1 min
+        if (!notificationInterval) {
+            notificationInterval = setInterval(() => {
+                store.dispatch('notificationCount');
+            }, 60000 * 2);
+        } else {
+            clearInterval(notificationInterval);
+            notificationInterval = setInterval(() => {
+                store.dispatch('notificationCount');
+            }, 60000 * 2); // 2 mins
+        }
+    }
+
+    if (!data || !data.id) {
+        clearInterval(notificationInterval);
+    }
+});
+
 $(document).on('page:beforein', '.page[data-name="notifications"]', async function (e) {
     refreshed = true;
     store.dispatch('fetchNotifications', {
@@ -44,6 +70,8 @@ $(document).on('page:afterin', '.page[data-name="notifications"]', async functio
 
 
 notificationsStore.onUpdated(async (data) => {
+    $('.preloader-notif').hide();
+
     if (!data || !data.success) {
         $('.notification-wrap').html(`<p class="text-center">${data?.message || 'Unable to get notifications'}</p>`);
     } else {
