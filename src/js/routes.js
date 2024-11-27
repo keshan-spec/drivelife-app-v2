@@ -32,6 +32,8 @@ import PostEditPage from '../pages/post-edit.f7';
 import ProfileEditAccountSettingsPage from '../pages/profile-edit-account-settings.f7';
 import NotFoundPage from '../pages/404.f7';
 
+import CreatePostTagPage from '../pages/create-post-tags.f7';
+
 var routes = [
   {
     path: '/',
@@ -47,6 +49,11 @@ var routes = [
     path: '/notifications/',
     component: NotificationsPage,
     keepAlive: true,
+  },
+  {
+    path: '/create-post-tags/',
+    component: CreatePostTagPage,
+    // keepAlive: true,
   },
   /* ------------------------ Auth Routes ------------------------ */
   {

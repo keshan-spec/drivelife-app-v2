@@ -1,0 +1,52 @@
+<template>
+    <div class="page no-toolbar" data-name="create-post-tags">
+        <div class="page-content create-post-tags">
+            <div class="post-media-list">
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default (props, { $, $on, $f7 }) => {
+
+        const { store } = $f7;
+
+        $on('pageBeforeIn', (e, page) => {
+            const postMediaList = page.$el.find('.post-media-list');
+
+            const data = store.getters.getCreatePostMedia.value || [];
+            postMediaList.html(renderMedia(data));
+        });
+
+        function renderMedia(data) {
+            try {
+                let render = '';
+
+                if (data.length) {
+                    data.forEach((media) => {
+                        render += `
+                        <img src="${media.uri}" class="gallery-image" />
+                        `;
+                    });
+                } else {
+                    render = `
+                        <div class="post-media-item">
+                        <label for="media" class="post-media-item-add">
+                            <i class="icon f7-icons">plus</i>
+                        </label>
+                        <input type="file" id="media" accept="image/*" multiple />
+                        </div>
+                    `;
+                }
+
+                return render;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+
+        return $render;
+    }
+</script>

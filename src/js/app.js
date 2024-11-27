@@ -155,8 +155,6 @@ if (window.f7App !== undefined) {
   window.f7App = app;
 }
 
-console.log('App initialized');
-
 $(document).on('click', '#goto-app', function (e) {
   // remove the query parameter from the URL
   window.history.pushState({}, document.title, window.location.pathname);
@@ -218,6 +216,7 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
   }, 300);
 });
 
+
 /* Store event listeners */
 userStore.onUpdated(async (data) => {
   if (data && data.id && !data.external_refresh && !data.refreshed) {
@@ -278,7 +277,7 @@ CapacitorApp.addListener('backButton', async () => {
       app.dialog.close();
       app.popup.close();
       return false;
-    } else if (view.history[0] == '/social/') {
+    } else if (view.history[0] == '/') {
       if (view.history.length > 1) {
         view.router.back();
         return false;
@@ -288,7 +287,7 @@ CapacitorApp.addListener('backButton', async () => {
       }
     } else {
       if (view.history.length < 2) {
-        $('.tab-link[href="#view-home"]').click();
+        $('.tab-link[href="#view-social"]').click();
         return;
       }
 

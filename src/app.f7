@@ -70,21 +70,6 @@
         <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
       </div>
 
-      <!-- <div id="view-home" class="view view-init view-main tab tab-active">
-        <div class="page" data-name="home">
-          <div class="page-content">
-            <div class="preloader preloader-central">
-              <span class="preloader-inner"><span class="preloader-inner-line"></span><span
-                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                  class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                  class="preloader-inner-line"></span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
       <div id="view-social" class="view view-init view-main tab tab-active" data-name="social" data-url="/">
       </div>
 
@@ -118,6 +103,9 @@
 
       <div id="profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
         data-url="/profile-garage-edit/">
+      </div>
+
+      <div id="create-post-tags" class="view view-init tab" data-name="create-post-tags" data-url="/create-post-tags/">
       </div>
       <!-- <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
         data-url="/profile-garage-vehicle-view/-1">
@@ -300,8 +288,12 @@
 </template>
 
 <script>
+  import { getGalleryPhotos } from './js/native.js';
+
   export default (props, { $, $on, $f7 }) => {
     let actionsGrid;
+
+    const { store } = $f7;
 
     const openGrid = () => {
       actionsGrid.open();
@@ -316,6 +308,11 @@
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
               // const user = await getSessionUser();
+              const response = await getGalleryPhotos();
+              store.dispatch('setPostMedia', {
+                media: response
+              });
+              $f7.views.current.router.navigate('/create-post-tags/');
             }
           },
           {

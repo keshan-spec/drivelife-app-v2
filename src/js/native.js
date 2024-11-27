@@ -3,6 +3,9 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { AndroidSettings, IOSSettings, NativeSettings } from 'capacitor-native-settings';
 import { Device } from '@capacitor/device';
 import { Clipboard } from '@capacitor/clipboard';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+
 import store from './store.js';
 
 const writeToClipboard = async (message) => {
@@ -47,6 +50,10 @@ const checkLocationPermission = async () => {
 
 /* Push notifications functions */
 export const registerNotifications = async () => {
+    if (await isRunningOnWeb()) {
+        return;
+    }
+
     let permStatus = await PushNotifications.checkPermissions();
 
     if (permStatus.receive === 'prompt') {
@@ -62,6 +69,10 @@ export const registerNotifications = async () => {
 };
 
 export const addListeners = async () => {
+    if (await isRunningOnWeb()) {
+        return;
+    }
+
     await PushNotifications.addListener('registration', token => {
         store.dispatch('setDeviceToken', {
             token: token.value,
@@ -82,6 +93,10 @@ export const addListeners = async () => {
 };
 
 export const getDeliveredNotifications = async () => {
+    if (await isRunningOnWeb()) {
+        return;
+    }
+
     const notificationList = await PushNotifications.getDeliveredNotifications();
 };
 
@@ -109,3 +124,68 @@ export const isRunningOnWeb = async () => {
     const { platform } = await Device.getInfo();
     return platform === 'web';
 };
+
+export async function getGalleryPhotos() {
+    const image = await Camera.pickImages({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        correctOrientation: true,
+        presentationStyle: 'fullscreen',
+        source: CameraSource.Photos // Camera, Photos or Prompt!
+    });
+
+    const data = image.photos.map(async (photo) => {
+        const base64 = await getImageURI(photo);
+
+        return {
+            base64,
+            uri: photo.webPath, // webPath is the path to the image on the web
+            ...photo
+        };
+    });
+
+    return await Promise.all(data);
+
+    const base64 = await getImageURI(image);
+
+    return [
+        {
+            base64,
+            uri: image.webPath, // webPath is the path to the image on the web
+            ...image
+        }
+    ];
+}
+
+async function getImageURI(photo) {
+    try {
+        const isWeb = await isRunningOnWeb();
+
+        if (!isWeb) {
+            const file = await Filesystem.readFile({
+                path: photo.path
+            });
+
+            return file.data;
+        }
+        else {
+            // Fetch the photo, read as a blob, then convert to base64 format
+            const response = await fetch(photo.webPath);
+            const blob = await response.blob();
+
+            return await convertBlobToBase64(blob);
+        }
+    } catch (error) {
+        alert('Error getting image URI: ' + JSON.stringify(error));
+    }
+}
+
+const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader;
+    reader.onerror = reject;
+    reader.onload = () => {
+        resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+});

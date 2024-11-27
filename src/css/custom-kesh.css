@@ -536,3 +536,17 @@
 .permission-title .f7-icons {
     font-size: 20px !important;
 }
+
+.post-media-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+}
+
+.gallery-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
