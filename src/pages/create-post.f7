@@ -1,0 +1,141 @@
+<template>
+    <div class="page no-toolbar" data-name="post-add">
+
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="/post-add-tags/" class="top-right-action">
+                        Next
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="page-content">
+            <div class="post-add">
+                <!-- Post Images -->
+                <div class="post-add-images">
+                    <!-- Slider container -->
+                    <div class="swiper post-add-swiper">
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <div class="post-add-content">
+                    <div class="block-title">Post content</div>
+                    <div class="list list-strong-ios list-dividers-ios inset-ios">
+                        <ul>
+                            <li class="item-content item-input">
+                                <div class="item-inner">
+                                    <div class="item-input-wrap">
+                                        <textarea placeholder="Write a caption" rows="8"
+                                            style="height:150px"></textarea>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default (props, { $, $on, $f7 }) => {
+
+        const { store } = $f7;
+
+        $on('pageBeforeIn', (e, page) => {
+            const postMediaList = page.$el.find('.post-add-images .post-add-swiper');
+
+            const mediaData = store.getters.getCreatePostMedia.value || [];
+            const contentData = store.getters.getCreatePostContent.value;
+
+            // get text area
+            const textArea = page.$el.find('.post-add-content textarea');
+            textArea.val(contentData);
+
+            postMediaList.html(renderMedia(mediaData));
+
+            page.$el.find('.swiper-slide .swiper-slide-image').forEach(img => {
+                img.onload = () => {
+                    if (img.naturalWidth > img.naturalHeight) {
+                        img.style.objectFit = 'contain';
+                    } else {
+                        img.style.objectFit = 'cover';
+                    }
+                };
+            });
+
+            $f7.swiper.create('.post-add-swiper', {
+                speed: 400,
+                spaceBetween: 0,
+                pagination: {
+                    el: '.swiper-pagination',
+                    type: 'bullets',
+                },
+            });
+        });
+
+        // before page out
+        $on('pageBeforeOut', (e, page) => {
+            const textArea = page.$el.find('.post-add-content textarea');
+
+
+            const contentData = textArea.val();
+
+            store.dispatch('setCreatePostContent', {
+                content: contentData
+            });
+        });
+
+        function renderMedia(data) {
+            try {
+                let render = `
+            <div class="swiper-wrapper">
+        `;
+
+                if (data.length) {
+                    data.forEach((media) => {
+                        render += `
+                    <div class="swiper-slide" data-id="${media.id}">
+                        <img class="swiper-slide-image" src="${media.uri}" />
+                        <img class="swiper-slide-background" src="${media.uri}" />
+                    </div>
+                `;
+                    });
+                } else {
+                    render += `
+                <div class="swiper-slide">
+                    <div class="post-media-item">
+                        No media found
+                    </div>
+                </div>
+            `;
+                }
+
+                render += `
+            </div>
+            <div class="swiper-pagination"></div>
+        `;
+
+                return render;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        return $render;
+    }
+</script>

@@ -204,3 +204,20 @@ export function detectDoubleTapClosure(callback) {
         lastTap = curTime;
     };
 }
+
+export const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader;
+    reader.onerror = reject;
+    reader.onload = () => {
+        resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+});
+
+export function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}

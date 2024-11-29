@@ -105,8 +105,6 @@
         data-url="/profile-garage-edit/">
       </div>
 
-      <div id="create-post-tags" class="view view-init tab" data-name="create-post-tags" data-url="/create-post-tags/">
-      </div>
       <!-- <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
         data-url="/profile-garage-vehicle-view/-1">
       </div> -->
@@ -288,7 +286,8 @@
 </template>
 
 <script>
-  import { getGalleryPhotos } from './js/native.js';
+  import { getGalleryPhotos, isRunningOnWeb, checkMediaPermission } from './js/native.js';
+  import { addNotification } from './js/api/create-post.js';
 
   export default (props, { $, $on, $f7 }) => {
     let actionsGrid;
@@ -307,12 +306,21 @@
             text: '<div class="actions-grid-item">Add Post</div>',
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
-              // const user = await getSessionUser();
+              if (await isRunningOnWeb()) {
+                $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
+                return;
+              }
+
+              if (!await checkMediaPermission()) {
+                $f7.dialog.alert('Please allow access to your camera and photos to create a post.');
+                return;
+              }
+
               const response = await getGalleryPhotos();
               store.dispatch('setPostMedia', {
                 media: response
               });
-              $f7.views.current.router.navigate('/create-post-tags/');
+              $f7.views.current.router.navigate('/post-add/');
             }
           },
           {

@@ -1,44 +1,449 @@
 <template>
-    <div class="page no-toolbar" data-name="create-post-tags">
-        <div class="page-content create-post-tags">
-            <div class="post-media-list">
+    <div class="page no-toolbar" data-name="post-add-tags">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="top-right-action" id="add-new-post">
+                        Post
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="page-content">
+            <div class="post-add">
+                <!-- Post Images -->
+                <div class="post-add-images">
+                    <!-- Slider container -->
+                    <div class="swiper post-add-tags-swiper">
+                        <div class="swiper-pagination"></div>
+                    </div>
+
+                </div>
+
+
+                <!-- Post Tags -->
+                <div class="post-tags">
+                    <!-- User Tag -->
+                    <div class="post-tag">
+                        <div class="block-title">Tag Users</div>
+                        <div class="list list-strong-ios list-dividers-ios inset-ios">
+                            <div class="tag-results" id="users">
+                            </div>
+
+                            <div class="tag-btn popup-open" data-popup=".tag-users-popup" data-panel="users">+ Add</div>
+                        </div>
+                    </div>
+
+                    <!-- Reg Tag -->
+                    <div class="post-tag">
+                        <div class="block-title">Tag Registrations</div>
+                        <div class="list list-strong-ios list-dividers-ios inset-ios">
+                            <div class="tag-results" id="car">
+                            </div>
+                            <div class="tag-btn popup-open" data-popup=".tag-reg-popup" data-panel="car">+ Add</div>
+                        </div>
+                    </div>
+
+                    <!-- Event Tag -->
+                    <div class="post-tag">
+                        <div class="block-title">Tag Event</div>
+                        <div class="list list-strong-ios list-dividers-ios inset-ios">
+                            <div class="tag-results" id="events">
+                            </div>
+
+                            <div class="tag-btn popup-open" data-popup=".tag-events-popup" data-panel="events">+ Add
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tag Popup - Users -->
+                <div class="popup tag-popup tag-users-popup three-quarter-popup">
+                    <div class="view">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <div class="title">Tag Users</div>
+                                    <div class="right">
+                                        <!-- Link to close popup -->
+                                        <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+
+                                <div class="block">
+                                    <!-- Search Box -->
+                                    <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                                        <input type="text" class="search-tag" placeholder="Search users" />
+                                    </div>
+
+                                    <!-- Results -->
+                                    <div class="tag-results">
+                                        <div
+                                            class="list list-outline-ios list-strong-ios list-dividers-ios mt-2 result-list">
+                                            <ul>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- * Tag Popup - Users -->
+
+
+                <!-- Tag Popup - Registrations -->
+                <div class="popup tag-popup tag-reg-popup three-quarter-popup">
+                    <div class="view">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <div class="title">Tag Registrations</div>
+                                    <div class="right">
+                                        <!-- Link to close popup -->
+                                        <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="block">
+                                    <!-- Search Box -->
+                                    <div
+                                        class="list links-list list-outline-ios list-strong-ios list-dividers-ios tag-search">
+                                        <input type="text" class="search-tag" placeholder="Search users" />
+                                    </div>
+
+                                    <!-- Results -->
+                                    <div
+                                        class="list list-outline-ios list-strong-ios list-dividers-ios mt-2 result-list">
+                                        <ul>
+                                            <li>
+                                                <a class="item-link search-result item-content" href="#">
+                                                    <div class="item-inner">
+                                                        <div class="item-title">Search Result</div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
+                                    <!-- Garage -->
+                                    <div class="tag-results">
+                                        <div class="list list-outline-ios list-strong-ios list-dividers-ios mt-2">
+                                            <ul class="garage-container">
+                                                <li>
+                                                    <a class="item-link search-result item-content" href="#">
+                                                        <div class="item-inner">
+                                                            <div class="item-title">My Garage</div>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- * Tag Popup - Registrations -->
+
+
+                <!-- Tag Popup - Events -->
+                <div class="popup tag-popup tag-events-popup three-quarter-popup">
+                    <div class="view">
+                        <div class="page">
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <div class="title">Tag Events</div>
+                                    <div class="right">
+                                        <!-- Link to close popup -->
+                                        <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-content">
+                                <div class="block">
+                                    <!-- Search Box -->
+                                    <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                                        <input type="text" class="search-tag" placeholder="Search users" />
+                                    </div>
+
+                                    <!-- Results -->
+                                    <div class="tag-results">
+                                        <div
+                                            class="list list-outline-ios list-strong-ios list-dividers-ios mt-2 result-list">
+                                            <ul>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- * Tag Popup - Events -->
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    export default (props, { $, $on, $f7 }) => {
+    import { fetchTaggableEntites, addPost } from '../js/api/create-post.js';
+    import { debounce } from '../js/utils.js';
 
+    const loader = `
+    <div class="loading-fullscreen search-view">
+        <div class="preloader preloader-central">
+            <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                class="preloader-inner-line"></span>
+            </span>
+        </div>
+    </div>`;
+
+    export default (props, { $, $on, $f7 }) => {
         const { store } = $f7;
+        let activeTab = '';
+        let activeImageIndex = 0;
+
+        const taggedEntityStore = store.getters.getCreatePostTaggedEntities;
+        const contentData = store.getters.getCreatePostContent.value;
+
+        const userGarage = store.getters.myGarage.value;
+        const mediaData = store.getters.getCreatePostMedia.value || [];
+
+        let taggedEntities = taggedEntityStore.value || [];
+
+        taggedEntityStore.onUpdated((data) => {
+            taggedEntities = data || [];
+            renderTaggedEntities(taggedEntities);
+        });
+
+        const debouncedSearch = debounce(async function (el) {
+            /* only get the first UL */
+            const results = el.closest('.block').find('.result-list ul');
+            const value = el.val().toLowerCase();
+
+            if (!value || value.length <= 2) {
+                results.html('');
+                return;
+            }
+
+            // add loading
+            results.html(loader);
+
+            // filter tagged entities
+            const tagsForImage = taggedEntities.filter((tag) => tag.index === activeImageIndex) || [];
+            const response = await fetchTaggableEntites(value, tagsForImage, activeTab);
+
+            if (response) {
+                const html = renderSearchResults(response);
+                results.html(html);
+            }
+        }, 500);
+
+        $on('pageInit', (e, page) => {
+            // post button
+            $(document).on('click', '#add-new-post', function () {
+                addPost({
+                    mediaList: mediaData,
+                    caption: contentData,
+                    location: '',
+                    taggedEntities: taggedEntities,
+                    association_id: null,
+                    association_type: null,
+                    onUpload: () => {
+                        // When upload is complete, send push notification
+
+                        // reset posts
+                        store.dispatch('getMyPosts', {
+                            page: 1,
+                            clear: true
+                        });
+
+                        store.dispatch('getPosts', {
+                            page: 1,
+                            reset: true
+                        });
+
+                        // reset create post
+                        store.dispatch('resetCreatePost');
+                    },
+                    onError: (error) => {
+                        store.dispatch('resetCreatePost');
+                    }
+                });
+
+                // goto home
+                $f7.views.main.router.navigate('/');
+            });
+
+            page.$el.find('.tag-btn').on('click', function () {
+                const panel = $(this).data('panel');
+                activeTab = panel;
+            });
+
+            // on search input keyup
+            page.$el.find('.search-tag').on('input paste', function () {
+                debouncedSearch($(this));
+            });
+
+            // on tag delete
+            $(document).on('click', '.chip-delete', function () {
+                const id = $(this).data('id');
+                const index = taggedEntities.findIndex((tag) => tag.arr_idx == id);
+
+                if (index > -1) {
+                    taggedEntities.splice(index, 1);
+                    setTaggedData(taggedEntities, true);
+                }
+            });
+
+            // on popup close
+            $f7.on('popupClosed', function (popup) {
+                popup.$el.find('.search-tag').val('');
+                popup.$el.find('.result-list ul').html('');
+            });
+
+            $(document).on('click', '.tag-entity-btn', function () {
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+
+                // get all tag-entity-btn with the data-id and change text to Tagged
+                $(`.tag-entity-btn[data-id="${id}"]`).text('Tagged');
+
+                handleTagClick({
+                    entity_id: id,
+                    type: type,
+                    name: name,
+                });
+            });
+        });
 
         $on('pageBeforeIn', (e, page) => {
-            const postMediaList = page.$el.find('.post-media-list');
+            renderTaggedEntities(taggedEntities);
 
-            const data = store.getters.getCreatePostMedia.value || [];
-            postMediaList.html(renderMedia(data));
+            const postMediaList = page.$el.find('.post-add-images .post-add-tags-swiper');
+
+            postMediaList.html(renderMedia(mediaData));
+
+            page.$el.find('.swiper-slide .swiper-slide-image').forEach(img => {
+                img.onload = () => {
+                    if (img.naturalWidth > img.naturalHeight) {
+                        img.style.objectFit = 'contain';
+                    } else {
+                        img.style.objectFit = 'cover';
+                    }
+                };
+            });
+
+            $f7.swiper.create('.post-add-tags-swiper', {
+                speed: 400,
+                spaceBetween: 0,
+                pagination: {
+                    el: '.swiper-pagination',
+                    type: 'bullets',
+                },
+            });
+
+            // on slide change
+            $f7.swiper.get('.post-add-tags-swiper').on('slideChange', function () {
+                activeImageIndex = this.activeIndex;
+                renderTaggedEntities(taggedEntities);
+            });
+
+            // If user has garage, render it in car popup
+            const carPopup = page.$el.find('.tag-reg-popup');
+            const carPopupList = carPopup.find('.garage-container');
+
+            if (userGarage && !userGarage.error) {
+                const entityFormat = userGarage.map((car) => {
+                    return {
+                        name: `${car.registration}`,
+                        vehicle_name: `${car.make} ${car.model}`,
+                        image: car.cover_photo,
+                        entity_id: car.id,
+                        type: 'car',
+                    };
+                });
+
+                const heading = `<li>
+                    <a class="item-link search-result item-content" href="#">
+                        <div class="item-inner">
+                            <div class="item-title">My Garage</div>
+                        </div>
+                    </a>
+                </li>`;
+
+                const garageHtml = heading + renderSearchResults(entityFormat);
+                carPopupList.html(garageHtml);
+            } else {
+                // hide garage
+                carPopupList.html('');
+            }
+        });
+
+        // before page out remove all event listeners
+        $on('pageBeforeOut', (e, page) => {
+            page.$el.find('.tag-btn').off('click');
+            page.$el.find('.search-tag').off('input paste');
+            $(document).off('click', '.chip-delete');
+            $f7.off('popupClosed');
+            $(document).off('click', '.tag-entity-btn');
+            $(document).off('click', '#add-new-post');
         });
 
         function renderMedia(data) {
             try {
-                let render = '';
+                let render = `
+            <div class="swiper-wrapper">
+        `;
 
                 if (data.length) {
                     data.forEach((media) => {
                         render += `
-                        <img src="${media.uri}" class="gallery-image" />
-                        `;
+                    <div class="swiper-slide" data-id="${media.id}">
+                        <img class="swiper-slide-image" src="${media.uri}" />
+                        <img class="swiper-slide-background" src="${media.uri}" />
+                    </div>
+                `;
                     });
                 } else {
-                    render = `
-                        <div class="post-media-item">
-                        <label for="media" class="post-media-item-add">
-                            <i class="icon f7-icons">plus</i>
-                        </label>
-                        <input type="file" id="media" accept="image/*" multiple />
-                        </div>
-                    `;
+                    render += `
+                <div class="swiper-slide">
+                    <div class="post-media-item">
+                        No media found
+                    </div>
+                </div>
+            `;
                 }
+
+                render += `
+            </div>
+            <div class="swiper-pagination"></div>
+        `;
 
                 return render;
             } catch (error) {
@@ -46,6 +451,151 @@
             }
         }
 
+        function renderSearchResults(data) {
+            try {
+                let render = '';
+
+                if (data.length) {
+                    data.forEach((item) => {
+                        let image = '';
+
+                        if (item.image !== 'search_q') {
+                            image = `
+                            <div class="item-media">
+                                <div class="image-square image-rounded"
+                                    style="background-image: url('${item.image || "img/profile-placeholder.jpg"}');">
+                                </div>
+                            </div>
+                            `;
+                        }
+
+                        let subText = '';
+
+                        if (item.type === 'car' && item.vehicle_name) {
+                            subText = `<div class="item-subtitle">${item.vehicle_name}</div>`;
+                        }
+
+                        if (item.type === 'event') {
+                            // get start_date and end_date, format to 11th Jan 2021 - 12th Jan 2021
+                            const startDate = new Date(item.start_date);
+                            const endDate = new Date(item.end_date);
+
+                            const formattedDate = `${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()} - ${endDate.getDate()} ${endDate.toLocaleString('default', { month: 'short' })} ${endDate.getFullYear()}`;
+
+                            subText = `<div class="item-subtitle">${formattedDate}</div>`;
+                            subText += `<div class="item-subtitle">${item.location}</div>`;
+                        }
+
+                        render += `
+                        <li>
+                            <a class="item-link search-result item-content" href="#">
+                                    ${image}
+                                <div class="item-inner ${item.type !== 'user' ? "multi-row" : ""}">
+                                    <div class="item-title">${item.name || "N/A"}</div>
+                                    ${subText}
+                                </div>
+
+                                <button class="tag-entity-btn button button-fill" data-name="${item.name}" data-id="${item.entity_id}" data-type="${item.type}">
+                                    Tag    
+                                </button>
+                            </a>
+                        </li>
+                        `;
+                    });
+                } else {
+                    render = `
+                <li>
+                    <a class="item-link search-result item-content" href="#">
+                        <div class="item-media">
+                            <div class="image-square image-rounded" 
+                                style="background-image: url('assets/img/default-placeholder.jpg');">
+                            </div>
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title">No results Found</div>
+                        </div>
+                    </a>
+                </li>
+            `;
+                }
+
+                return render;
+            } catch (error) {
+                console.log(error);
+                return `<li>Error rendering media</li>`;
+            }
+        }
+
+        function renderTaggedEntities(data) {
+            // display tagged entities
+            const taggedUsers = data.filter((tag) => tag.type === 'user' && tag.index === activeImageIndex);
+            const taggedCars = data.filter((tag) => tag.type === 'car' && tag.index === activeImageIndex);
+            const taggedEvents = data.filter((tag) => tag.type === 'event' && tag.index === activeImageIndex);
+
+            const users = $('.tag-results#users');
+            const cars = $('.tag-results#car');
+            const events = $('.tag-results#events');
+
+            users.html('');
+            cars.html('');
+            events.html('');
+
+            taggedUsers.forEach((tag) => {
+                users.append(`
+                <div class="chip">
+                    <div class="chip-label">${tag.label}</div><a class="chip-delete" data-id="${tag.arr_idx}"></a>
+                </div>
+                `);
+            });
+
+            taggedCars.forEach((tag) => {
+                cars.append(`
+                <div class="chip">
+                    <div class="chip-label">${tag.label}</div><a class="chip-delete" data-id="${tag.arr_idx}"></a>
+                </div>
+                `);
+            });
+
+            taggedEvents.forEach((tag) => {
+                events.append(`
+                <div class="chip">
+                    <div class="chip-label">${tag.label}</div><a class="chip-delete" data-id="${tag.arr_idx}"></a>
+                </div>
+                `);
+            });
+        }
+
+        function handleTagClick(entity) {
+            const isTagged = taggedEntities.find((tag) => tag.id == entity.entity_id && tag.index == activeImageIndex);
+
+            if (isTagged) {
+                $f7.dialog.alert('Already Tagged', 'This entity has already been tagged in this image.');
+                return;
+            }
+
+            setTaggedData([{
+                x: 1,
+                y: 1,
+                index: activeImageIndex,
+                label: entity.name,
+                type: entity.type,
+                id: entity.entity_id,
+                arr_idx: taggedEntities.length,
+            }]);
+        }
+
+        function setTaggedData(data, isDelete = false) {
+            if (isDelete) {
+                store.dispatch('setPostTaggedEntities', {
+                    entities: data,
+                });
+                return;
+            }
+
+            store.dispatch('setPostTaggedEntities', {
+                entities: [...taggedEntities, ...data],
+            });
+        }
 
         return $render;
     }

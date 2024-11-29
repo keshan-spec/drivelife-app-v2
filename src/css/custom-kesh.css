@@ -550,3 +550,22 @@
     object-fit: cover;
     border-radius: 8px;
 }
+
+.item-inner.multi-row {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.tag-popup .item-link .item-inner:before {
+    display: none !important;
+}
+
+.item-inner.multi-row .item-subtitle {
+    font-size: 11px;
+}
+
+.tag-entity-btn {
+    width: 82px !important;
+    font-size: 12px !important;
+}

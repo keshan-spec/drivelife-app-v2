@@ -20,7 +20,7 @@ $(document).on('page:beforein', '.page[data-name="post-edit"]', async function (
     const post = posts.data.find(p => p.id == postId);
 
     $('#edit_post_id').val(postId);
-    $('#post_content').val(post.caption);
+    $('#post_content').val(post?.caption || '');
 
 });
 

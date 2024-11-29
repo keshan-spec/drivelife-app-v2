@@ -32,6 +32,7 @@ import PostEditPage from '../pages/post-edit.f7';
 import ProfileEditAccountSettingsPage from '../pages/profile-edit-account-settings.f7';
 import NotFoundPage from '../pages/404.f7';
 
+import CreatePostPage from '../pages/create-post.f7';
 import CreatePostTagPage from '../pages/create-post-tags.f7';
 
 var routes = [
@@ -51,10 +52,14 @@ var routes = [
     keepAlive: true,
   },
   {
-    path: '/create-post-tags/',
-    component: CreatePostTagPage,
-    // keepAlive: true,
+    path: '/post-add/',
+    component: CreatePostPage,
   },
+  {
+    path: '/post-add-tags/',
+    component: CreatePostTagPage,
+  },
+
   /* ------------------------ Auth Routes ------------------------ */
   {
     path: '/auth/',

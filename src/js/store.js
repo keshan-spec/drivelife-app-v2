@@ -71,6 +71,8 @@ const DEFAULT_PAGINATED_DATA = {
 const store = createStore({
   state: {
     createPostMedia: null,
+    createPostContent: null,
+    createPostTaggedEntities: [],
     user: null,
     posts: {
       new_data: [],
@@ -155,6 +157,16 @@ const store = createStore({
       state
     }) {
       return state.createPostMedia;
+    },
+    getCreatePostContent({
+      state
+    }) {
+      return state.createPostContent;
+    },
+    getCreatePostTaggedEntities({
+      state
+    }) {
+      return state.createPostTaggedEntities;
     },
     myFollowers({
       state
@@ -293,12 +305,33 @@ const store = createStore({
     },
   },
   actions: {
+    resetCreatePost({
+      state
+    }) {
+      state.createPostMedia = null;
+      state.createPostContent = null;
+      state.createPostTaggedEntities = [];
+    },
     setPostMedia({
       state
     }, {
       media
     }) {
       state.createPostMedia = media;
+    },
+    setCreatePostContent({
+      state
+    }, {
+      content
+    }) {
+      state.createPostContent = content;
+    },
+    setPostTaggedEntities({
+      state
+    }, {
+      entities
+    }) {
+      state.createPostTaggedEntities = entities;
     },
     async fetchMyFollowers({
       state
