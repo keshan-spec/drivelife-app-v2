@@ -36,6 +36,7 @@
     "@capacitor/ios": "^6.1.2",
     "@capacitor/local-notifications": "^6.1.1",
     "@capacitor/push-notifications": "^6.0.3",
+    "@capacitor/splash-screen": "^6.0.3",
     "@capacitor/storage": "^1.2.5",
     "capacitor-native-settings": "^6.0.1",
     "dom7": "^4.0.6",
