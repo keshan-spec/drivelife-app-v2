@@ -569,3 +569,42 @@
     width: 82px !important;
     font-size: 12px !important;
 }
+
+.create-post-indicator-inner {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    padding: 0 10px;
+    background-color: #f9f9f9;
+    /* Optional background color */
+    border: 1px solid #ddd;
+    /* Optional border */
+    border-radius: 8px;
+    /* Optional rounded corners */
+}
+
+.create-post-indicator-media img {
+    width: 50px;
+    /* Thumbnail size */
+    height: 50px;
+    /* Ensure a square aspect ratio */
+    object-fit: cover;
+    /* Crop image to fit if necessary */
+    border-radius: 4px;
+    /* Optional rounded corners for the image */
+    margin-right: 10px;
+    /* Space between image and text */
+}
+
+.create-post-indicator-text {
+    font-size: 16px;
+    /* Adjust text size */
+    color: #333;
+    /* Text color */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    overflow: hidden;
+    /* Hide overflowing text */
+    text-overflow: ellipsis;
+    /* Add ellipsis to overflowing text */
+}

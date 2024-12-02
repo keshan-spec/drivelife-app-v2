@@ -16,7 +16,6 @@ $(document).on('page:beforein', '.page[data-name="post-edit"]', async function (
         return;
     }
 
-    console.log(posts);
     const post = posts.data.find(p => p.id == postId);
 
     $('#edit_post_id').val(postId);

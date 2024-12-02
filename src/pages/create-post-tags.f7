@@ -125,20 +125,13 @@
                                     <!-- Search Box -->
                                     <div
                                         class="list links-list list-outline-ios list-strong-ios list-dividers-ios tag-search">
-                                        <input type="text" class="search-tag" placeholder="Search users" />
+                                        <input type="text" class="search-tag" placeholder="Search registrations" />
                                     </div>
 
                                     <!-- Results -->
                                     <div
                                         class="list list-outline-ios list-strong-ios list-dividers-ios mt-2 result-list">
                                         <ul>
-                                            <li>
-                                                <a class="item-link search-result item-content" href="#">
-                                                    <div class="item-inner">
-                                                        <div class="item-title">Search Result</div>
-                                                    </div>
-                                                </a>
-                                            </li>
                                         </ul>
                                     </div>
 
@@ -183,7 +176,7 @@
                                 <div class="block">
                                     <!-- Search Box -->
                                     <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
-                                        <input type="text" class="search-tag" placeholder="Search users" />
+                                        <input type="text" class="search-tag" placeholder="Search events" />
                                     </div>
 
                                     <!-- Results -->
@@ -228,7 +221,7 @@
         let activeImageIndex = 0;
 
         const taggedEntityStore = store.getters.getCreatePostTaggedEntities;
-        const contentData = store.getters.getCreatePostContent.value;
+        let contentData = '';
 
         const userGarage = store.getters.myGarage.value;
         const mediaData = store.getters.getCreatePostMedia.value || [];
@@ -264,41 +257,6 @@
         }, 500);
 
         $on('pageInit', (e, page) => {
-            // post button
-            $(document).on('click', '#add-new-post', function () {
-                addPost({
-                    mediaList: mediaData,
-                    caption: contentData,
-                    location: '',
-                    taggedEntities: taggedEntities,
-                    association_id: null,
-                    association_type: null,
-                    onUpload: () => {
-                        // When upload is complete, send push notification
-
-                        // reset posts
-                        store.dispatch('getMyPosts', {
-                            page: 1,
-                            clear: true
-                        });
-
-                        store.dispatch('getPosts', {
-                            page: 1,
-                            reset: true
-                        });
-
-                        // reset create post
-                        store.dispatch('resetCreatePost');
-                    },
-                    onError: (error) => {
-                        store.dispatch('resetCreatePost');
-                    }
-                });
-
-                // goto home
-                $f7.views.main.router.navigate('/');
-            });
-
             page.$el.find('.tag-btn').on('click', function () {
                 const panel = $(this).data('panel');
                 activeTab = panel;
@@ -343,6 +301,45 @@
         });
 
         $on('pageBeforeIn', (e, page) => {
+            // post button
+            $(document).on('click', '#add-new-post', function () {
+                store.dispatch('setIsPostCreating', true);
+
+                addPost({
+                    mediaList: mediaData,
+                    caption: contentData,
+                    location: '',
+                    taggedEntities: taggedEntities,
+                    association_id: null,
+                    association_type: null,
+                    onUpload: () => {
+                        // reset posts
+                        store.dispatch('getMyPosts', {
+                            page: 1,
+                            clear: true
+                        });
+
+                        store.dispatch('getPosts', {
+                            page: 1,
+                            reset: true
+                        });
+
+                        // reset create post
+                        store.dispatch('resetCreatePost');
+                    },
+                    onError: (error) => {
+                        store.dispatch('resetCreatePost');
+                        store.dispatch('setIsPostCreating', false);
+                        $f7.dialog.alert(error.message, 'Error creating post');
+                    }
+                });
+
+                // goto home
+                $f7.views.main.router.navigate('/');
+            });
+
+            contentData = store.getters.getCreatePostContent.value || '';
+
             renderTaggedEntities(taggedEntities);
 
             const postMediaList = page.$el.find('.post-add-images .post-add-tags-swiper');
@@ -470,9 +467,14 @@
                         }
 
                         let subText = '';
+                        let itemName = item.name;
 
                         if (item.type === 'car' && item.vehicle_name) {
                             subText = `<div class="item-subtitle">${item.vehicle_name}</div>`;
+                        }
+
+                        if (item.type === 'car' && !item.registration) {
+                            itemName = item.vehicle_name;
                         }
 
                         if (item.type === 'event') {
@@ -495,7 +497,7 @@
                                     ${subText}
                                 </div>
 
-                                <button class="tag-entity-btn button button-fill" data-name="${item.name}" data-id="${item.entity_id}" data-type="${item.type}">
+                                <button class="tag-entity-btn button button-fill" data-name="${itemName}" data-id="${item.entity_id}" data-type="${item.type}">
                                     Tag    
                                 </button>
                             </a>
@@ -566,18 +568,24 @@
         }
 
         function handleTagClick(entity) {
-            const isTagged = taggedEntities.find((tag) => tag.id == entity.entity_id && tag.index == activeImageIndex);
+            const isTagged = taggedEntities.find((tag) => tag.id == entity.entity_id && tag.index === activeImageIndex);
 
-            if (isTagged) {
+            if (isTagged && entity.entity_id !== 'search_q') {
                 $f7.dialog.alert('Already Tagged', 'This entity has already been tagged in this image.');
                 return;
+            }
+
+            let label = entity.name;
+
+            if (entity.type === 'car' && !entity.name) {
+                label = entity.vehicle_name;
             }
 
             setTaggedData([{
                 x: 1,
                 y: 1,
                 index: activeImageIndex,
-                label: entity.name,
+                label: label,
                 type: entity.type,
                 id: entity.entity_id,
                 arr_idx: taggedEntities.length,

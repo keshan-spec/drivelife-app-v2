@@ -652,8 +652,6 @@ $(document).on('click', '#delete-post', function () {
         clear: true
       });
 
-      console.log(isSingleView);
-
       if (isSingleView == 'true') {
         // $('.view-profile-link').click()
         view.router.back();
@@ -787,7 +785,6 @@ $(document).on('click', '.comment-replies-toggle', function () {
 
 // on comment form submit
 $(document).on('submit', '#comment-form', async function (e) {
-  alert('comment form submit');
   e.preventDefault();
 
   const postId = this.getAttribute('data-post-id');

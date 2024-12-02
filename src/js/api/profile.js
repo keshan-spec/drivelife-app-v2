@@ -267,7 +267,7 @@ export const getFollowersForUser = async (profileId) => {
 
     const response = await fetch(`${API_URL}/wp-json/app/v2/get-followers?user_id=${profileId}`, {
         method: "GET",
-        cache: "force-cache",
+        // cache: "force-cache",
         headers: {
             "Content-Type": "application/json",
         },

@@ -92,7 +92,6 @@
         $on('pageBeforeOut', (e, page) => {
             const textArea = page.$el.find('.post-add-content textarea');
 
-
             const contentData = textArea.val();
 
             store.dispatch('setCreatePostContent', {
@@ -102,34 +101,26 @@
 
         function renderMedia(data) {
             try {
-                let render = `
-            <div class="swiper-wrapper">
-        `;
+                let render = `<div class="swiper-wrapper">`;
 
                 if (data.length) {
                     data.forEach((media) => {
                         render += `
-                    <div class="swiper-slide" data-id="${media.id}">
-                        <img class="swiper-slide-image" src="${media.uri}" />
-                        <img class="swiper-slide-background" src="${media.uri}" />
-                    </div>
-                `;
+                        <div class="swiper-slide" data-id="${media.id}">
+                            <img class="swiper-slide-image" src="${media.uri}" />
+                            <img class="swiper-slide-background" src="${media.uri}" />
+                        </div>`;
                     });
                 } else {
                     render += `
-                <div class="swiper-slide">
-                    <div class="post-media-item">
-                        No media found
-                    </div>
-                </div>
-            `;
+                    <div class="swiper-slide">
+                        <div class="post-media-item">
+                            No media found
+                        </div>
+                    </div>`;
                 }
 
-                render += `
-            </div>
-            <div class="swiper-pagination"></div>
-        `;
-
+                render += `</div><div class="swiper-pagination"></div>`;
                 return render;
             } catch (error) {
                 console.log(error);

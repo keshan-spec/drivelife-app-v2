@@ -41,11 +41,6 @@ var routes = [
     component: HomePage,
     keepAlive: true,
   },
-  // {
-  //   path: '/social/',
-  //   component: HomePage,
-  //   keepAlive: true,
-  // },
   {
     path: '/notifications/',
     component: NotificationsPage,

@@ -19,15 +19,21 @@ const uploadFilesToCloudflareV1 = async (user_id, mediaList) => {
 
         const data = await response.json();
 
-        if (!data || data.error || response.status !== 200) {
-            throw new Error(data.error || "Failed to upload media");
+        if (response.status !== 200) {
+            throw new Error("Failed to upload media");
+        }
+
+        if (!data || !data.success) {
+            throw new Error(data.message || "Failed to upload media");
         }
 
         if (data.success && data.media_ids) {
             return data.media_ids;
+        } else {
+            throw new Error("Failed to upload media");
         }
     } catch (error) {
-        console.error('Error uploading files to Cloudflare:', error);
+        console.error('Error uploading files to Cloudflare:', error.message);
         throw error;
     }
 };
@@ -46,11 +52,11 @@ export const addPost = async ({
         const user = await getSessionUser();
 
         if (!user || !user.id) {
-            return [];
+            throw new Error("User session not found");
         }
 
         if (!mediaList || mediaList.length === 0) {
-            throw new Error("Invalid data");
+            throw new Error("No media found");
         }
 
         const media = await uploadFilesToCloudflareV1(user.id, mediaList);
@@ -86,12 +92,13 @@ export const addPost = async ({
         await addNotification("Post created", "Post created successfully", {
             post_id: data.post_id,
         });
+
         onUpload();
         return data;
     } catch (e) {
         await addNotification("Failed to create post", e.message || "Failed to create post");
         onError();
-        throw new Error(`Failed to create post: ${e.message}`);
+        console.error("Error creating post", e.message);
     }
 };
 
@@ -108,7 +115,6 @@ export const addTagsForPost = async (postId, tags) => {
         }
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/add-tags`, {
-            cache: "no-cache",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -123,6 +129,7 @@ export const addTagsForPost = async (postId, tags) => {
 
         return data;
     } catch (e) {
+        await addNotification("Failed to add tags", e.message || "Failed to add tags");
         console.error("Error adding tags", e.message);
         return null;
     }
@@ -184,7 +191,6 @@ export const addNotification = async (title, message, data = {}) => {
         notifications: [
             {
                 id: Math.ceil(Math.random() * 100),
-                // id: new Date().getTime(), // Unique ID for the notification
                 title: title, // Notification title
                 body: message,   // Notification body
                 schedule: { at: new Date(Date.now() + 1000) },

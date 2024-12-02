@@ -36,6 +36,7 @@
         <div class="ptr-arrow"></div>
       </div>
 
+      <div class="create-post-indicator"></div>
       <div class="tabs">
         <div class="tab tab-active" id="tab-latest">
           <div class="data virtual-list list-virtual-latest">
@@ -59,7 +60,47 @@
 </template>
 
 <script>
-  export default () => {
+  export default (props, { $, $on, $f7 }) => {
+    let actionsGrid;
+
+    const { store } = $f7;
+    const isPostCreatingStore = store.getters.getIsPostCreating;
+
+    isPostCreatingStore.onUpdated((value) => {
+      if (!value) {
+        $('.create-post-indicator').html('');
+      }
+    });
+
+    $on('pageBeforeIn', (e, page) => {
+      if (isPostCreatingStore.value === true) {
+        renderIndicator();
+      }
+    });
+
+    function renderIndicator() {
+      // add an indicator that a post is being created above social tabs
+      const mediaData = store.getters.getCreatePostMedia.value || [];
+      const postIndicator = $('.create-post-indicator');
+
+      if (mediaData && mediaData.length) {
+        const mediaUrl = mediaData[0].uri;
+
+        if (mediaUrl) {
+          // Add new indicator above social tabs
+          postIndicator.html(`
+            <div class="create-post-indicator-inner">
+              <div class="create-post-indicator-media">
+                <img src="${mediaUrl}" alt="Post thumbnail" />
+              </div>
+              <div class="create-post-indicator-text">
+                Creating Post...
+              </div>
+            </div>`);
+        }
+      }
+    }
+
     return $render;
   }
 </script>

@@ -196,43 +196,6 @@
       </div>
     </div>
 
-    <!-- Edit Post Slider -->
-    <div class="popup edit-post-popup three-quarter-popup">
-      <div class="view">
-        <div class="page">
-          <div class="navbar">
-            <div class="navbar-inner">
-              <div class="title">Post Options</div>
-              <div class="right">
-                <!-- Link to close popup -->
-                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
-              </div>
-            </div>
-          </div>
-          <div class="page-content">
-
-            <div class="block">
-              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
-                <ul>
-                  <li>
-                    <a href="#" target="_blank" id="edit-post">
-                      <i class="icon f7-icons">pencil</i>
-                      Edit Post
-                    </a>
-                  </li>
-
-                  <li><a href="#" target="_blank" id="delete-post"><i class="icon f7-icons">delete_right</i> Delete
-                      Post</a></li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Edit Post Slider -->
-
     <!-- Add Link Slider -->
     <div class="popup add-link-popup three-quarter-popup">
       <div class="view">
@@ -282,6 +245,43 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Post Slider -->
+    <div class="popup edit-post-popup three-quarter-popup">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="title">Post Options</div>
+              <div class="right">
+                <!-- Link to close popup -->
+                <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+
+            <div class="block">
+              <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                <ul>
+                  <li>
+                    <a href="#" target="_blank" id="edit-post">
+                      <i class="icon f7-icons">pencil</i>
+                      Edit Post
+                    </a>
+                  </li>
+
+                  <li><a href="#" target="_blank" id="delete-post"><i class="icon f7-icons">delete_right</i> Delete
+                      Post</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Edit Post Slider -->
   </div>
 </template>
 
@@ -298,7 +298,7 @@
       actionsGrid.open();
     };
 
-    $on('pageInit', () => {
+    $on('pageInit', (e, page) => {
       actionsGrid = $f7.actions.create({
         grid: true,
         buttons: [
@@ -306,10 +306,10 @@
             text: '<div class="actions-grid-item">Add Post</div>',
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
-              if (await isRunningOnWeb()) {
-                $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
-                return;
-              }
+              // if (await isRunningOnWeb()) {
+              //   $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
+              //   return;
+              // }
 
               if (!await checkMediaPermission()) {
                 $f7.dialog.alert('Please allow access to your camera and photos to create a post.');
@@ -366,10 +366,6 @@
         swipeHandler: '.followers-popup .navbar'
       });
     });
-
-    // $on('pageBeforeRemove', () => {
-    //   actionsGrid.destroy();
-    // });
 
     return $render;
   }

@@ -1,20 +1,19 @@
 import {
     API_URL,
     TIMEOUT_MS_LOW
-} from './consts.js'
+} from './consts.js';
 import {
     getSessionUser
-} from './auth.js'
-import store from '../store.js'
-import { getPostFromDB, savePostToDB } from './indexdb.js'
+} from './auth.js';
+import store from '../store.js';
 
 export async function fetchPosts(page, following = false) {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user || !user.id) return
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
 
         const queryParams = new URLSearchParams({
             user_id: user.id,
@@ -31,26 +30,26 @@ export async function fetchPosts(page, following = false) {
             signal // Abort signal
         });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.log(error);
 
-        return {}
+        return {};
     }
 }
 
 export async function fetchComments(postId) {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_LOW)
+            controller.abort();
+        }, TIMEOUT_MS_LOW);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/get-post-comments`, {
             method: "POST",
@@ -62,10 +61,10 @@ export async function fetchComments(postId) {
                 post_id: postId
             }),
             signal
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -79,8 +78,8 @@ export async function fetchComments(postId) {
 }
 
 export const maybeLikePost = async (postId) => {
-    const user = await getSessionUser()
-    if (!user) return
+    const user = await getSessionUser();
+    if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-post`, {
         method: "POST",
@@ -91,22 +90,22 @@ export const maybeLikePost = async (postId) => {
             user_id: user.id,
             post_id: postId
         }),
-    })
-    const data = await response.json()
-    return data
-}
+    });
+    const data = await response.json();
+    return data;
+};
 
 export const addComment = async (postId, comment, comment_id = null) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_LOW)
+            controller.abort();
+        }, TIMEOUT_MS_LOW);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/add-post-comment`, {
             method: "POST",
@@ -120,10 +119,10 @@ export const addComment = async (postId, comment, comment_id = null) => {
                 parent_id: comment_id
             }),
             signal
-        })
+        });
 
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -134,11 +133,11 @@ export const addComment = async (postId, comment, comment_id = null) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};
 
 export const deleteComment = async (commentId) => {
-    const user = await getSessionUser()
-    if (!user) return
+    const user = await getSessionUser();
+    if (!user) return;
 
     const response = await fetch(`${API_URL}/wp-json/app/v1/delete-post-comment`, {
         method: "POST",
@@ -149,15 +148,15 @@ export const deleteComment = async (commentId) => {
             user_id: user.id,
             comment_id: commentId
         }),
-    })
+    });
 
-    const data = await response.json()
-    return data
-}
+    const data = await response.json();
+    return data;
+};
 
 export const maybeLikeComment = async (commentId, ownerId) => {
-    const user = await getSessionUser()
-    if (!user) return
+    const user = await getSessionUser();
+    if (!user) return;
 
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/toggle-like-comment`, {
@@ -170,46 +169,46 @@ export const maybeLikeComment = async (commentId, ownerId) => {
                 comment_id: commentId,
                 owner_id: ownerId
             }),
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
 
         if (!response.ok || response.status !== 200) {
-            throw new Error(data.message)
+            throw new Error(data.message);
         }
 
-        return data
+        return data;
     } catch (e) {
-        console.error("Error liking comment")
-        throw new Error(e.message)
+        console.error("Error liking comment");
+        throw new Error(e.message);
     }
-}
+};
 
-export const getPostsForUser = async (profileId, page = 1, tagged = false, limit = 9) => {
+export const getPostsForUser = async (profileId, page = 1, tagged = false, limit = 9, forceRefresh = false) => {
     const queryParams = new URLSearchParams({
         user_id: profileId,
         tagged: tagged ? 1 : 0,
         page: page,
-        limit
+        limit,
+        // t: forceRefresh ? new Date().getTime() : undefined, // Cache-busting if needed
     }).toString();
 
     const response = await fetch(`${API_URL}/wp-json/app/v2/get-user-posts?${queryParams}`, {
         method: "GET",
-        cache: "force-cache",
+        cache: forceRefresh ? "no-store" : "force-cache", // Force refetch if needed
         headers: {
             "Content-Type": "application/json",
         },
-    })
+    });
 
-    const data = await response.json()
+    const data = await response.json();
     if (response.status !== 200) {
         return {
             data: [],
             total_pages: 0,
             page: 1,
             limit
-        }
+        };
     }
-
 
     try {
         // Trigger background fetches for each post's detailed data
@@ -220,22 +219,22 @@ export const getPostsForUser = async (profileId, page = 1, tagged = false, limit
         console.log("Error fetching post details", error);
     }
 
-    return data
-}
+    return data;
+};
 
 export const getPostById = async (post_id) => {
-    const user = await getSessionUser()
-    if (!user || !user.id) return null
+    const user = await getSessionUser();
+    if (!user || !user.id) return null;
 
 
     try {
-        const existingPosts = store.getters.posts.value
-        const pathStore = store.getters.getPathData
+        const existingPosts = store.getters.posts.value;
+        const pathStore = store.getters.getPathData;
 
         if (existingPosts?.data && existingPosts?.data.length > 0) {
-            const post = existingPosts.data.find(p => p.id == post_id)
+            const post = existingPosts.data.find(p => p.id == post_id);
             if (post) {
-                return post
+                return post;
             }
         }
 
@@ -245,16 +244,16 @@ export const getPostById = async (post_id) => {
         //     return cachedPost;
         // }
 
-        let cachedData = null
+        let cachedData = null;
         if (pathStore && pathStore.value[`/post/${post_id}`]) {
-            cachedData = pathStore.value[`/post/${post_id}`]
+            cachedData = pathStore.value[`/post/${post_id}`];
         }
 
         if (cachedData) {
-            return cachedData
+            return cachedData;
         }
     } catch (error) {
-        console.log("Error getting post from store", error)
+        console.log("Error getting post from store", error);
     }
 
     try {
@@ -264,8 +263,8 @@ export const getPostById = async (post_id) => {
             headers: {
                 "Content-Type": "application/json",
             }
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
 
         if (data && data.id) {
             // Save the fetched post to IndexedDB
@@ -274,18 +273,18 @@ export const getPostById = async (post_id) => {
             store.dispatch('setPathData', {
                 path: `/post/${post_id}`,
                 data: data,
-            })
+            });
         }
 
-        return data
+        return data;
     } catch (error) {
-        return null
+        return null;
     }
-}
+};
 
 export const deletePost = async (post_id) => {
-    const user = await getSessionUser()
-    if (!user) return
+    const user = await getSessionUser();
+    if (!user) return;
 
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v1/delete-post`, {
@@ -297,17 +296,17 @@ export const deletePost = async (post_id) => {
                 user_id: user.id,
                 post_id
             }),
-        })
+        });
 
         if (response.status !== 200) {
-            throw new Error("Error deleting post")
+            throw new Error("Error deleting post");
         }
 
-        return true
+        return true;
     } catch (error) {
-        return false
+        return false;
     }
-}
+};
 
 /**
  * @param {Object} data {

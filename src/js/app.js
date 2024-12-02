@@ -263,7 +263,7 @@ CapacitorApp.addListener('backButton', async () => {
     var view = app.views.current;
 
     if (view.history.includes('/auth/')) {
-      CapacitorApp.minimizeApp();
+      // CapacitorApp.minimizeApp();
       return true;
     }
 
@@ -282,7 +282,7 @@ CapacitorApp.addListener('backButton', async () => {
         view.router.back();
         return false;
       } else {
-        CapacitorApp.minimizeApp();
+        // CapacitorApp.minimizeApp();
         return true;
       }
     } else {

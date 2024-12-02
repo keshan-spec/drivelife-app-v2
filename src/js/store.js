@@ -73,6 +73,7 @@ const store = createStore({
     createPostMedia: null,
     createPostContent: null,
     createPostTaggedEntities: [],
+    isPostCreating: false,
     user: null,
     posts: {
       new_data: [],
@@ -153,6 +154,11 @@ const store = createStore({
     myFollowers: [],
   },
   getters: {
+    getIsPostCreating({
+      state
+    }) {
+      return state.isPostCreating;
+    },
     getCreatePostMedia({
       state
     }) {
@@ -305,12 +311,18 @@ const store = createStore({
     },
   },
   actions: {
+    setIsPostCreating({
+      state
+    }, value) {
+      state.isPostCreating = value;
+    },
     resetCreatePost({
       state
     }) {
       state.createPostMedia = null;
       state.createPostContent = null;
       state.createPostTaggedEntities = [];
+      state.isPostCreating = false;
     },
     setPostMedia({
       state
@@ -992,7 +1004,7 @@ const store = createStore({
       page = 1,
       clear = false
     }) {
-      const posts = await getPostsForUser(state.user.id, page);
+      const posts = await getPostsForUser(state.user.id, page, false, 9, clear);
 
       if (clear) {
         state.myPosts = {
@@ -1025,7 +1037,7 @@ const store = createStore({
       page = 1,
       clear = false
     }) {
-      const posts = await getPostsForUser(state.user.id, page, true);
+      const posts = await getPostsForUser(state.user.id, page, true, 9, clear);
 
       if (clear) {
         state.myTags = {
