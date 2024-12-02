@@ -33,7 +33,7 @@ const uploadFilesToCloudflareV1 = async (user_id, mediaList) => {
             throw new Error("Failed to upload media");
         }
     } catch (error) {
-        console.error('Error uploading files to Cloudflare:', error.message);
+        console.log('Error uploading files to Cloudflare:', error.message);
         throw error;
     }
 };
@@ -60,6 +60,11 @@ export const addPost = async ({
         }
 
         const media = await uploadFilesToCloudflareV1(user.id, mediaList);
+
+        if (!media || media.length === 0) {
+            throw new Error("Failed to upload media");
+        }
+
         const formData = new FormData();
 
         formData.append("user_id", user.id);
@@ -98,7 +103,7 @@ export const addPost = async ({
     } catch (e) {
         await addNotification("Failed to create post", e.message || "Failed to create post");
         onError();
-        console.error("Error creating post", e.message);
+        console.log("Error creating post", e.message);
     }
 };
 
