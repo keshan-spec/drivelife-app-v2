@@ -70,6 +70,7 @@ const DEFAULT_PAGINATED_DATA = {
 
 const store = createStore({
   state: {
+    homeListenersInitialized: false,
     createPostMedia: null,
     createPostContent: null,
     createPostTaggedEntities: [],
@@ -154,6 +155,11 @@ const store = createStore({
     myFollowers: [],
   },
   getters: {
+    homeListenersInitialized({
+      state
+    }) {
+      return state.homeListenersInitialized;
+    },
     getIsPostCreating({
       state
     }) {
@@ -311,6 +317,11 @@ const store = createStore({
     },
   },
   actions: {
+    setHomeListenersInitialized({
+      state
+    }, value) {
+      state.homeListenersInitialized = value;
+    },
     setIsPostCreating({
       state
     }, value) {

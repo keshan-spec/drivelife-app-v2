@@ -26,6 +26,8 @@ var currentFollowingPostsPage = 1;
 
 var postsStore = store.getters.posts;
 var followingPostsStore = store.getters.followingPosts;
+var userStore = store.getters.user;
+
 
 var totalPostPages = 0;
 var totalFPostPages = 0;
@@ -167,6 +169,20 @@ followingPostsStore.onUpdated((data) => {
   displayPosts(data.new_data, true);
 });
 
+userStore.onUpdated((data) => {
+  const listenersInitialized = store.getters.homeListenersInitialized.value;
+
+  if (data && data.id && !data.external_refresh && !data.refreshed) {
+    if (!listenersInitialized) {
+      initializeListeners();
+    }
+  } else {
+    if (listenersInitialized) {
+      unInitiallizeListeners();
+    }
+  }
+});
+
 $(document).on('infinite', '.infinite-scroll-content.home-page', async function () {
   if (isFetchingPosts) return;
 
@@ -216,19 +232,355 @@ $(document).on('ptr:refresh', '.ptr-content.home-page', async function (e) {
   app.ptr.get('.ptr-content.home-page').done();
 });
 
-$(document).on('page:beforein', '.page[data-name="social"]', function (e) {
+function unInitiallizeListeners() {
+  store.dispatch('setHomeListenersInitialized', false);
+
+  $(document).off('mousedown', '.toolbar-bottom a');
+  $(document).off('click', '.media-post-comment');
+  $(document).off('click', '.media-post-commentcount');
+  $(document).off('click', '.media-post-share');
+  $(document).off('click', '#share-post-email');
+  $(document).off('click', '#copy-link');
+  $(document).off('click', '.comment-replies-toggle');
+  $(document).off('click', '.comment-reply');
+  $(document).off('submit', '#comment-form');
+  $(document).off('click', '.comment-delete');
+  $(document).off('click', '.comment a');
+  $(document).off('click', '.media-post-like i');
+  $(document).off('click', '.media-post-edit');
+  $(document).off('click', '#delete-post');
+  $(document).off('click', '#edit-post');
+  $(document).off('click', '.media-post-video');
+  $(document).off('touchstart', '.media-post-content .post-media');
+  $(document).off('touchstart', '.media-single-post-content .post-media');
+  $(document).off('click', '.media-post-readmore');
+}
+
+function initializeListeners() {
+  store.dispatch('setHomeListenersInitialized', true);
+
+  $(document).on('click', '.media-post-readmore', function () {
+    const postDescription = this.previousElementSibling.previousElementSibling; // The short description
+    const fullDescription = this.previousElementSibling; // The full description
+
+    if (fullDescription.classList.contains('hidden')) {
+      postDescription.classList.add('hidden');
+      fullDescription.classList.remove('hidden');
+      this.textContent = '... less';
+    } else {
+      postDescription.classList.remove('hidden');
+      fullDescription.classList.add('hidden');
+      this.textContent = '... more';
+    }
+  });
+
+  $(document).on('click', '.media-post-like i', (e) => {
+    const postId = e.target.getAttribute('data-post-id');
+
+    const parent = e.target.closest('.media-post');
+    const isSingle = parent.classList.contains('single') ? true : false;
+
+    togglePostLike(postId, isSingle);
+  });
+
+  // set the post id as a data attribute from the edit post popup
+  $(document).on('click', '.media-post-edit', function () {
+    const postId = $(this).closest('.media-post').attr('data-post-id');
+    const isSingleView = $(this).closest('.media-post').hasClass('single');
+    $('.edit-post-popup').attr('data-post-id', postId);
+    $('.edit-post-popup').attr('data-is-single', isSingleView);
+  });
+
+  $(document).on('click', '#delete-post', function () {
+    var view = app.views.current;
+
+    // set the post id as a data attribute from the edit post popup
+    const postId = $('.edit-post-popup').attr('data-post-id');
+    const isSingleView = $('.edit-post-popup').attr('data-is-single');
+
+    app.dialog.confirm('Are you sure you want to delete this post?', 'Delete Post', async () => {
+      app.preloader.show();
+      const response = await deletePost(postId);
+      app.preloader.hide();
+
+      if (response) {
+        store.dispatch('getMyPosts', {
+          page: 1,
+          clear: true
+        });
+        store.dispatch('getMyTags', {
+          page: 1,
+          clear: true
+        });
+
+        if (isSingleView == 'true') {
+          // $('.view-profile-link').click()
+          view.router.back();
+          // view.router.navigate('/profile/')
+        }
+
+        showToast('Post deleted successfully');
+        // remove the post from the DOM
+        $(`.media-post[data-post-id="${postId}"]`).remove();
+        app.popup.close('.edit-post-popup');
+      } else {
+        showToast('Failed to delete post');
+        app.preloader.hide();
+      }
+    });
+  });
+
+  $(document).on('click', '#edit-post', function () {
+    var view = app.views.current;
+
+    // set the post id as a data attribute from the edit post popup
+    const postId = $('.edit-post-popup').attr('data-post-id');
+    view.router.navigate(`/post-edit/${postId}`, {
+      force: true
+    });
+
+    app.popup.close('.edit-post-popup');
+  });
+
+  $(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapClosure((e) => {
+    const parent = e.closest('.media-post');
+    const postId = parent.getAttribute('data-post-id');
+    const isLiked = parent.getAttribute('data-is-liked') === 'true';
+
+    if (isLiked) {
+      return;
+    }
+
+    togglePostLike(postId);
+  }), {
+    passive: false
+  });
+
+  $(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
+    const parent = e.closest('.media-post');
+    const postId = parent.getAttribute('data-post-id');
+    const isLiked = parent.getAttribute('data-is-liked') === 'true';
+
+    if (isLiked) {
+      return;
+    }
+
+    togglePostLike(postId);
+  }), {
+    passive: false
+  });
+
+  // media-post-video click
+  $(document).on('click', '.media-post-video', function () {
+    if (this.paused) {
+      this.play();
+    } else {
+      this.pause();
+    }
+  });
+
+  // on .popup-open click
+  $(document).on('click', '.media-post-comment, .media-post-commentcount', async function () {
+    const postId = this.getAttribute('data-post-id');
+
+    if (!postId) {
+      return;
+    }
+
+    document.getElementById('comments-list').innerHTML = '<div class="preloader"></div>';
+    document.getElementById('comment-form').reset();
+
+    // update the post id in the comment form
+    document.getElementById('comment-form').setAttribute('data-post-id', '');
+    document.getElementById('comment-form').removeAttribute('data-comment-id');
+
+    document.getElementById('comment-form').querySelector('.replying-to').innerHTML = '';
+    document.getElementById('comment-form').querySelector('.replying-to').classList.add('hidden');
+
+    try {
+      const comments = await fetchComments(postId);
+      displayComments(comments, postId);
+    } catch (error) {
+      app.notification.create({
+        titleRightText: 'now',
+        subtitle: 'Oops, something went wrong',
+        text: error.message || 'Failed to fetch comments',
+      }).open();
+    }
+  });
+
+  $(document).on('click', '.media-post-share', function () {
+    // set the post id as a data attribute 
+    const postId = $(this).closest('.media-post').attr('data-post-id');
+    $('.share-popup').attr('data-post-id', postId);
+    $('#copy-link').attr('data-clipboard-text', `https://app.mydrivelife.com/post-view/${postId}`);
+  });
+
+  $(document).on('click', '#share-post-email', function () {
+    const postId = $(this).closest('.popup').attr('data-post-id');
+    const postLink = `https://app.mydrivelife.com/post-view/${postId}`;
+
+    // open the email composer
+    window.open(`mailto:?subject=Check out this post&body=${postLink}`);
+  });
+
+  // data-clipboard-text click
+  $(document).on('click', '#copy-link', function () {
+    const copyText = $(this).attr('data-clipboard-text');
+    navigator.clipboard.writeText(copyText);
+
+    app.toast.create({
+      text: 'Link copied to clipboard',
+      closeTimeout: 2000
+    }).open();
+  });
+
+  // on .comment-replies-toggle click
+  $(document).on('click', '.comment-replies-toggle', function () {
+    const commentRepliesContainer = this.nextElementSibling;
+    commentRepliesContainer.classList.toggle('show');
+    const repliesCount = this.getAttribute('data-replies-count');
+
+    this.innerText = this.innerText === `Show ${repliesCount} replies` ? `Hide ${repliesCount} replies` : `Show ${repliesCount} replies`;
+  });
+
+  // on comment form submit
+  $(document).on('submit', '#comment-form', async function (e) {
+    e.preventDefault();
+
+    const postId = this.getAttribute('data-post-id');
+    const commentId = this.getAttribute('data-comment-id');
+    const comment = this.comment.value;
+
+    if (!comment) {
+      // app.dialog.alert('Please enter a comment')
+      return;
+    }
+
+    app.preloader.show();
+
+    try {
+      const response = await addComment(postId, comment, commentId);
+
+      app.preloader.hide();
+
+      if (response) {
+        this.reset();
+        this.removeAttribute('data-comment-id');
+        this.querySelector('.replying-to').innerHTML = '';
+        this.querySelector('.replying-to').classList.add('hidden');
+        const comments = await fetchComments(postId);
+        displayComments(comments, postId);
+      } else {
+        app.notification.create({
+          text: 'Failed to add comment',
+          titleRightText: 'now',
+          subtitle: 'Oops, something went wrong',
+        }).open();
+      }
+    } catch (error) {
+      app.notification.create({
+        titleRightText: 'now',
+        subtitle: 'Oops, something went wrong',
+        text: error.message || 'Failed to add comment',
+      }).open();
+      app.preloader.hide();
+    }
+  });
+
+  //.comment-reply click
+  $(document).on('click', '.comment-reply', function () {
+    // get the comment id, and comment owner id
+    const commentId = this.closest('.comment').getAttribute('data-comment-id');
+    const ownerId = this.closest('.comment').getAttribute('data-owner-id');
+    const ownerName = this.closest('.comment').getAttribute('data-owner-name');
+
+    // add something above the comment form to show the user they are replying to a comment
+    // add the comment id to the form
+    document.getElementById('comment-form').setAttribute('data-comment-id', commentId);
+    document.getElementById('comment-form').comment.focus();
+
+    // add the owner name to the form
+    //  <span class="replying-to">Replying to <strong>m88xrk</strong></span>
+    const replyingTo = document.getElementById('comment-form').querySelector('.replying-to');
+    replyingTo.innerHTML = `Replying to <strong>${ownerName}</strong>`;
+    replyingTo.classList.remove('hidden');
+    document.getElementById('comment-form').prepend(replyingTo);
+  });
+
+  $(document).on('click', '.comment-delete', async function () {
+    app.dialog.confirm('Are you sure you want to delete this comment? This will remove all replies to this comment', 'Delete Comment', async () => {
+      try {
+        const commentId = this.getAttribute('data-comment-id');
+        const response = await deleteComment(commentId);
+
+        if (response && response.success) {
+          // remove the comment from the DOM
+          $(`.comment[data-comment-id="${commentId}"]`).remove();
+          showToast('Comment deleted successfully');
+        }
+      } catch (error) {
+        app.dialog.alert('Failed to delete comment');
+      }
+    });
+  });
+
+  $(document).on('click', '.comment a', function (e) {
+    var view = app.views.current;
+    // hide the comments popup
+    app.popup.close();
+
+    // get the href attribute
+    const href = this.getAttribute('data-url');
+
+    if (!href || href === '#') {
+      return;
+    }
+
+    // prevent the default action
+    e.preventDefault();
+
+    view.router.navigate(href, {
+      force: true
+    });
+  });
+
+  // event listener for tab change
+  $(document).on('click', '.social-tabs .tab-link', async function (e) {
+    const type = this.getAttribute('data-type');
+    activeTab = type;
+  });
+}
+
+$(document).on('tab:hide', '#view-social', function (e) {
+  unInitiallizeListeners();
+});
+
+$(document).on('tab:show', '#view-social', function (e) {
+  initializeListeners();
+});
+
+$(document).on('page:beforein', '.page[data-name="home"]', function (e) {
+  const session = userStore.value;
+
+  if (!session || !session.id) {
+    return;
+  }
+
+  const listenersInitialized = store.getters.homeListenersInitialized.value;
   app.toolbar.show('.toolbar.toolbar-bottom', true);
+
+  if (listenersInitialized) return; // Prevent multiple attachments
+
+  initializeListeners();
 });
 
-// before page out
-$(document).on('page:beforeout', '.page[data-name="social"]', function () {
-  pauseAllVideos();
-});
 
-// event listener for tab change
-$(document).on('click', '.social-tabs .tab-link', async function (e) {
-  const type = this.getAttribute('data-type');
-  activeTab = type;
+$(document).on('page:beforeout', '.page[data-name="home"]', function (e) {
+  const listenersInitialized = store.getters.homeListenersInitialized.value;
+  if (!listenersInitialized) return; // Prevent multiple attachments
+
+  unInitiallizeListeners();
 });
 
 function preloadImage(url) {
@@ -597,289 +949,3 @@ function toggleCommentLike(commentId, ownerId) {
 
   maybeLikeComment(commentId, ownerId);
 }
-
-$(document).on('click', '.media-post-readmore', function () {
-  const postDescription = this.previousElementSibling.previousElementSibling; // The short description
-  const fullDescription = this.previousElementSibling; // The full description
-
-  if (fullDescription.classList.contains('hidden')) {
-    postDescription.classList.add('hidden');
-    fullDescription.classList.remove('hidden');
-    this.textContent = '... less';
-  } else {
-    postDescription.classList.remove('hidden');
-    fullDescription.classList.add('hidden');
-    this.textContent = '... more';
-  }
-});
-
-$(document).on('click', '.media-post-like i', (e) => {
-  const postId = e.target.getAttribute('data-post-id');
-
-  const parent = e.target.closest('.media-post');
-  const isSingle = parent.classList.contains('single') ? true : false;
-
-  togglePostLike(postId, isSingle);
-});
-
-// set the post id as a data attribute from the edit post popup
-$(document).on('click', '.media-post-edit', function () {
-  const postId = $(this).closest('.media-post').attr('data-post-id');
-  const isSingleView = $(this).closest('.media-post').hasClass('single');
-  $('.edit-post-popup').attr('data-post-id', postId);
-  $('.edit-post-popup').attr('data-is-single', isSingleView);
-});
-
-$(document).on('click', '#delete-post', function () {
-  var view = app.views.current;
-
-  // set the post id as a data attribute from the edit post popup
-  const postId = $('.edit-post-popup').attr('data-post-id');
-  const isSingleView = $('.edit-post-popup').attr('data-is-single');
-
-  app.dialog.confirm('Are you sure you want to delete this post?', 'Delete Post', async () => {
-    app.preloader.show();
-    const response = await deletePost(postId);
-    app.preloader.hide();
-
-    if (response) {
-      store.dispatch('getMyPosts', {
-        page: 1,
-        clear: true
-      });
-      store.dispatch('getMyTags', {
-        page: 1,
-        clear: true
-      });
-
-      if (isSingleView == 'true') {
-        // $('.view-profile-link').click()
-        view.router.back();
-        // view.router.navigate('/profile/')
-      }
-
-      showToast('Post deleted successfully');
-      // remove the post from the DOM
-      $(`.media-post[data-post-id="${postId}"]`).remove();
-      app.popup.close('.edit-post-popup');
-    } else {
-      showToast('Failed to delete post');
-      app.preloader.hide();
-    }
-  });
-});
-
-$(document).on('click', '#edit-post', function () {
-  var view = app.views.current;
-
-  // set the post id as a data attribute from the edit post popup
-  const postId = $('.edit-post-popup').attr('data-post-id');
-  view.router.navigate(`/post-edit/${postId}`, {
-    force: true
-  });
-
-  app.popup.close('.edit-post-popup');
-});
-
-$(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapClosure((e) => {
-  const parent = e.closest('.media-post');
-  const postId = parent.getAttribute('data-post-id');
-  const isLiked = parent.getAttribute('data-is-liked') === 'true';
-
-  if (isLiked) {
-    return;
-  }
-
-  togglePostLike(postId);
-}), {
-  passive: false
-});
-
-$(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
-  const parent = e.closest('.media-post');
-  const postId = parent.getAttribute('data-post-id');
-  const isLiked = parent.getAttribute('data-is-liked') === 'true';
-
-  if (isLiked) {
-    return;
-  }
-
-  togglePostLike(postId);
-}), {
-  passive: false
-});
-
-// media-post-video click
-$(document).on('click', '.media-post-video', function () {
-  if (this.paused) {
-    this.play();
-  } else {
-    this.pause();
-  }
-});
-
-// on .popup-open click
-$(document).on('click', '.media-post-comment, .media-post-commentcount', async function () {
-  const postId = this.getAttribute('data-post-id');
-
-  if (!postId) {
-    return;
-  }
-
-  document.getElementById('comments-list').innerHTML = '<div class="preloader"></div>';
-  document.getElementById('comment-form').reset();
-
-  // update the post id in the comment form
-  document.getElementById('comment-form').setAttribute('data-post-id', '');
-  document.getElementById('comment-form').removeAttribute('data-comment-id');
-
-  document.getElementById('comment-form').querySelector('.replying-to').innerHTML = '';
-  document.getElementById('comment-form').querySelector('.replying-to').classList.add('hidden');
-
-  try {
-    const comments = await fetchComments(postId);
-    displayComments(comments, postId);
-  } catch (error) {
-    app.notification.create({
-      titleRightText: 'now',
-      subtitle: 'Oops, something went wrong',
-      text: error.message || 'Failed to fetch comments',
-    }).open();
-  }
-});
-
-$(document).on('click', '.media-post-share', function () {
-  // set the post id as a data attribute 
-  const postId = $(this).closest('.media-post').attr('data-post-id');
-  $('.share-popup').attr('data-post-id', postId);
-  $('#copy-link').attr('data-clipboard-text', `https://app.mydrivelife.com/post-view/${postId}`);
-});
-
-$(document).on('click', '#share-post-email', function () {
-  const postId = $(this).closest('.popup').attr('data-post-id');
-  const postLink = `https://app.mydrivelife.com/post-view/${postId}`;
-
-  // open the email composer
-  window.open(`mailto:?subject=Check out this post&body=${postLink}`);
-});
-
-// data-clipboard-text click
-$(document).on('click', '#copy-link', function () {
-  const copyText = $(this).attr('data-clipboard-text');
-  navigator.clipboard.writeText(copyText);
-
-  app.toast.create({
-    text: 'Link copied to clipboard',
-    closeTimeout: 2000
-  }).open();
-});
-
-// on .comment-replies-toggle click
-$(document).on('click', '.comment-replies-toggle', function () {
-  const commentRepliesContainer = this.nextElementSibling;
-  commentRepliesContainer.classList.toggle('show');
-  const repliesCount = this.getAttribute('data-replies-count');
-
-  this.innerText = this.innerText === `Show ${repliesCount} replies` ? `Hide ${repliesCount} replies` : `Show ${repliesCount} replies`;
-});
-
-// on comment form submit
-$(document).on('submit', '#comment-form', async function (e) {
-  e.preventDefault();
-
-  const postId = this.getAttribute('data-post-id');
-  const commentId = this.getAttribute('data-comment-id');
-  const comment = this.comment.value;
-
-  if (!comment) {
-    // app.dialog.alert('Please enter a comment')
-    return;
-  }
-
-  app.preloader.show();
-
-  try {
-    const response = await addComment(postId, comment, commentId);
-
-    app.preloader.hide();
-
-    if (response) {
-      this.reset();
-      this.removeAttribute('data-comment-id');
-      this.querySelector('.replying-to').innerHTML = '';
-      this.querySelector('.replying-to').classList.add('hidden');
-      const comments = await fetchComments(postId);
-      displayComments(comments, postId);
-    } else {
-      app.notification.create({
-        text: 'Failed to add comment',
-        titleRightText: 'now',
-        subtitle: 'Oops, something went wrong',
-      }).open();
-    }
-  } catch (error) {
-    app.notification.create({
-      titleRightText: 'now',
-      subtitle: 'Oops, something went wrong',
-      text: error.message || 'Failed to add comment',
-    }).open();
-    app.preloader.hide();
-  }
-});
-
-//.comment-reply click
-$(document).on('click', '.comment-reply', function () {
-  // get the comment id, and comment owner id
-  const commentId = this.closest('.comment').getAttribute('data-comment-id');
-  const ownerId = this.closest('.comment').getAttribute('data-owner-id');
-  const ownerName = this.closest('.comment').getAttribute('data-owner-name');
-
-  // add something above the comment form to show the user they are replying to a comment
-  // add the comment id to the form
-  document.getElementById('comment-form').setAttribute('data-comment-id', commentId);
-  document.getElementById('comment-form').comment.focus();
-
-  // add the owner name to the form
-  //  <span class="replying-to">Replying to <strong>m88xrk</strong></span>
-  const replyingTo = document.getElementById('comment-form').querySelector('.replying-to');
-  replyingTo.innerHTML = `Replying to <strong>${ownerName}</strong>`;
-  replyingTo.classList.remove('hidden');
-  document.getElementById('comment-form').prepend(replyingTo);
-});
-
-$(document).on('click', '.comment-delete', async function () {
-  app.dialog.confirm('Are you sure you want to delete this comment? This will remove all replies to this comment', 'Delete Comment', async () => {
-    try {
-      const commentId = this.getAttribute('data-comment-id');
-      const response = await deleteComment(commentId);
-
-      if (response && response.success) {
-        // remove the comment from the DOM
-        $(`.comment[data-comment-id="${commentId}"]`).remove();
-        showToast('Comment deleted successfully');
-      }
-    } catch (error) {
-      app.dialog.alert('Failed to delete comment');
-    }
-  });
-});
-
-$(document).on('click', '.comment a', function (e) {
-  var view = app.views.current;
-  // hide the comments popup
-  app.popup.close();
-
-  // get the href attribute
-  const href = this.getAttribute('data-url');
-
-  if (!href || href === '#') {
-    return;
-  }
-
-  // prevent the default action
-  e.preventDefault();
-
-  view.router.navigate(href, {
-    force: true
-  });
-});

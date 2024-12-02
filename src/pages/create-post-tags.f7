@@ -330,12 +330,11 @@
                     onError: (error) => {
                         store.dispatch('resetCreatePost');
                         store.dispatch('setIsPostCreating', false);
-                        $f7.dialog.alert(error.message, 'Error creating post');
+                        $f7.dialog.alert('Oops there was an error creating the post! Please try again');
                     }
                 });
 
-                // goto home
-                $f7.views.main.router.navigate('/');
+                $f7.views.current.router.navigate('/');
             });
 
             contentData = store.getters.getCreatePostContent.value || '';

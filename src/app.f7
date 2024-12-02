@@ -70,7 +70,7 @@
         <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
       </div>
 
-      <div id="view-social" class="view view-init view-main tab tab-active" data-name="social" data-url="/">
+      <div id="view-social" class="view view-init view-main tab tab-active" data-name="home" data-url="/">
       </div>
 
       <div id="view-discover" class="view view-init tab" data-name="discover" data-url="/discover/">
@@ -91,31 +91,11 @@
       <!-- <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
       </div> -->
 
-      <div id="view-profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
-        data-url="/profile-garage-edit/">
-      </div>
-
       <div id="profile-view" class="view view-init tab" data-name="profile-view" data-url="/profile-view/1">
       </div>
 
       <div id="post-view" class="view view-init tab" data-name="post-view" data-url="/post-view/-1">
       </div>
-
-      <div id="profile-garage-edit" class="view view-init tab" data-name="profile-garage-edit"
-        data-url="/profile-garage-edit/">
-      </div>
-
-      <!-- <div id="profile-garage-vehicle-view" class="view view-init tab" data-name="profile-garage-vehicle-view"
-        data-url="/profile-garage-vehicle-view/-1">
-      </div> -->
-      <!-- 
-      <div id="discover-view-venue" class="view view-init tab" data-name="discover-view-venue"
-        data-url="/discover-view-venue/-1">
-      </div>
-
-      <div id="discover-view-event" class="view view-init tab" data-name="discover-view-event"
-        data-url="/discover-view-event/-1">
-      </div> -->
 
       <div id="search" class="view view-init tab" data-name="search" data-url="/search/">
       </div>
@@ -297,6 +277,66 @@
     const openGrid = () => {
       actionsGrid.open();
     };
+
+    $f7.on('routeChanged', async (route) => {
+      if (route.route && route.route.keepAlive) {
+
+      } else {
+        // remove event listener
+      }
+    });
+
+    $on('pageBeforeIn', () => {
+      $(document).on('click', '.view-profile', function (e) {
+        $('.view-profile-link').click();
+      });
+
+      // logout-button
+      $(document).on('click', '.logout-button', async function (e) {
+        $('.init-loader').show();
+
+        $f7.dialog.close();
+        $f7.popup.close();
+        $f7.panel.close();
+
+        await store.dispatch('logout');
+
+        // reload page
+        window.location.reload();
+      });
+
+      $(document).on('mousedown', '.toolbar-bottom a', async function (e) {
+        var targetHref = $(this).attr('href');
+        var validTabs = ['#view-social', '#view-discover', '#view-store', '#view-profile'];
+
+        if ($(this).hasClass('tab-link-active') && validTabs.includes(targetHref)) {
+          var view = $f7.views.current;
+          if (view.history.length > 1) {
+            view.router.back(view.history[0], {
+              force: true
+            });
+          }
+        }
+        if (!view || !view.history) {
+          return;
+        }
+
+        if (targetHref == '#view-social' && view.history.length <= 1) {
+          $('.page-current .page-content').scrollTop(0, 200);
+
+          const ptrContent = $f7.ptr.get('.ptr-content.home-page');
+          if (ptrContent) {
+            ptrContent.refresh();
+          }
+        }
+      });
+    });
+
+    $on('pageBeforeOut', () => {
+      $(document).off('click', '.view-profile');
+      $(document).off('click', '.logout-button');
+      $(document).off('mousedown', '.toolbar-bottom a');
+    });
 
     $on('pageInit', (e, page) => {
       actionsGrid = $f7.actions.create({

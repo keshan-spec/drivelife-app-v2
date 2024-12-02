@@ -176,36 +176,6 @@ $(document).on('click', '.start-link', function (e) {
   }
 });
 
-$(document).on('mousedown', '.toolbar-bottom a', async function (e) {
-  var targetHref = $(this).attr('href');
-  var validTabs = ['#view-social', '#view-discover', '#view-store', '#view-profile'];
-
-  if ($(this).hasClass('tab-link-active') && validTabs.includes(targetHref)) {
-    var view = app.views.current;
-    if (view.history.length > 1) {
-      view.router.back(view.history[0], {
-        force: true
-      });
-    }
-  }
-  if (!view || !view.history) {
-    return;
-  }
-
-  if (targetHref == '#view-social' && view.history.length <= 1) {
-    $('.page-current .page-content').scrollTop(0, 200);
-
-    const ptrContent = app.ptr.get('.ptr-content.home-page');
-    if (ptrContent) {
-      ptrContent.refresh();
-    }
-  }
-});
-
-$(document).on('click', '.view-profile', function (e) {
-  $('.view-profile-link').click();
-});
-
 $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
   if (toolbarEl) {
     toolbarEl.style.display = 'none';
@@ -215,7 +185,6 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
     $('.init-loader').hide();
   }, 300);
 });
-
 
 /* Store event listeners */
 userStore.onUpdated(async (data) => {

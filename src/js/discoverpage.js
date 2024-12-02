@@ -497,8 +497,7 @@ filteredVenuesStore.onUpdated((data) => {
 });
 
 $(document).on('page:afterin', '.page[data-name="discover"]', function (e) {
-
-    initAutocomplete();
+    // initAutocomplete();
 });
 
 $(document).on('infinite', '.discover-page.infinite-scroll-content', async function (e) {
