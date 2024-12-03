@@ -342,33 +342,33 @@ function initializeListeners() {
     app.popup.close('.edit-post-popup');
   });
 
-  $(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapClosure((e) => {
-    const parent = e.closest('.media-post');
-    const postId = parent.getAttribute('data-post-id');
-    const isLiked = parent.getAttribute('data-is-liked') === 'true';
+  // $(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapClosure((e) => {
+  //   const parent = e.closest('.media-post');
+  //   const postId = parent.getAttribute('data-post-id');
+  //   const isLiked = parent.getAttribute('data-is-liked') === 'true';
 
-    if (isLiked) {
-      return;
-    }
+  //   if (isLiked) {
+  //     return;
+  //   }
 
-    togglePostLike(postId);
-  }), {
-    passive: false
-  });
+  //   togglePostLike(postId);
+  // }), {
+  //   passive: false
+  // });
 
-  $(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
-    const parent = e.closest('.media-post');
-    const postId = parent.getAttribute('data-post-id');
-    const isLiked = parent.getAttribute('data-is-liked') === 'true';
+  // $(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
+  //   const parent = e.closest('.media-post');
+  //   const postId = parent.getAttribute('data-post-id');
+  //   const isLiked = parent.getAttribute('data-is-liked') === 'true';
 
-    if (isLiked) {
-      return;
-    }
+  //   if (isLiked) {
+  //     return;
+  //   }
 
-    togglePostLike(postId);
-  }), {
-    passive: false
-  });
+  //   togglePostLike(postId);
+  // }), {
+  //   passive: false
+  // });
 
   // media-post-video click
   $(document).on('click', '.media-post-video', function () {
@@ -557,10 +557,14 @@ $(document).on('tab:hide', '#view-social', function (e) {
 });
 
 $(document).on('tab:show', '#view-social', function (e) {
+  const listenersInitialized = store.getters.homeListenersInitialized.value;
+
+  if (listenersInitialized) return; // Prevent multiple attachments
+
   initializeListeners();
 });
 
-$(document).on('page:beforein', '.page[data-name="home"]', function (e) {
+$(document).on('page:beforein', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
   const session = userStore.value;
 
   if (!session || !session.id) {
@@ -576,7 +580,7 @@ $(document).on('page:beforein', '.page[data-name="home"]', function (e) {
 });
 
 
-$(document).on('page:beforeout', '.page[data-name="home"]', function (e) {
+$(document).on('page:beforeout', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
   const listenersInitialized = store.getters.homeListenersInitialized.value;
   if (!listenersInitialized) return; // Prevent multiple attachments
 
@@ -736,6 +740,28 @@ async function displayPosts(posts, following = false) {
   });
 
   loadVideos();
+  initDoubleTapLike();
+}
+
+function initDoubleTapLike() {
+  // get all the media-post elements
+  const mediaPosts = document.querySelectorAll('.media-post');
+
+  mediaPosts.forEach(post => {
+    const mc = new Hammer(post);
+
+    // listen to events...
+    mc.on("doubletap", function (ev) {
+      const postId = post.getAttribute('data-post-id');
+      const isLiked = post.getAttribute('data-is-liked') === 'true';
+
+      if (isLiked) {
+        return;
+      }
+
+      togglePostLike(postId);
+    });
+  });
 }
 
 export function togglePostLike(postId, single = false) {

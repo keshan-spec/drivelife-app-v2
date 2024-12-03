@@ -8,6 +8,7 @@ import {
 import store from "./store.js";
 
 import $ from 'dom7';
+import { togglePostLike } from "./homepage.js";
 
 var containerWidth = window.innerWidth;
 
@@ -138,6 +139,23 @@ function displaySinglePost(post) {
 `;
 
   postsContainer.insertAdjacentHTML('beforeend', postItem);
+
+  const elem = $('.media-post.single[data-post-id="' + post.id + '"]')[0];
+  console.log('Elem:', elem);
+
+  const mc = new Hammer(elem);
+
+  // listen to events...
+  mc.on("doubletap", function (ev) {
+    const postId = elem.getAttribute('data-post-id');
+    const isLiked = elem.getAttribute('data-is-liked') === 'true';
+
+    if (isLiked) {
+      return;
+    }
+
+    togglePostLike(postId);
+  });
 }
 
 $(document).on('page:beforein', '.page[data-name="post-view"]', async function (e) {
