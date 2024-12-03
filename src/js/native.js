@@ -198,6 +198,11 @@ async function getImageURI(photo) {
 /* Misc functions */
 export const openSettings = async () => {
     try {
+        if (await isRunningOnWeb()) {
+            console.log('Cannot open settings on web');
+            return;
+        }
+
         const { platform } = await Device.getInfo();
         if (platform === 'android') {
             await NativeSettings.openAndroid({

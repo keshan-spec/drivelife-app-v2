@@ -88,8 +88,8 @@
       <div id="view-auth" class="view view-init tab" data-name="auth" data-url="/auth/">
       </div>
 
-      <!-- <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
-      </div> -->
+      <div id="view-notifications" class="view view-init tab" data-name="notifications" data-url="/notifications/">
+      </div>
 
       <div id="profile-view" class="view view-init tab" data-name="profile-view" data-url="/profile-view/1">
       </div>
@@ -277,14 +277,6 @@
     const openGrid = () => {
       actionsGrid.open();
     };
-
-    $f7.on('routeChanged', async (route) => {
-      if (route.route && route.route.keepAlive) {
-
-      } else {
-        // remove event listener
-      }
-    });
 
     $on('pageBeforeIn', () => {
       $(document).on('click', '.view-profile', function (e) {

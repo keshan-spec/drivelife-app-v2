@@ -113,7 +113,16 @@
     </div>
 </template>
 <script>
-    export default () => {
+    import { openSettings } from "../js/native.js";
+
+    export default (props, { $, $on, $f7 }) => {
+
+        $on('pageInit', (e, page) => {
+            page.$el.find('.update-permissions').on('click', function (e) {
+                openSettings();
+            });
+        });
+
         return $render;
     }
 </script>

@@ -124,7 +124,212 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+    updatePassword,
+    updateUserDetails,
+  } from "../js/api/auth.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+
+    $on('pageInit', async (e, page) => {
+      const user = await getSessionUser();
+      const isEmailVerified = user.email_verified ?? false;
+
+      if (!user) {
+        $f7.views.current.router.navigate('/login');
+        return;
+      }
+
+      // Example of how to fill in the form fields with the provided data
+      page.$el.find('input[name="first_name"]').val(user.first_name || '');
+      page.$el.find('input[name="last_name"]').val(user.last_name || '');
+      page.$el.find('input[name="email"]').val(user.email || '');
+      page.$el.find('input[name="tel_no"]').val(user.billing_info?.phone || '');
+
+      // if email is not verified, show the verify email button
+      if (isEmailVerified) {
+        $('#email-verify-span').remove();
+      }
+    });
+
+    $on('pageBeforeIn', async (e, page) => {
+      $(document).on('click', '#save-details', async function () {
+        var view = $f7.views.current;
+        const user = await getSessionUser();
+
+        // Get the values from the input fields
+        const firstName = $('input[name="first_name"]').val().trim();
+        const lastName = $('input[name="last_name"]').val().trim();
+        const email = $('input[name="email"]').val().trim();
+        const telNo = $('input[name="tel_no"]').val().trim();
+
+        // Validate the input fields
+        if (firstName === '') {
+          showToast('Please enter your first name', 'Error');
+          return;
+        }
+
+        if (lastName === '') {
+          showToast('Please enter your last name', 'Error');
+          return;
+        }
+
+        if (email === '') {
+          showToast('Please enter your email', 'Error');
+          return;
+        }
+
+        // Simple email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          showToast('Please enter a valid email address', 'Error');
+          return;
+        }
+
+        // Prepare the data for the API request
+        const requestData = {
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          phone: telNo,
+        };
+
+        // check if the request data is the same as userdata
+        let dirtied = false;
+
+        for (const key in requestData) {
+          if (key == 'phone') {
+            if (requestData[key] !== user.billing_info.phone) {
+              dirtied = true;
+              break;
+            }
+            continue;
+          }
+
+          if (requestData[key] !== user[key]) {
+            dirtied = true;
+            break;
+          }
+        }
+
+        if (!dirtied) {
+          return;
+        }
+
+        try {
+          $f7.preloader.show();
+
+          const response = await updateUserDetails(requestData, email !== user.email);
+
+          $f7.preloader.hide();
+
+          if (response && response.success) {
+            // showToast('Details updated successfully', 'Success');
+            showToast('Details updated successfully');
+            view.router.navigate('/profile/');
+            store.dispatch('updateUserDetails');
+            return;
+          }
+
+          throw new Error(response.message);
+        } catch (error) {
+          $f7.preloader.hide();
+          $f7.notification.create({
+            titleRightText: 'now',
+            subtitle: 'Oops, something went wrong',
+            text: error.message || 'Failed to update details',
+          }).open();
+        }
+      });
+
+      $(document).on('click', '#update_password', async function () {
+        var view = $f7.views.current;
+
+        // Get the values from the password input fields
+        const password = $('input[name="password"]').val().trim();
+        const current_password = $('input[name="current_password"]').val().trim();
+        const confirmPassword = $('input[name="confirm_password"]').val().trim();
+
+        if (current_password === '') {
+          showToast('Please enter your current password', 'Error');
+          return;
+        }
+
+        if (password.length < 8) {
+          showToast('Password must be at least 8 characters long.');
+          return;
+        }
+
+        // Check if password contains at least one lowercase letter
+        if (!/[a-z]/.test(password)) {
+          showToast('Password must contain at least one lowercase letter.');
+          return;
+        }
+
+        // Check if password contains at least one uppercase letter
+        if (!/[A-Z]/.test(password)) {
+          showToast('Password must contain at least one uppercase letter.');
+          return;
+        }
+
+        // Check if password contains at least one number
+        if (!/\d/.test(password)) {
+          showToast('Password must contain at least one number.');
+          return;
+        }
+
+        if (confirmPassword === '') {
+          showToast('Please confirm your password', 'Error');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showToast('Passwords do not match', 'Error');
+          return;
+        }
+
+        try {
+          $f7.preloader.show();
+
+          const response = await updatePassword(password, current_password);
+
+          $f7.preloader.hide();
+
+          if (response && response.success) {
+            showToast('Password updated successfully');
+            view.router.navigate('/profile/');
+            return;
+          }
+
+          throw new Error(response.message);
+        } catch (error) {
+          $f7.preloader.hide();
+          $f7.notification.create({
+            titleRightText: 'now',
+            subtitle: 'Oops, something went wrong',
+            text: error.message || 'Failed to update password',
+          }).open();
+        }
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#save-details');
+      $(document).off('click', '#update_password');
+    });
+
+    const showToast = (text, type = 'error') => {
+      $f7.toast.create({
+        text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: type === 'error' ? 'toast-error' : 'toast-success',
+      }).open();
+    };
+
     return $render;
   }
 </script>

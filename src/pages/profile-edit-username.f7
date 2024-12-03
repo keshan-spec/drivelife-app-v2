@@ -47,7 +47,112 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+    updateUsername
+  } from "../js/api/auth.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageInit', async (e, page) => {
+      page.$el.find('#lowercaseInput').on('input', function (event) {
+        this.value = this.value.toLowerCase();
+      });
+
+      const user = await getSessionUser();
+      if (!user || !user.id) {
+        $f7.views.current.router.navigate('/login');
+        return;
+      }
+
+      // Example of how to fill in the form fields with the provided data
+      page.$el.find('.profile-edit-view input[name="username"]').val(user.username || '');
+
+      if (user.can_update_username) {
+        // $('#username-editable').remove();
+        page.$el.find('#username-editable').remove();
+      } else {
+        page.$el.find('.profile-edit-view input[name="username"]').attr('disabled', 'disabled');
+        page.$el.find('#username-editable').text(`You can change your username in ${user.next_update_username} days`);
+      }
+    });
+
+    $on('pageBeforeIn', (e, page) => {
+      $(document).on('click', '#save-username', async function () {
+        var view = $f7.views.current;
+
+        const user = await getSessionUser();
+
+        if (!user.can_update_username) {
+          return;
+        }
+
+        const username = $('.profile-edit-view input[name="username"]').val();
+
+        if (username === '') {
+          showToast('Please enter a username', 'Error');
+          return;
+        }
+
+        // username can only have letters, numbers, and underscores
+        var usernamePattern = /^[a-zA-Z0-9_]+$/;
+        if (!usernamePattern.test(username)) {
+          showToast('Username can only contain letters, numbers, and underscores');
+          return;
+        }
+
+        // username must be at least 3 characters long
+        if (username.length < 3) {
+          showToast('Username must be at least 3 characters long');
+          return;
+        }
+
+        if (username === user.username) {
+          return;
+        }
+
+        try {
+          $f7.preloader.show();
+
+          const response = await updateUsername(username);
+
+          $f7.preloader.hide();
+
+          if (response && response.success) {
+            showToast('Username updated successfully', 'Success');
+            view.router.navigate('/profile/');
+
+            store.dispatch('updateUserDetails');
+          } else {
+            throw new Error(response.message);
+          }
+        } catch (error) {
+          $f7.preloader.hide();
+          $f7.notification.create({
+            titleRightText: 'now',
+            subtitle: 'Oops, something went wrong',
+            text: error.message || 'Failed to update username',
+          }).open();
+        }
+
+
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#save-username');
+    });
+
+    const showToast = (text, type = 'default') => {
+      $f7.toast.create({
+        text: text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: `toast-${type}`,
+      }).open();
+    };
+
     return $render;
   }
 </script>

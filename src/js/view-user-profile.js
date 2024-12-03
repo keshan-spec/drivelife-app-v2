@@ -90,8 +90,8 @@ $(document).on('click', '.user-follow-btn', async function () {
 });
 
 async function renderProfileData(cachedData, userId) {
-    // if (!refreshed && !cachedData) {
-    // }
+    var view = app.views.current;
+
     refreshed = false;
 
     if (!cachedData) {

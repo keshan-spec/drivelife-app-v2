@@ -1,5 +1,5 @@
-// export const API_URL = 'https://www.carevents.com/uk';
-export const API_URL = 'https://wordpress-889362-4267074.cloudwaysapps.com/uk';
+export const API_URL = 'https://www.carevents.com/uk';
+// export const API_URL = 'https://wordpress-889362-4267074.cloudwaysapps.com/uk';
 export const TIMEOUT_MS_LOW = 15 * 1000; // 15 seconds
 export const TIMEOUT_MS_HIGH = 30 * 1000; // 30 seconds
 export const TIMEOUT_MS_HIGHER = 60 * 1000; // 60 seconds
