@@ -95,6 +95,15 @@ $(document).on('click', '.toggle-password', function () {
 $(document).on('submit', 'form#sign-up-step1', async function (e) {
     e.preventDefault();
 
+    // store.dispatch('setRegisterData', {
+    //     email: "test@test.test",
+    //     password: ")eE7R6H2Vp$wpFS$uR@LNyzq",
+    //     username: "kteshtestte",
+    //     user_id: 65279
+    // });
+    // app.views.main.router.navigate('/signup-step2/');
+    // return;
+
     var firstName = $(this).find('input[name="first_name"]').val().trim();
     var lastName = $(this).find('input[name="last_name"]').val().trim();
     var email = $(this).find('input[name="email"]').val().trim();
@@ -348,62 +357,6 @@ $(document).on('submit', '#interest-selection-form', async function (e) {
         app.dialog.alert('An error occurred, please try again');
         return;
     }
-});
-
-const handleSignUpComplete = async (onLogin) => {
-    const registerData = store.getters.getRegisterData.value;
-
-    if (!registerData || !registerData.user_id || !registerData.email || !registerData.password) {
-        app.dialog.alert('An error occurred, please try again');
-        return;
-    }
-
-    try {
-        app.preloader.show();
-
-        const response = await verifyUser({
-            email: registerData.email,
-            password: registerData.password
-        });
-
-        app.preloader.hide();
-
-        if (!response || response.error) {
-            app.dialog.alert(response.error || 'Login failed, please try again');
-            app.views.main.router.navigate('/auth/');
-            loginButton.innerHTML = 'Next';
-            return;
-        }
-
-        if (response.success) {
-            await store.dispatch('login', {
-                token: response.token
-            });
-            onLogin();
-            return;
-        }
-    } catch (error) {
-        app.dialog.alert('Login failed, please try again');
-    }
-};
-
-// Signup complete
-$(document).on('click', '#signup-complete', async function (e) {
-    await handleSignUpComplete(() => {
-        // app.views.main.router.navigate('/');
-        // $('.start-link').click();
-        // reload page
-        window.location.reload();
-    });
-});
-
-$(document).on('click', '#signup-complete-car', async function (e) {
-    await handleSignUpComplete(() => {
-        window.localStorage.setItem('addVehicle', 'true');
-        app.views.main.router.navigate('/');
-
-        $('.start-link').click();
-    });
 });
 
 $(document).on('page:afterin', '.page[data-name="signup-step1"]', function (e) {

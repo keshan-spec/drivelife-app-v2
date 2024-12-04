@@ -91,7 +91,34 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+  } from "../js/api/auth.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageInit', (e, page) => {
+      page.$el.find('.garage-add-post').on('click', async function () {
+        const garageId = $(this).attr('data-garage-id');
+
+        if (!garageId) {
+          $f7.dialog.alert('Garage not found');
+          return;
+        }
+
+        const user = await getSessionUser();
+        if (user && user.id) {
+          store.dispatch('setCreatePostAssociations', {
+            association_id: garageId,
+            association_type: 'garage'
+          });
+          // $f7.views.current.router.navigate(`/post-add/?garage_id=${garageId}`);
+        } else {
+          $f7.dialog.alert('You must be logged in to add a post');
+        }
+      });
+    });
     return $render;
   }
 </script>

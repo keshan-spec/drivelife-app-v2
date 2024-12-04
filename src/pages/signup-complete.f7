@@ -25,7 +25,75 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    verifyUser
+  } from '../js/api/auth.js';
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageBeforeIn', (e, page) => {
+      // Signup complete
+      $(document).on('click', '#signup-complete', async function (e) {
+        await handleSignUpComplete(() => {
+          // $f7.views.main.router.navigate('/');
+          // $('.start-link').click();
+          // reload page
+          window.location.reload();
+        });
+      });
+
+      $(document).on('click', '#signup-complete-car', async function (e) {
+        await handleSignUpComplete(() => {
+          window.localStorage.setItem('addVehicle', 'true');
+          window.location.reload();
+          // $f7.views.main.router.navigate('/');
+        });
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#signup-complete');
+      $(document).off('click', '#signup-complete-car');
+    });
+
+    const handleSignUpComplete = async (onLogin) => {
+      const registerData = store.getters.getRegisterData.value;
+
+      if (!registerData || !registerData.user_id || !registerData.email || !registerData.password) {
+        $f7.dialog.alert('An error occurred, please try again');
+        return;
+      }
+
+      try {
+        $f7.preloader.show();
+
+        const response = await verifyUser({
+          email: registerData.email,
+          password: registerData.password
+        });
+
+        $f7.preloader.hide();
+
+        if (!response || response.error) {
+          $f7.dialog.alert(response.error || 'Login failed, please try again');
+          $f7.views.main.router.navigate('/auth/');
+          return;
+        }
+
+        if (response.success) {
+          await store.dispatch('login', {
+            token: response.token
+          });
+
+          onLogin();
+          return;
+        }
+      } catch (error) {
+        $f7.dialog.alert('Login failed, please try again');
+        $f7.preloader.hide();
+      }
+    };
     return $render;
   }
 </script>

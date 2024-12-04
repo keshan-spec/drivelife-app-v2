@@ -64,7 +64,7 @@
         </div>
 
         <div class="block">
-          <p>v3.2.5</p>
+          <p>v3.2.6</p>
         </div>
 
         <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
@@ -274,11 +274,18 @@
 
     const { store } = $f7;
 
+    const createPostAssociationsStore = store.getters.getCreatePostAssociations;
+
+    createPostAssociationsStore.onUpdated((data) => {
+      actionsGrid.open();
+      $('.add-post-btn').click();
+    });
+
     const openGrid = () => {
       actionsGrid.open();
     };
 
-    $on('pageBeforeIn', () => {
+    $on('pageBeforeIn', (e, page) => {
       $(document).on('click', '.view-profile', function (e) {
         $('.view-profile-link').click();
       });
@@ -335,7 +342,7 @@
         grid: true,
         buttons: [
           [{
-            text: '<div class="actions-grid-item">Add Post</div>',
+            text: '<div class="actions-grid-item add-post-btn">Add Post</div>',
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
               const isPostCreatingStore = store.getters.getIsPostCreating.value;
@@ -356,9 +363,11 @@
               }
 
               const response = await getGalleryPhotos();
+
               store.dispatch('setPostMedia', {
                 media: response
               });
+
               $f7.views.current.router.navigate('/post-add/');
             }
           },
