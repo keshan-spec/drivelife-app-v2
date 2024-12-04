@@ -227,6 +227,12 @@
         const mediaData = store.getters.getCreatePostMedia.value || [];
 
         let taggedEntities = taggedEntityStore.value || [];
+        const createPostAssociations = store.getters.getCreatePostAssociations.value || {
+            association_id: null,
+            association_type: null,
+        };
+
+        console.log('createPostAssociations', createPostAssociations);
 
         taggedEntityStore.onUpdated((data) => {
             taggedEntities = data || [];
@@ -277,6 +283,7 @@
         $on('pageBeforeIn', (e, page) => {
             // post button
             $(document).on('click', '#add-new-post', function () {
+
                 store.dispatch('setIsPostCreating', true);
 
                 addPost({
@@ -284,8 +291,8 @@
                     caption: contentData,
                     location: '',
                     taggedEntities: taggedEntities,
-                    association_id: null,
-                    association_type: null,
+                    association_id: createPostAssociations.association_id || null,
+                    association_type: createPostAssociations.association_type || null,
                     onUpload: () => {
                         // reset posts
                         store.dispatch('getMyPosts', {

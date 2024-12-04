@@ -74,6 +74,10 @@ const store = createStore({
     createPostMedia: null,
     createPostContent: null,
     createPostTaggedEntities: [],
+    createPostAssociations: {
+      association_id: null,
+      association_type: null,
+    },
     isPostCreating: false,
     user: null,
     posts: {
@@ -155,6 +159,11 @@ const store = createStore({
     myFollowers: [],
   },
   getters: {
+    getCreatePostAssociations({
+      state
+    }) {
+      return state.createPostAssociations;
+    },
     homeListenersInitialized({
       state
     }) {
@@ -317,6 +326,17 @@ const store = createStore({
     },
   },
   actions: {
+    setCreatePostAssociations({
+      state
+    }, {
+      association_id,
+      association_type
+    }) {
+      state.createPostAssociations = {
+        association_id: association_id,
+        association_type: association_type,
+      };
+    },
     setHomeListenersInitialized({
       state
     }, value) {

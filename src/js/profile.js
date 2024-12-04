@@ -619,8 +619,6 @@ $(document).on('page:init', '.page[data-name="profile-garage-vehicle-view"]', as
     return;
   }
 
-
-
   let cachedData = null;
   try {
     if (pathStore && pathStore.value[`/garage/${garageId}`]) {
@@ -761,26 +759,6 @@ async function updateProfilePage(data) {
 
 
     $('.garage-add-post').attr('data-garage-id', data.id);
-
-    $(document).on('click', '.garage-add-post', async function (e) {
-      const garageId = $(this).attr('data-garage-id');
-
-      if (!garageId) {
-        app.dialog.alert('Garage not found');
-        return;
-      }
-
-      const user = await getSessionUser();
-      if (user) {
-        sendRNMessage({
-          type: "createPost",
-          user_id: user.id,
-          page: 'profile-garage-post',
-          association_id: garageId,
-          association_type: 'garage',
-        });
-      }
-    });
   }
 
   // Update the ownership information

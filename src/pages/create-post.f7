@@ -53,10 +53,18 @@
 
 <script>
     export default (props, { $, $on, $f7 }) => {
-
         const { store } = $f7;
 
         $on('pageBeforeIn', (e, page) => {
+            const queryParams = e.detail.route.query || {};
+
+            if (queryParams.garage_id) {
+                store.dispatch('setCreatePostAssociations', {
+                    association_id: queryParams.garage_id,
+                    association_type: 'garage'
+                });
+            }
+
             const postMediaList = page.$el.find('.post-add-images .post-add-swiper');
 
             const mediaData = store.getters.getCreatePostMedia.value || [];
@@ -64,8 +72,6 @@
 
             // get text area
             const textArea = page.$el.find('.post-add-content textarea');
-            textArea.val(contentData);
-
             postMediaList.html(renderMedia(mediaData));
 
             page.$el.find('.swiper-slide .swiper-slide-image').forEach(img => {

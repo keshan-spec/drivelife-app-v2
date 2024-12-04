@@ -2,41 +2,6 @@ import { getSessionUser } from "./auth";
 import { API_URL } from "./consts";
 import { LocalNotifications } from '@capacitor/local-notifications';
 
-// const uploadFilesToCloudflareV2 = async (user_id, mediaList) => {
-//     try {
-//         const formData = new FormData();
-//         mediaList.forEach((file, index) => {
-//             formData.append(`media_data[${index}]`, file.base64); // Append each base64 string with an indexed key
-//         });
-
-//         formData.append('user_id', user_id);
-
-//         const response = await fetch(`${API_URL}/wp-json/app/v1/upload-media-cloudflare`, {
-//             method: "POST",
-//             body: formData,
-//         });
-
-//         const data = await response.json();
-
-//         if (response.status !== 200) {
-//             throw new Error("Failed to upload media");
-//         }
-
-//         if (!data || !data.success) {
-//             throw new Error(data.message || "Failed to upload media");
-//         }
-
-//         if (data.success && data.media_ids) {
-//             return data.media_ids;
-//         } else {
-//             throw new Error("Failed to upload media");
-//         }
-//     } catch (error) {
-//         console.log('Error uploading files to Cloudflare:', error.message);
-//         throw error;
-//     }
-// };
-
 const uploadSingleFileToCloudflare = async (user_id, file) => {
     try {
         const formData = new FormData();
@@ -75,7 +40,6 @@ const uploadFilesToCloudflareV2 = async (user_id, mediaList) => {
     }
 };
 
-
 export const addPost = async ({
     mediaList,
     caption,
@@ -111,10 +75,10 @@ export const addPost = async ({
         formData.append("media", JSON.stringify(media));
 
         if (association_id && association_type) {
-            if (association_type !== 'garage') {
-                formData.append("association_id", association_id);
-                formData.append("association_type", association_type);
-            }
+            // if (association_type !== 'garage') {
+            formData.append("association_id", association_id);
+            formData.append("association_type", association_type);
+            // }
         }
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/create-post`, {
