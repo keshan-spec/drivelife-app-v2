@@ -141,8 +141,6 @@ function displaySinglePost(post) {
   postsContainer.insertAdjacentHTML('beforeend', postItem);
 
   const elem = $('.media-post.single[data-post-id="' + post.id + '"]')[0];
-  console.log('Elem:', elem);
-
   const mc = new Hammer(elem);
 
   // listen to events...
