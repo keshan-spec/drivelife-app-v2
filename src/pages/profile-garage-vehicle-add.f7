@@ -25,7 +25,7 @@
 
         <div class="list list-strong-ios list-dividers-ios inset-ios">
           <div class="custom-file-upload" id="fileUpload">
-            <input type="file" id="fileuploadInput" name="vehicle_image" />
+            <input type="file" id="fileuploadInput" name="vehicle_image" accept="image/*" />
             <label for="fileuploadInput">
               <span>
                 <i class="icon f7-icons">cloud_upload</i>

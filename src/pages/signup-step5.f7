@@ -22,7 +22,7 @@
         <div class="block-title">Profile Image</div>
         <div class="list list-strong-ios list-dividers-ios inset-ios">
           <div class="custom-file-upload profile" id="fileUpload">
-            <input type="file" id="fileuploadInput" name="profile_image" />
+            <input type="file" id="fileuploadInput" name="profile_image" accept="image/*" />
             <label for="fileuploadInput">
             </label>
             <span>
@@ -35,7 +35,7 @@
         <div class="block-title">Cover Image</div>
         <div class="list list-strong-ios list-dividers-ios inset-ios">
           <div class="custom-file-upload cover" id="fileUpload">
-            <input type="file" id="fileuploadInput1" name="cover_image" />
+            <input type="file" id="fileuploadInput1" name="cover_image" accept="image/*" />
             <label for="fileuploadInput1">
             </label>
             <span>
