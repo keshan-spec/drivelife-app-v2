@@ -84,6 +84,8 @@
 
         const userStore = store.getters.user;
         const notificationsStore = store.getters.getNotifications;
+        const notificationCountStore = store.getters.getNotifCount;
+
         let notificationInterval;
 
         userStore.onUpdated((data) => {
@@ -139,7 +141,6 @@
                 console.log(error);
             }
 
-            // $f7.ptr.get('.notification-page.ptr-content').done();
             e.detail();
         });
 
@@ -244,6 +245,11 @@
             if (unreadNotificationIds.length > 0) {
                 store.dispatch('markNotificationsAsRead', unreadNotificationIds);
             }
+
+            document.querySelectorAll('.notification-count').forEach((el) => {
+                el.innerHTML = data;
+                el.style.display = data > 0 ? 'flex' : 'none';
+            });
 
             // remove event listeners
             $(document).off('click', '.toggle-follow');

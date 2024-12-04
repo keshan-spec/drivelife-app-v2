@@ -338,6 +338,13 @@
             text: '<div class="actions-grid-item">Add Post</div>',
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
+              const isPostCreatingStore = store.getters.getIsPostCreating.value;
+
+              if (isPostCreatingStore) {
+                $f7.dialog.alert('You are already creating a post. Please complete the post before creating a new one.');
+                return;
+              }
+
               // if (await isRunningOnWeb()) {
               //   $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
               //   return;

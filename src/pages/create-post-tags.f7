@@ -267,36 +267,10 @@
                 debouncedSearch($(this));
             });
 
-            // on tag delete
-            $(document).on('click', '.chip-delete', function () {
-                const id = $(this).data('id');
-                const index = taggedEntities.findIndex((tag) => tag.arr_idx == id);
-
-                if (index > -1) {
-                    taggedEntities.splice(index, 1);
-                    setTaggedData(taggedEntities, true);
-                }
-            });
-
             // on popup close
             $f7.on('popupClosed', function (popup) {
                 popup.$el.find('.search-tag').val('');
                 popup.$el.find('.result-list ul').html('');
-            });
-
-            $(document).on('click', '.tag-entity-btn', function () {
-                const id = $(this).data('id');
-                const type = $(this).data('type');
-                const name = $(this).data('name');
-
-                // get all tag-entity-btn with the data-id and change text to Tagged
-                $(`.tag-entity-btn[data-id="${id}"]`).text('Tagged');
-
-                handleTagClick({
-                    entity_id: id,
-                    type: type,
-                    name: name,
-                });
             });
         });
 
@@ -340,9 +314,7 @@
             contentData = store.getters.getCreatePostContent.value || '';
 
             renderTaggedEntities(taggedEntities);
-
             const postMediaList = page.$el.find('.post-add-images .post-add-tags-swiper');
-
             postMediaList.html(renderMedia(mediaData));
 
             page.$el.find('.swiper-slide .swiper-slide-image').forEach(img => {
@@ -368,6 +340,32 @@
             $f7.swiper.get('.post-add-tags-swiper').on('slideChange', function () {
                 activeImageIndex = this.activeIndex;
                 renderTaggedEntities(taggedEntities);
+            });
+
+            // on tag delete
+            $(document).on('click', '.chip-delete', function () {
+                const id = $(this).data('id');
+                const index = taggedEntities.findIndex((tag) => tag.arr_idx == id);
+
+                if (index > -1) {
+                    taggedEntities.splice(index, 1);
+                    setTaggedData(taggedEntities, true);
+                }
+            });
+
+            $(document).on('click', '.tag-entity-btn', function () {
+                const id = $(this).data('id');
+                const type = $(this).data('type');
+                const name = $(this).data('name');
+
+                // get all tag-entity-btn with the data-id and change text to Tagged
+                $(`.tag-entity-btn[data-id="${id}"]`).text('Tagged');
+
+                handleTagClick({
+                    entity_id: id,
+                    type: type,
+                    name: name,
+                });
             });
 
             // If user has garage, render it in car popup
