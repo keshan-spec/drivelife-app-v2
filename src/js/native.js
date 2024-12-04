@@ -157,6 +157,8 @@ export async function getGalleryPhotos() {
         resultType: CameraResultType.Uri,
         correctOrientation: true,
         presentationStyle: 'fullscreen',
+        width: 2000,
+        height: 2000,
         // source: CameraSource., // Camera, Photos or Prompt!
         limit: 5,
     });
@@ -186,12 +188,14 @@ async function getImageURI(photo) {
             return file.data;
         }
         else {
+            console.log('Running on web, fetching image URI', photo.webPath);
+
             // Fetch the photo, read as a blob, then convert to base64 format
-            const blob = await fetch(blobUrl).then((res) => res.blob());
+            const blob = await fetch(photo.webPath).then((res) => res.blob());
             return await convertBlobToBase64(blob);
         }
     } catch (error) {
-        alert('Error getting image URI: ' + JSON.stringify(error));
+        console.log('Error getting image URI', error);
     }
 }
 

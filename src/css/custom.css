@@ -2126,7 +2126,8 @@ swiper-container.event-listing {
     background: #AE9159 !important;
 }
 
-#link-profile {
+#link-profile,
+#unlink-profile {
     background: #ae9159 !important;
     border: 0 !important;
     color: #ffffff !important;

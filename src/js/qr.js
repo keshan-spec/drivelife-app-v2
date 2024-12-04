@@ -22,7 +22,6 @@ let defaultConfig = {
     fps: 60,
     showTorchButtonIfSupported: true,
     showZoomSliderIfSupported: true,
-    // aspectRatio: 1.7777778
 };
 
 const renderResult = (result) => {
@@ -126,49 +125,65 @@ export async function openQRModal() {
     );
 }
 
-// on link profile
-$(document).on('click', '#link-profile', async function () {
-    const result = store.getters.scannedData.value;
+// on routechange
+$(document).on('page:beforeout', function (e) {
+    unInitListeners();
+    initListners();
+});
 
-    if (result) {
-        const response = await handleLink(result);
-        if (response.status === 'error') {
-            store.dispatch('setScannedData', {
-                status: 'error',
-                message: response.text,
-                available: false
-            });
+initListners();
+
+function initListners() {
+    // on link profile
+    $(document).on('click', '#link-profile', async function () {
+        const result = store.getters.scannedData.value;
+
+        if (result) {
+            const response = await handleLink(result);
+            if (response.status === 'error') {
+                store.dispatch('setScannedData', {
+                    status: 'error',
+                    message: response.text,
+                    available: false
+                });
+            }
+
+            app.dialog.close();
+            app.dialog.alert(response.message);
+
+            // reset the scanned data
+            store.dispatch('setScannedData', null);
         }
+    });
 
+    // unlink profile
+    $(document).on('click', '#unlink-profile', async function () {
+        const result = store.getters.scannedData.value;
+        // close the modal
         app.dialog.close();
-        app.dialog.alert(response.message);
 
-        // reset the scanned data
-        store.dispatch('setScannedData', null);
-    }
-});
+        if (result) {
+            const response = await handleUnlink(result);
+            if (response.type === 'success') {
+                app.dialog.alert(response.text);
+            }
 
-// unlink profile
-$(document).on('click', '#unlink-profile', async function () {
-    const result = store.getters.scannedData.value;
-    // close the modal
-    app.dialog.close();
-
-    if (result) {
-        const response = await handleUnlink(result);
-        if (response.type === 'success') {
-            app.dialog.alert(response.text);
+            // reset the scanned data
+            store.dispatch('setScannedData', null);
         }
+    });
 
-        // reset the scanned data
-        store.dispatch('setScannedData', null);
-    }
-});
+    $(document).on('click', '.open-qr-modal', async function () {
+        console.log('Opening QR modal');
+        openQRModal();
+    });
+}
 
-$(document).on('click', '.open-qr-modal', async function () {
-    console.log('Opening QR modal');
-    openQRModal();
-});
+function unInitListeners() {
+    $(document).off('click', '#link-profile');
+    $(document).off('click', '#unlink-profile');
+    $(document).off('click', '.open-qr-modal');
+}
 
 store.getters.scannedData.onUpdated((data) => {
     if (html5QrCode) {

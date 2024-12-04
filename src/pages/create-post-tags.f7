@@ -308,7 +308,9 @@
                     }
                 });
 
-                $f7.views.current.router.navigate('/');
+                $f7.views.current.router.back($f7.views.current.history[0], {
+                    force: true,
+                });
             });
 
             contentData = store.getters.getCreatePostContent.value || '';

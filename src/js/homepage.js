@@ -579,7 +579,6 @@ $(document).on('page:beforein', '.page[data-name="home"], .page[data-name="post-
   initializeListeners();
 });
 
-
 $(document).on('page:beforeout', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
   const listenersInitialized = store.getters.homeListenersInitialized.value;
   if (!listenersInitialized) return; // Prevent multiple attachments

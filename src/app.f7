@@ -64,7 +64,7 @@
         </div>
 
         <div class="block">
-          <p>v3.2.1</p>
+          <p>v3.2.5</p>
         </div>
 
         <a class="logout-button"><i class="icon f7-icons">arrow_left_square</i> Logout</a>
@@ -363,10 +363,10 @@
             }
           },
           {
-            text: '<div class="actions-grid-item">Scan QR Code</div>',
-            icon: '<img src="/img/icon-qr-code.svg" width="48" style="max-width: 100%;"/>',
+            text: '<div class="actions-grid-item open-qr-modal">Scan QR Code</div>',
+            icon: '<img src="/img/icon-qr-code.svg" width="48" style="max-width: 100%;" class="open-qr-modal"/>',
             onClick: function () {
-              $('.open-qr-modal').click();
+              // $('.open-qr-modal').click();
             }
           },
           {

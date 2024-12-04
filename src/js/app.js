@@ -86,8 +86,6 @@ if (window.f7App !== undefined) {
           $('.init-loader').hide();
           $('.start-link').click();
         }
-
-        await handleQRCode();
       },
       pageInit: function (page) {
         if (page.name === 'profile') {
@@ -248,6 +246,11 @@ CapacitorApp.addListener('backButton', async () => {
       return false;
     } else if (view.history[0] == '/') {
       if (view.history.length > 1) {
+        // if routes have '/post-add/' or '/post-add-tags/ then dont go back
+        if (view.history.includes('/post-add/') || view.history.includes('/post-add-tags/')) {
+          return false;
+        }
+
         view.router.back();
         return false;
       } else {
@@ -272,6 +275,7 @@ CapacitorApp.addListener('backButton', async () => {
 CapacitorApp.addListener('appUrlOpen', async (data) => {
   const view = app.views.current;
   const url = data.url;
+
   let path = url.split('/').slice(3).join('/');
 
   // SSO with CarEvents
@@ -303,6 +307,15 @@ CapacitorApp.addListener('appUrlOpen', async (data) => {
     path = `/${path}`;
   }
 
+  // if path is /qr/8700279E
+  // redirect to the profile linked to the QR code
+  const isQrCode = path.includes('/qr/');
+  if (isQrCode) {
+    const qrCode = path.split('/').slice(-1)[0];
+    maybeRedirectToProfile(qrCode);
+    return;
+  }
+
   view.router.navigate(path);
 });
 
@@ -315,6 +328,7 @@ export function showToast(message, type = 'Message', position = 'bottom') {
   }).open();
 }
 
+/* Unused function */
 async function handleQRCode() {
   const deeplink = getQueryParameter('deeplink');
   if (deeplink) {
