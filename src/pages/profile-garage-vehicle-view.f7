@@ -95,8 +95,14 @@
     getSessionUser,
   } from "../js/api/auth.js";
 
+  import {
+    getGargeById,
+  } from "../js/api/garage.js";
+
   export default (props, { $, $on, $f7 }) => {
     const { store } = $f7;
+
+    var pathStore = store.getters.getPathData;
 
     $on('pageInit', (e, page) => {
       page.$el.find('.garage-add-post').on('click', async function () {
@@ -108,6 +114,7 @@
         }
 
         const user = await getSessionUser();
+
         if (user && user.id) {
           store.dispatch('setCreatePostAssociations', {
             association_id: garageId,
@@ -119,6 +126,134 @@
         }
       });
     });
+
+    $on('pageBeforeIn', async (e, page) => {
+      var garageId = e.detail.route.params.id;
+
+      if (!garageId) {
+        $f7.dialog.alert('Garage not found');
+        $f7.views.main.router.back();
+        return;
+      }
+
+      if (garageId == -1) {
+        return;
+      }
+
+      let cachedData = null;
+      try {
+        if (pathStore && pathStore.value[`/garage/${garageId}`]) {
+          cachedData = pathStore.value[`/garage/${garageId}`];
+        }
+      } catch (error) {
+        console.error('Error fetching cached data:', error);
+      }
+
+      if (cachedData) {
+        $('.loading-fullscreen.garage').hide();
+        store.dispatch('setGarageViewPosts', garageId, 1);
+        store.dispatch('setGarageViewTags', garageId, 1);
+        updateProfilePage(cachedData);
+        return;
+      }
+
+      $('.loading-fullscreen.garage').show();
+
+      const garage = await getGargeById(garageId);
+      if (!garage) {
+        $('.loading-fullscreen').hide();
+
+        $f7.dialog.alert('Garage not found');
+        $f7.views.main.router.back();
+        return;
+      }
+
+      $('.loading-fullscreen.garage').hide();
+
+      // Assuming `path` is a dynamic path like '/garage/2'
+      store.dispatch('setPathData', {
+        path: `/garage/${garageId}`,
+        data: garage,
+      });
+
+      // Call the function to update the page
+      updateProfilePage(garage);
+      store.dispatch('setGarageViewPosts', garageId, 1);
+      store.dispatch('setGarageViewTags', garageId, 1);
+    });
+
+    // Function to update the HTML with the data
+    async function updateProfilePage(data) {
+      const user = await getSessionUser();
+
+      // Update the cover photo
+      const coverPhotoElement = document.querySelector('.vehicle-profile-background');
+      if (coverPhotoElement) {
+        coverPhotoElement.style.backgroundImage = `url('${data.cover_photo}')`;
+      }
+
+      // Update the profile image
+      const profileImageElement = document.querySelector('.vehicle-profile-image');
+      if (profileImageElement) {
+        profileImageElement.style.backgroundImage = `url('${data.owner.profile_image || 'img/profile-placeholder.jpg'}')`;
+
+        let profile_link = `/profile-view/${data.owner_id}`;
+
+        if (user.id == data.owner_id) {
+          profile_link = '/profile/';
+          // add class view-profile
+          profileImageElement.classList.add('view-profile');
+        }
+
+        profileImageElement.setAttribute('href', profile_link);
+      }
+
+      // Update the vehicle make and model
+      const vehicleTitleElement = document.querySelector('.profile-garage-intro h1');
+      if (vehicleTitleElement) {
+        vehicleTitleElement.textContent = `${data.make} ${data.model}`;
+      }
+
+
+      const profileLinks = $('.profile-links-edit.garage');
+      if (profileLinks) {
+        const editLink = `<a class="profile-link" href="/profile-garage-vehicle-edit/${data.id}">Edit Vehicle</a>`;
+        const user = await getSessionUser();
+
+        if (data.owner_id == user.id) {
+          // check if the edit link is already present
+          if (!profileLinks.find('.profile-link[href="/profile-garage-vehicle-edit/' + data.id + '"]').length) {
+            profileLinks.prepend(editLink);
+          }
+        }
+
+
+        if (data.owner_id != user.id) {
+          if (data.allow_tagging != "1") {
+            $('.garage-add-post').hide();
+          }
+
+          $('.garage-add-post').text('Tag this vehicle');
+        }
+
+
+        $('.garage-add-post').attr('data-garage-id', data.id);
+      }
+
+      // Update the ownership information
+      const ownershipInfoElement = document.querySelector('.garage-owned-information');
+      if (ownershipInfoElement) {
+        const ownedUntilText = data.owned_until ? ` - ${data.owned_until}` : ' - Present';
+        ownershipInfoElement.textContent = `Owned from ${data.owned_since}${ownedUntilText}`;
+      }
+
+      // Update the vehicle description
+      const vehicleDescriptionElement = document.querySelector('.garage-vehicle-description');
+      if (vehicleDescriptionElement) {
+        vehicleDescriptionElement.textContent = data.short_description;
+      }
+    }
+
     return $render;
   }
 </script>

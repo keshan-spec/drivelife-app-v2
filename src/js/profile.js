@@ -2,18 +2,11 @@ import store from "./store.js";
 import app, {
   showToast
 } from "./app.js";
-import {
-  addVehicleToGarage,
-  deleteVehicleFromGarage,
-  getGargeById,
-  updateVehicleInGarage
-} from "./api/garage.js";
+
 import {
   getSessionUser
 } from "./api/auth.js";
-import {
-  sendRNMessage
-} from "./api/consts.js";
+
 import { removeFollower } from "./api/profile.js";
 import $ from 'dom7';
 
@@ -21,7 +14,6 @@ var garageStore = store.getters.myGarage;
 var myPostsStore = store.getters.myPosts;
 var myFollowersStore = store.getters.myFollowers;
 var myTagsStore = store.getters.myTags;
-var pathStore = store.getters.getPathData;
 var userStore = store.getters.user;
 var refreshed = false;
 
@@ -39,6 +31,8 @@ var currentGaragePostPage = 1;
 // Garage tags
 var totalGarageTagPages = 1;
 var currentGarageTagPage = 1;
+
+var garageUpdated = null;
 
 export function displayProfile(user, container = 'profile') {
   if (!user) {
@@ -421,11 +415,15 @@ $(document).on('click', '.remove-follower', async function (e) {
 
 userStore.onUpdated((user) => {
   displayProfile(user);
+  isFetchingPosts = false;
+  currentPostPage = 1;
+  currentFPostPage = 1;
 });
 
 garageStore.onUpdated((garage) => {
   // clear path data
   store.dispatch('clearPathData');
+  garageUpdated = garage;
   createGarageContent(garage, '.current-vehicles-list', '.past-vehicles-list');
 });
 
@@ -476,46 +474,6 @@ myTagsStore.onUpdated((data) => {
   }
 });
 
-$(document).on('page:init', '.page[data-name="profile-garage-vehicle-add"]', function (e) {
-  app.calendar.create({
-    inputEl: '#owned-from',
-    openIn: 'customModal',
-    header: true,
-    footer: true,
-    dateFormat: 'dd/mm/yyyy',
-    maxDate: new Date()
-  });
-
-  app.calendar.create({
-    inputEl: '#owned-to',
-    openIn: 'customModal',
-    header: true,
-    footer: true,
-    dateFormat: 'dd/mm/yyyy',
-    // minDate: new Date()
-  });
-});
-
-$(document).on('page:init', '.page[data-name="profile-garage-vehicle-edit"]', function (e) {
-  app.calendar.create({
-    inputEl: '#owned-from',
-    openIn: 'customModal',
-    header: true,
-    footer: true,
-    dateFormat: 'dd/mm/yyyy',
-    maxDate: new Date()
-  });
-
-  app.calendar.create({
-    inputEl: '#owned-to',
-    openIn: 'customModal',
-    header: true,
-    footer: true,
-    dateFormat: 'dd/mm/yyyy',
-    // minDate: new Date()
-  });
-});
-
 $(document).on('infinite', '.profile-landing-page.infinite-scroll-content', async function (e) {
   refreshed = false;
 
@@ -553,27 +511,6 @@ $(document).on('infinite', '.profile-landing-page.infinite-scroll-content', asyn
   }
 });
 
-$(document).on('ptr:refresh', '.profile-landing-page.ptr-content.my-profile', async function (e) {
-  refreshed = true;
-
-  try {
-    store.dispatch('clearPathData');
-
-    await store.dispatch('updateUserDetails');
-    await store.dispatch('getMyGarage');
-    await store.dispatch('getMyPosts', {
-      page: 1,
-      clear: true
-    });
-    await store.dispatch('getMyTags', {
-      page: 1,
-      clear: true
-    });
-  } catch (error) {
-    console.log(error);
-  }
-  app.ptr.get('.profile-landing-page.ptr-content.my-profile').done();
-});
 
 $(document).on('page:beforein', '.page[data-name="profile"]', async function (e) {
   const user = await getSessionUser();
@@ -599,6 +536,12 @@ $(document).on('page:beforein', '.page[data-name="profile"]', async function (e)
     }
   }
 
+  if (garageUpdated) {
+    createGarageContent(garageUpdated, '.current-vehicles-list', '.past-vehicles-list');
+  }
+
+  garageUpdated = null;
+
   app.popup.create({
     el: '.links-popup',
     swipeToClose: 'to-bottom'
@@ -606,61 +549,6 @@ $(document).on('page:beforein', '.page[data-name="profile"]', async function (e)
 });
 
 // ------- Garage Views -------
-$(document).on('page:init', '.page[data-name="profile-garage-vehicle-view"]', async function (e) {
-  var garageId = e.detail.route.params.id;
-
-  if (!garageId) {
-    app.dialog.alert('Garage not found');
-    app.views.main.router.back();
-    return;
-  }
-
-  if (garageId == -1) {
-    return;
-  }
-
-  let cachedData = null;
-  try {
-    if (pathStore && pathStore.value[`/garage/${garageId}`]) {
-      cachedData = pathStore.value[`/garage/${garageId}`];
-    }
-  } catch (error) {
-    console.error('Error fetching cached data:', error);
-  }
-
-  if (cachedData) {
-    $('.loading-fullscreen.garage').hide();
-    store.dispatch('setGarageViewPosts', garageId, 1);
-    store.dispatch('setGarageViewTags', garageId, 1);
-    updateProfilePage(cachedData);
-    return;
-  }
-
-  $('.loading-fullscreen.garage').show();
-
-  const garage = await getGargeById(garageId);
-  if (!garage) {
-    $('.loading-fullscreen').hide();
-
-    app.dialog.alert('Garage not found');
-    app.views.main.router.back();
-    return;
-  }
-
-  $('.loading-fullscreen.garage').hide();
-
-  // Assuming `path` is a dynamic path like '/garage/2'
-  store.dispatch('setPathData', {
-    path: `/garage/${garageId}`,
-    data: garage,
-  });
-
-  // Call the function to update the page
-  updateProfilePage(garage);
-  store.dispatch('setGarageViewPosts', garageId, 1);
-  store.dispatch('setGarageViewTags', garageId, 1);
-});
-
 store.getters.getGarageViewPosts.onUpdated((data) => {
   if (data && data.data) {
     const posts = data.data;
@@ -707,494 +595,7 @@ store.getters.getGarageViewTags.onUpdated((data) => {
   }
 });
 
-// Function to update the HTML with the data
-async function updateProfilePage(data) {
-  const user = await getSessionUser();
-
-  // Update the cover photo
-  const coverPhotoElement = document.querySelector('.vehicle-profile-background');
-  if (coverPhotoElement) {
-    coverPhotoElement.style.backgroundImage = `url('${data.cover_photo}')`;
-  }
-
-  // Update the profile image
-  const profileImageElement = document.querySelector('.vehicle-profile-image');
-  if (profileImageElement) {
-    profileImageElement.style.backgroundImage = `url('${data.owner.profile_image || 'img/profile-placeholder.jpg'}')`;
-
-    let profile_link = `/profile-view/${data.owner_id}`;
-
-    if (user.id == data.owner_id) {
-      profile_link = '/profile/';
-      // add class view-profile
-      profileImageElement.classList.add('view-profile');
-    }
-
-    profileImageElement.setAttribute('href', profile_link);
-  }
-  // Update the vehicle make and model
-  const vehicleTitleElement = document.querySelector('.profile-garage-intro h1');
-  if (vehicleTitleElement) {
-    vehicleTitleElement.textContent = `${data.make} ${data.model}`;
-  }
-
-
-  const profileLinks = $('.profile-links-edit.garage');
-  if (profileLinks) {
-    const editLink = `<a class="profile-link" href="/profile-garage-vehicle-edit/${data.id}">Edit Vehicle</a>`;
-    const user = await getSessionUser();
-
-    if (data.owner_id == user.id) {
-      profileLinks.prepend(editLink);
-    }
-
-
-    if (data.owner_id != user.id) {
-      if (data.allow_tagging != "1") {
-        $('.garage-add-post').hide();
-      }
-
-      $('.garage-add-post').text('Tag this vehicle');
-    }
-
-
-    $('.garage-add-post').attr('data-garage-id', data.id);
-  }
-
-  // Update the ownership information
-  const ownershipInfoElement = document.querySelector('.garage-owned-information');
-  if (ownershipInfoElement) {
-    const ownedUntilText = data.owned_until ? ` - ${data.owned_until}` : ' - Present';
-    ownershipInfoElement.textContent = `Owned from ${data.owned_since}${ownedUntilText}`;
-  }
-
-  // Update the vehicle description
-  const vehicleDescriptionElement = document.querySelector('.garage-vehicle-description');
-  if (vehicleDescriptionElement) {
-    vehicleDescriptionElement.textContent = data.short_description;
-  }
-}
-
 $(document).on('page:init', '.page[data-name="profile-garage-edit"]', async function (e) {
   const garage = garageStore.value;
   createGarageContent(garage, '#garage-edit-current-list', '#garage-edit-past-list');
-});
-
-$(document).on('page:init', '.page[data-name="profile-garage-vehicle-edit"]', async function (e) {
-  var garageId = e.detail.route.params.id;
-  var view = app.views.current;
-
-  if (!garageId) {
-    app.dialog.alert('Garage not found');
-    view.router.back(view.history[0], {
-      force: true
-    });
-    return;
-  }
-
-  let data = null;
-  try {
-    if (pathStore && pathStore.value[`/garage/${garageId}`]) {
-      data = pathStore.value[`/garage/${garageId}`];
-    }
-  } catch (error) {
-    console.error('Error fetching cached data:', error);
-  }
-
-  if (!data) {
-    $('.loading-fullscreen').show();
-    const garage = await getGargeById(garageId);
-
-    if (!garage) {
-      app.dialog.alert('Garage not found');
-      view.router.back(view.history[0], {
-        force: true
-      });
-      return;
-    }
-
-    data = garage;
-    // Assuming `path` is a dynamic path like '/garage/2'
-    store.dispatch('setPathData', {
-      path: `/garage/${garageId}`,
-      data: data,
-    });
-  }
-
-  $('.loading-fullscreen').hide();
-
-  // check if user is the owner of the garage
-  const user = await getSessionUser();
-  if (data.owner_id != user.id) {
-    app.dialog.alert('You are not authorized to edit this vehicle');
-    view.router.back(view.history[0], {
-      force: true
-    });
-    return;
-  }
-
-  document.querySelector('input[name="garage_id"]').value = garageId;
-
-  // Populate form fields with garage data
-  document.querySelector('select[name="vehicle_make"]').value = data.make;
-  document.querySelector('input[name="vehicle_model"]').value = data.model;
-  document.querySelector('input[name="vehicle_variant"]').value = data.variant;
-  document.querySelector('input[name="vehicle_reg"]').value = data.registration;
-  document.querySelector('input[name="vehicle_colour"]').value = data.colour;
-  document.querySelector('input[name="vehicle_owned_from"]').value = data.owned_since;
-  document.querySelector('input[name="vehicle_owned_to"]').value = data.owned_until || '';
-  document.querySelector('input[name="vehicle_tagging"]').checked = data.allow_tagging === "1";
-  document.querySelector('textarea[name="vehicle_description"]').value = data.short_description || '';
-
-  // If a cover photo exists, use it as the background image of the upload label
-  if (data.cover_photo) {
-    document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${data.cover_photo}')`;
-    document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
-  }
-
-  // Set vehicle ownership and toggle the "Owned To" date picker
-  const ownershipSelect = document.querySelector('select[name="vehicle_ownership"]');
-
-  const toggleOwnedToDatePicker = () => {
-    const ownedToInput = document.querySelector('input[name="vehicle_owned_to"]');
-    const ownedToBContainer = document.querySelector('#owned-to-block');
-    if (ownershipSelect.value === "current") { // Current Vehicle
-      ownedToBContainer.style.display = 'none';
-      ownedToInput.value = '';
-    } else {
-      ownedToBContainer.style.display = 'block';
-    }
-  };
-
-  // Initially set the visibility based on the garage data
-  const isPrimary = data.primary_car === "1" ? true : false;
-  const hasOwndedTo = data.owned_until && data.owned_until.length > 1 ? true : false;
-  ownershipSelect.value = hasOwndedTo ? "past" : "current";
-  toggleOwnedToDatePicker();
-
-  // Attach event listener to toggle visibility when ownership type changes
-  ownershipSelect.addEventListener('change', toggleOwnedToDatePicker);
-
-  // input vehicle_image
-  $(document).on('change', 'input#fileuploadInput', function (e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
-      document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
-    };
-
-    reader.readAsDataURL(file);
-  });
-
-  // #delete-vehicle on click
-  $(document).on('click', '#delete-vehicle', async function (e) {
-    app.dialog.confirm('Are you sure you want to delete this vehicle?', async function () {
-      try {
-        app.preloader.show();
-
-        const response = await deleteVehicleFromGarage(garageId);
-
-        if (!response || !response.success) {
-          throw new Error('Failed to delete vehicle');
-        }
-
-        app.preloader.hide();
-
-        showToast('Vehicle deleted successfully');
-
-        await store.dispatch('getMyGarage');
-        view.router.back('/profile-garage-edit/', {
-          force: true
-        });
-
-      } catch (error) {
-        console.log(error);
-        app.preloader.hide();
-
-        app.notification.create({
-          titleRightText: 'now',
-          subtitle: 'Oops, something went wrong',
-          text: error.message || 'Failed to delete vehicle',
-        }).open();
-      }
-    });
-  });
-});
-
-function parseDate(dateString) {
-  const parts = dateString.split('/');
-  return new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM, DD
-}
-
-// submit-vehicle-form
-$(document).on('click', '#submit-vehicle-form', async function (e) {
-  var view = app.views.current;
-
-  // form data
-  const form = $('form#vehicleForm');
-
-  // values
-  const garageId = form.find('input[name="garage_id"]').val();
-
-  const make = form.find('select[name="vehicle_make"]').val();
-  const model = form.find('input[name="vehicle_model"]').val();
-  const variant = form.find('input[name="vehicle_variant"]').val();
-  const reg = form.find('input[name="vehicle_reg"]').val();
-  const colour = form.find('input[name="vehicle_colour"]').val();
-  const description = form.find('textarea[name="vehicle_description"]').val();
-
-  const owned_from = form.find('input[name="vehicle_owned_from"]').val();
-  const owned_to = form.find('input[name="vehicle_owned_to"]').val();
-
-  const primary_car = form.find('select[name="vehicle_ownership"]').val();
-  const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
-
-  const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
-
-  if (!make || make === "0") {
-    showToast('Please select a vehicle make');
-    return;
-  }
-
-  if (!model) {
-    showToast('Please enter a vehicle model');
-    return;
-  }
-
-  // if (!owned_from) {
-  //   showToast('Please enter the date you owned the vehicle from')
-  //   return
-  // }
-
-  // // if primary_car is past, owned_to is required
-  // if (primary_car === "past" && !owned_to) {
-  //   showToast('Please enter the date you owned the vehicle to')
-  //   return
-  // }
-
-  if (owned_to && owned_from) {
-    const ownedFromDate = parseDate(owned_from.trim());
-    const ownedToDate = parseDate(owned_to.trim());
-
-    if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
-      showToast('One or both of the dates are invalid.');
-      return;
-    }
-
-    if (ownedToDate < ownedFromDate) {
-      showToast('Owned to date cannot be less than owned from date');
-      return;
-    }
-  }
-
-  let base64 = null;
-
-  if (cover_image) {
-    // Wrap the FileReader in a Promise to wait for it to complete
-    base64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(cover_image);
-
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Failed to read image as base64'));
-    });
-  }
-
-  try {
-    app.preloader.show();
-
-    const response = await updateVehicleInGarage({
-      make,
-      model,
-      variant,
-      registration: reg,
-      colour,
-      ownedFrom: owned_from,
-      ownedTo: owned_to,
-      primary_car,
-      allow_tagging,
-      cover_photo: base64,
-      vehicle_period: primary_car,
-      description
-    },
-      garageId
-    );
-
-    if (!response || !response.success) {
-      throw new Error('Failed to update vehicle');
-    }
-
-    app.preloader.hide();
-    showToast('Vehicle updated successfully');
-
-    // refresh garage
-    await store.dispatch('getMyGarage');
-
-    view.router.back(view.history[0], {
-      force: true
-    });
-  } catch (error) {
-    app.preloader.hide();
-    app.notification.create({
-      titleRightText: 'now',
-      subtitle: 'Oops, something went wrong',
-      text: error.message || 'Failed to update vehicle',
-    }).open();
-  }
-});
-
-$(document).on('page:init', '.page[data-name="profile-garage-vehicle-add"]', async function (e) {
-  const toggleOwnedToDatePicker = (e) => {
-    const ownedToInput = document.querySelector('input[name="vehicle_owned_to"]');
-    const ownedToBContainer = document.querySelector('#owned-to-block');
-
-    const value = e.target.value;
-
-    if (value === "current") { // Current Vehicle
-      ownedToBContainer.style.display = 'none';
-      ownedToInput.value = '';
-    } else {
-      ownedToBContainer.style.display = 'block';
-    }
-  };
-
-  $(document).on('change', 'select[name="vehicle_ownership"]', toggleOwnedToDatePicker);
-
-  // input vehicle_image
-  $(document).on('change', 'input[name="vehicle_image"]', function (e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
-      document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
-    };
-
-    reader.readAsDataURL(file);
-  });
-});
-
-$(document).on('click', '#submit-add-vehicle-form', async function (e) {
-  var view = app.views.current;
-
-  const form = $('form#addVehicleForm');
-
-  // values
-  const make = form.find('select[name="vehicle_make"]').val();
-  const model = form.find('input[name="vehicle_model"]').val();
-  const variant = form.find('input[name="vehicle_variant"]').val();
-  const reg = form.find('input[name="vehicle_reg"]').val();
-  const colour = form.find('input[name="vehicle_colour"]').val();
-  const description = form.find('textarea[name="vehicle_description"]').val();
-
-  const owned_from = form.find('input[name="vehicle_owned_from"]').val();
-  const owned_to = form.find('input[name="vehicle_owned_to"]').val();
-
-  const primary_car = form.find('select[name="vehicle_ownership"]').val();
-  const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
-
-  const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
-
-  if (!make || make === "0") {
-    showToast('Please select a vehicle make');
-    return;
-  }
-
-  if (!model) {
-    showToast('Please enter a vehicle model');
-    return;
-  }
-
-  // if (!reg) {
-  //   app.dialog.alert('Please enter a vehicle registration number')
-  //   return
-  // }
-
-  // if (!owned_from) {
-  //   app.dialog.alert('Please enter the date you owned the vehicle from')
-  //   return
-  // }
-
-  if (owned_to && owned_from) {
-    const ownedFromDate = parseDate(owned_from.trim());
-    const ownedToDate = parseDate(owned_to.trim());
-
-    if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
-      showToast('One or both of the dates are invalid.');
-      return;
-    }
-
-    if (ownedToDate < ownedFromDate) {
-      showToast('Owned to date cannot be less than owned from date');
-      return;
-    }
-  }
-
-  // if primary_car is past, owned_to is required
-  if (primary_car === "past" && !owned_to) {
-    showToast('Please enter the date you owned the vehicle to');
-
-    return;
-  }
-
-  if (!cover_image) {
-    showToast('Please upload a cover image');
-    return;
-  }
-
-  let base64 = null;
-
-  if (cover_image) {
-    // Wrap the FileReader in a Promise to wait for it to complete
-    base64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(cover_image);
-
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Failed to read image as base64'));
-    });
-  }
-
-  try {
-    app.preloader.show();
-
-    const response = await addVehicleToGarage({
-      make,
-      model,
-      variant,
-      registration: reg,
-      colour,
-      ownedFrom: owned_from,
-      ownedTo: owned_to,
-      primary_car,
-      allow_tagging,
-      cover_photo: base64,
-      vehicle_period: primary_car,
-      description
-    });
-
-    if (!response || !response.success) {
-      throw new Error('Failed to update vehicle');
-    }
-
-    app.preloader.hide();
-
-    store.dispatch('getMyGarage');
-    showToast('Vehicle added successfully');
-
-    view.router.navigate(`/profile-garage-vehicle-view/${response.id}`, {
-      force: true
-    });
-  } catch (error) {
-    app.preloader.hide();
-
-    showToast(error.message || 'Failed to add vehicle');
-    // app.notification.create({
-    //   titleRightText: 'now',
-    //   subtitle: 'Oops, something went wrong',
-    //   text: error.message || 'Failed to add vehicle',
-    // }).open()
-  }
 });

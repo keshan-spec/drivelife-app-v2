@@ -252,7 +252,314 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+  } from "../js/api/auth.js";
+
+  import {
+    deleteVehicleFromGarage,
+    getGargeById,
+    updateVehicleInGarage
+  } from "../js/api/garage.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    var pathStore = store.getters.getPathData;
+
+    $on('pageInit', (e, page) => {
+      $f7.calendar.create({
+        inputEl: '#owned-from',
+        openIn: 'customModal',
+        header: true,
+        footer: true,
+        dateFormat: 'dd/mm/yyyy',
+        maxDate: new Date()
+      });
+
+      $f7.calendar.create({
+        inputEl: '#owned-to',
+        openIn: 'customModal',
+        header: true,
+        footer: true,
+        dateFormat: 'dd/mm/yyyy',
+      });
+
+      // input vehicle_image
+      page.$el.find('input#fileuploadInput').on('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
+          document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
+        };
+
+        reader.readAsDataURL(file);
+      });
+    });
+
+    $on('pageBeforeIn', async (e, page) => {
+      var garageId = e.detail.route.params.id;
+      var view = $f7.views.current;
+
+      if (!garageId) {
+        $f7.dialog.alert('Garage not found');
+        view.router.back(view.history[0], {
+          force: true
+        });
+        return;
+      }
+
+      let data = null;
+      try {
+        if (pathStore && pathStore.value[`/garage/${garageId}`]) {
+          data = pathStore.value[`/garage/${garageId}`];
+        }
+      } catch (error) {
+        console.error('Error fetching cached data:', error);
+      }
+
+      if (!data) {
+        $('.loading-fullscreen').show();
+        const garage = await getGargeById(garageId);
+
+        if (!garage) {
+          $f7.dialog.alert('Garage not found');
+          view.router.back(view.history[0], {
+            force: true
+          });
+          return;
+        }
+
+        data = garage;
+        // Assuming `path` is a dynamic path like '/garage/2'
+        store.dispatch('setPathData', {
+          path: `/garage/${garageId}`,
+          data: data,
+        });
+      }
+
+      $('.loading-fullscreen').hide();
+
+      // check if user is the owner of the garage
+      const user = await getSessionUser();
+
+      if (data.owner_id != user.id) {
+        $f7.dialog.alert('You are not authorized to edit this vehicle');
+        view.router.back(view.history[0], {
+          force: true
+        });
+        return;
+      }
+
+
+      page.$el.find('input[name="garage_id"]').val(garageId);
+      // document.querySelector('input[name="garage_id"]').value = garageId;
+
+      // Populate form fields with garage data
+      page.$el.find('select[name="vehicle_make"]').val(data.make);
+      page.$el.find('input[name="vehicle_model"]').val(data.model);
+      page.$el.find('input[name="vehicle_variant"]').val(data.variant);
+      page.$el.find('input[name="vehicle_reg"]').val(data.registration);
+      page.$el.find('input[name="vehicle_colour"]').val(data.colour);
+      page.$el.find('input[name="vehicle_owned_from"]').val(data.owned_since);
+      page.$el.find('input[name="vehicle_owned_to"]').val(data.owned_until || '');
+      page.$el.find('input[name="vehicle_tagging"]').prop('checked', data.allow_tagging === "1");
+      page.$el.find('textarea[name="vehicle_description"]').val(data.short_description || '');
+
+      // If a cover photo exists, use it as the background image of the upload label
+      if (data.cover_photo) {
+        page.$el.find('.custom-file-upload label').css('background-image', `url('${data.cover_photo}')`);
+        page.$el.find('.custom-file-upload label').css('background-size', 'cover');
+      }
+
+      // Set vehicle ownership and toggle the "Owned To" date picker
+      const ownershipSelect = document.querySelector('select[name="vehicle_ownership"]');
+
+      const toggleOwnedToDatePicker = () => {
+        const ownedToInput = document.querySelector('input[name="vehicle_owned_to"]');
+        const ownedToBContainer = document.querySelector('#owned-to-block');
+        if (ownershipSelect.value === "current") { // Current Vehicle
+          ownedToBContainer.style.display = 'none';
+          ownedToInput.value = '';
+        } else {
+          ownedToBContainer.style.display = 'block';
+        }
+      };
+
+      // Initially set the visibility based on the garage data
+      const isPrimary = data.primary_car === "1" ? true : false;
+      const hasOwndedTo = data.owned_until && data.owned_until.length > 1 ? true : false;
+      ownershipSelect.value = hasOwndedTo ? "past" : "current";
+      toggleOwnedToDatePicker();
+
+      // Attach event listener to toggle visibility when ownership type changes
+      ownershipSelect.addEventListener('change', toggleOwnedToDatePicker);
+    });
+
+    $on('pageBeforeIn', (e, page) => {
+      var garageId = e.detail.route.params.id;
+      var view = $f7.views.current;
+
+      $(document).on('click', '#delete-vehicle', async function (e) {
+        $f7.dialog.confirm('Are you sure you want to delete this vehicle?', async function () {
+          try {
+            $f7.preloader.show();
+
+            const response = await deleteVehicleFromGarage(garageId);
+
+            if (!response || !response.success) {
+              throw new Error('Failed to delete vehicle');
+            }
+
+            $f7.preloader.hide();
+
+            showToast('Vehicle deleted successfully');
+
+            await store.dispatch('getMyGarage');
+            view.router.back('/profile-garage-edit/', {
+              force: true
+            });
+
+          } catch (error) {
+            console.log(error);
+            $f7.preloader.hide();
+
+            $f7.notification.create({
+              titleRightText: 'now',
+              subtitle: 'Oops, something went wrong',
+              text: error.message || 'Failed to delete vehicle',
+            }).open();
+          }
+        });
+      });
+
+      $(document).on('click', '#submit-vehicle-form', async function (e) {
+        var view = $f7.views.current;
+
+        // form data
+        const form = $('form#vehicleForm');
+
+        // values
+        const garageId = form.find('input[name="garage_id"]').val();
+
+        const make = form.find('select[name="vehicle_make"]').val();
+        const model = form.find('input[name="vehicle_model"]').val();
+        const variant = form.find('input[name="vehicle_variant"]').val();
+        const reg = form.find('input[name="vehicle_reg"]').val();
+        const colour = form.find('input[name="vehicle_colour"]').val();
+        const description = form.find('textarea[name="vehicle_description"]').val();
+
+        const owned_from = form.find('input[name="vehicle_owned_from"]').val();
+        const owned_to = form.find('input[name="vehicle_owned_to"]').val();
+
+        const primary_car = form.find('select[name="vehicle_ownership"]').val();
+        const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
+
+        const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
+
+        if (!make || make === "0") {
+          showToast('Please select a vehicle make');
+          return;
+        }
+
+        if (!model) {
+          showToast('Please enter a vehicle model');
+          return;
+        }
+
+        if (owned_to && owned_from) {
+          const ownedFromDate = parseDate(owned_from.trim());
+          const ownedToDate = parseDate(owned_to.trim());
+
+          if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
+            showToast('One or both of the dates are invalid.');
+            return;
+          }
+
+          if (ownedToDate < ownedFromDate) {
+            showToast('Owned to date cannot be less than owned from date');
+            return;
+          }
+        }
+
+        let base64 = null;
+
+        if (cover_image) {
+          // Wrap the FileReader in a Promise to wait for it to complete
+          base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(cover_image);
+
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Failed to read image as base64'));
+          });
+        }
+
+        try {
+          $f7.preloader.show();
+
+          const response = await updateVehicleInGarage({
+            make,
+            model,
+            variant,
+            registration: reg,
+            colour,
+            ownedFrom: owned_from,
+            ownedTo: owned_to,
+            primary_car,
+            allow_tagging,
+            cover_photo: base64,
+            vehicle_period: primary_car,
+            description
+          },
+            garageId
+          );
+
+          if (!response || !response.success) {
+            throw new Error('Failed to update vehicle');
+          }
+
+          $f7.preloader.hide();
+          showToast('Vehicle updated successfully');
+
+          // refresh garage
+          await store.dispatch('getMyGarage');
+
+          view.router.back(view.history[0], {
+            force: true
+          });
+        } catch (error) {
+          $f7.preloader.hide();
+          $f7.notification.create({
+            titleRightText: 'now',
+            subtitle: 'Oops, something went wrong',
+            text: error.message || 'Failed to update vehicle',
+          }).open();
+        }
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#delete-vehicle');
+      $(document).off('click', '#submit-vehicle-form');
+    });
+
+    function parseDate(dateString) {
+      const parts = dateString.split('/');
+      return new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM, DD
+    }
+
+    const showToast = (text, type = 'default') => {
+      $f7.toast.create({
+        text: text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: `toast-${type}`,
+      }).open();
+    };
+
     return $render;
   }
 </script>

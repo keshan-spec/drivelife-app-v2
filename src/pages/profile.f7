@@ -213,7 +213,29 @@
   </div>
 </template>
 <script>
-  export default () => {
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('ptr:refresh', async (e) => {
+      try {
+        store.dispatch('clearPathData');
+
+        await store.dispatch('updateUserDetails');
+        await store.dispatch('getMyGarage');
+        await store.dispatch('getMyPosts', {
+          page: 1,
+          clear: true
+        });
+        await store.dispatch('getMyTags', {
+          page: 1,
+          clear: true
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      e.detail();
+    });
+
     return $render;
   }
 </script>

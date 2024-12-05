@@ -233,7 +233,188 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    addVehicleToGarage,
+  } from "../js/api/garage.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageInit', (e, page) => {
+      $f7.calendar.create({
+        inputEl: '#owned-from',
+        openIn: 'customModal',
+        header: true,
+        footer: true,
+        dateFormat: 'dd/mm/yyyy',
+        maxDate: new Date()
+      });
+
+      $f7.calendar.create({
+        inputEl: '#owned-to',
+        openIn: 'customModal',
+        header: true,
+        footer: true,
+        dateFormat: 'dd/mm/yyyy',
+      });
+
+      page.$el.find('select[name="vehicle_ownership"]').on('change', toggleOwnedToDatePicker);
+
+      // input vehicle_image
+      page.$el.find('input[name="vehicle_image"]').on('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
+          document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
+        };
+
+        reader.readAsDataURL(file);
+      });
+    });
+
+    $on('pageBeforeIn', (e, page) => {
+      $(document).on('click', '#submit-add-vehicle-form', async function (e) {
+        var view = $f7.views.current;
+
+        const form = $('form#addVehicleForm');
+
+        // values
+        const make = form.find('select[name="vehicle_make"]').val();
+        const model = form.find('input[name="vehicle_model"]').val();
+        const variant = form.find('input[name="vehicle_variant"]').val();
+        const reg = form.find('input[name="vehicle_reg"]').val();
+        const colour = form.find('input[name="vehicle_colour"]').val();
+        const description = form.find('textarea[name="vehicle_description"]').val();
+
+        const owned_from = form.find('input[name="vehicle_owned_from"]').val();
+        const owned_to = form.find('input[name="vehicle_owned_to"]').val();
+
+        const primary_car = form.find('select[name="vehicle_ownership"]').val();
+        const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
+
+        const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
+
+        if (!make || make === "0") {
+          showToast('Please select a vehicle make');
+          return;
+        }
+
+        if (!model) {
+          showToast('Please enter a vehicle model');
+          return;
+        }
+
+        if (owned_to && owned_from) {
+          const ownedFromDate = parseDate(owned_from.trim());
+          const ownedToDate = parseDate(owned_to.trim());
+
+          if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
+            showToast('One or both of the dates are invalid.');
+            return;
+          }
+
+          if (ownedToDate < ownedFromDate) {
+            showToast('Owned to date cannot be less than owned from date');
+            return;
+          }
+        }
+
+        // if primary_car is past, owned_to is required
+        if (primary_car === "past" && !owned_to) {
+          showToast('Please enter the date you owned the vehicle to');
+          return;
+        }
+
+        if (!cover_image) {
+          showToast('Please upload a cover image');
+          return;
+        }
+
+        let base64 = null;
+
+        if (cover_image) {
+          // Wrap the FileReader in a Promise to wait for it to complete
+          base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(cover_image);
+
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Failed to read image as base64'));
+          });
+        }
+
+        try {
+          $f7.preloader.show();
+
+          const response = await addVehicleToGarage({
+            make,
+            model,
+            variant,
+            registration: reg,
+            colour,
+            ownedFrom: owned_from,
+            ownedTo: owned_to,
+            primary_car,
+            allow_tagging,
+            cover_photo: base64,
+            vehicle_period: primary_car,
+            description
+          });
+
+          if (!response || !response.success) {
+            throw new Error('Failed to update vehicle');
+          }
+
+          $f7.preloader.hide();
+
+          store.dispatch('getMyGarage');
+          showToast('Vehicle added successfully');
+
+          view.router.back(`/profile-garage-vehicle-view/${response.id}`, {
+            force: true
+          });
+        } catch (error) {
+          $f7.preloader.hide();
+
+          showToast(error.message || 'Failed to add vehicle');
+        }
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#submit-add-vehicle-form');
+    });
+
+    const toggleOwnedToDatePicker = (e) => {
+      const ownedToInput = document.querySelector('input[name="vehicle_owned_to"]');
+      const ownedToBContainer = document.querySelector('#owned-to-block');
+
+      const value = e.target.value;
+
+      if (value === "current") { // Current Vehicle
+        ownedToBContainer.style.display = 'none';
+        ownedToInput.value = '';
+      } else {
+        ownedToBContainer.style.display = 'block';
+      }
+    };
+
+    function parseDate(dateString) {
+      const parts = dateString.split('/');
+      return new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM, DD
+    }
+
+    const showToast = (text, type = 'default') => {
+      $f7.toast.create({
+        text: text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: `toast-${type}`,
+      }).open();
+    };
+
     return $render;
   }
 </script>
