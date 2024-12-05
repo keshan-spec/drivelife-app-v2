@@ -71,6 +71,7 @@ const DEFAULT_PAGINATED_DATA = {
 const store = createStore({
   state: {
     homeListenersInitialized: false,
+    postUploadProgress: 0,
     createPostMedia: null,
     createPostContent: null,
     createPostTaggedEntities: [],
@@ -159,6 +160,11 @@ const store = createStore({
     myFollowers: [],
   },
   getters: {
+    getPostUploadProgress({
+      state
+    }) {
+      return state.postUploadProgress;
+    },
     getCreatePostAssociations({
       state
     }) {
@@ -326,6 +332,11 @@ const store = createStore({
     },
   },
   actions: {
+    setPostUploadProgress({
+      state
+    }, progress) {
+      state.postUploadProgress = progress;
+    },
     setCreatePostAssociations({
       state
     }, {
@@ -354,6 +365,12 @@ const store = createStore({
       state.createPostContent = null;
       state.createPostTaggedEntities = [];
       state.isPostCreating = false;
+      state.createPostAssociations = {
+        association_id: null,
+        association_type: null,
+      };
+
+      state.postUploadProgress = 0;
     },
     setPostMedia({
       state

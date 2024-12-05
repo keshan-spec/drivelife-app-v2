@@ -1,3 +1,5 @@
+import { getImageURI } from "../native";
+import store from "../store";
 import { getSessionUser } from "./auth";
 import { API_URL } from "./consts";
 import { LocalNotifications } from '@capacitor/local-notifications';
@@ -15,13 +17,69 @@ const uploadSingleFileToCloudflare = async (user_id, file) => {
 
         const data = await response.json();
 
+        alert(JSON.stringify(data));
+
         if (response.status !== 200 || !data.success) {
             throw new Error(data.message || "Failed to upload media");
         }
 
         return data.media_ids;
     } catch (error) {
+        alert('Error uploading file to Cloudflare: ' + error.message);
         console.log('Error uploading file to Cloudflare:', error.message);
+        throw error;
+    }
+};
+
+const uploadFileInChunks = async (userId, file, chunkSize = 1024 * 600) => {
+    try {
+        const base64Data = await getImageURI(file); // Base64 string of the file
+        const totalChunks = Math.ceil(base64Data.length / chunkSize);
+
+        // Extract file name (optional, adjust based on your implementation)
+        const uriParts = file.path.split('/');
+        const fileName = uriParts[uriParts.length - 1];
+
+        // get the last 1000 characters of the base64 string
+        let media_id = null;
+
+        for (let i = 0; i < totalChunks; i++) {
+            const start = i * chunkSize;
+            const end = Math.min(start + chunkSize, base64Data.length);
+
+            // Slice the Base64 string for this chunk
+            let base64Chunk = base64Data.slice(start, end);
+
+            // if we're in the last iteration, make sure the full base64 string is sent
+            if (i === totalChunks - 1) {
+                base64Chunk = base64Data.slice(start);
+            }
+
+            const formData = new FormData();
+            formData.append("user_id", userId);
+            formData.append("file_name", fileName);
+            formData.append("chunk_index", i);
+            formData.append("total_chunks", totalChunks);
+            formData.append("chunk_data", base64Chunk);
+
+            // Send the chunk to the server
+            const response = await fetch(`${API_URL}/wp-json/app/v1/upload-media-cloudflare-chunks`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(`Chunk upload failed at index ${i}: ${data.message}`);
+            }
+
+            if (data.media_id) {
+                media_id = data.media_id;
+            }
+        }
+
+        return media_id;
+    } catch (error) {
         throw error;
     }
 };
@@ -29,7 +87,7 @@ const uploadSingleFileToCloudflare = async (user_id, file) => {
 const uploadFilesToCloudflareV2 = async (user_id, mediaList) => {
     try {
         const uploadPromises = mediaList.map((file) =>
-            uploadSingleFileToCloudflare(user_id, file)
+            uploadFileInChunks(user_id, file)
         );
 
         const results = await Promise.all(uploadPromises);
@@ -39,6 +97,100 @@ const uploadFilesToCloudflareV2 = async (user_id, mediaList) => {
         throw error;
     }
 };
+
+const uploadFileInChunks1 = async (userId, file, chunkSize = 1024 * 600, onProgress) => {
+    try {
+        const base64Data = file.base64; // Base64 string of the file
+        const totalChunks = Math.ceil(base64Data.length / chunkSize);
+
+        // Extract file name (optional, adjust based on your implementation)
+        const uriParts = file.path.split('/');
+
+
+        // create a unique file name, timestamp + file name
+        const fileName = new Date().getTime() + uriParts[uriParts.length - 1];
+        // const fileName = uriParts[uriParts.length - 1];
+
+        let media_id = null;
+
+        for (let i = 0; i < totalChunks; i++) {
+            const start = i * chunkSize;
+            const end = Math.min(start + chunkSize, base64Data.length);
+
+            // Slice the Base64 string for this chunk
+            let base64Chunk = base64Data.slice(start, end);
+
+            // if we're in the last iteration, make sure the full base64 string is sent
+            if (i === totalChunks - 1) {
+                base64Chunk = base64Data.slice(start);
+            }
+
+            const formData = new FormData();
+            formData.append("user_id", userId);
+            formData.append("file_name", fileName);
+            formData.append("chunk_index", i);
+            formData.append("total_chunks", totalChunks);
+            formData.append("chunk_data", base64Chunk);
+
+            // Send the chunk to the server
+            const response = await fetch(`${API_URL}/wp-json/app/v1/upload-media-cloudflare-chunks`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(`Chunk upload failed at index ${i}: ${data.message}`);
+            }
+
+            if (data.media_id) {
+                media_id = data.media_id;
+            }
+
+            // Calculate the progress and update the store
+            const progress = ((i + 1) / totalChunks) * 100; // Percentage of upload progress
+            onProgress(progress); // Pass the progress to the callback function
+        }
+
+        return media_id;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const uploadFilesToCloudflareV3 = async (user_id, mediaList) => {
+    try {
+        let totalChunksProcessed = 0;
+        let totalChunks = mediaList.reduce((sum, file) => {
+            const totalFileChunks = Math.ceil(file.base64.length / (1024 * 600)); // Same chunk size calculation
+            return sum + totalFileChunks;
+        }, 0);
+
+        // Update the progress for all files
+        const onProgress = (progress) => {
+            const progressPercentage = ((totalChunksProcessed + progress) / totalChunks);
+
+            // make sure the progress is not more than 100
+            store.dispatch('setPostUploadProgress', progressPercentage); // Dispatch progress to store
+        };
+
+        const uploadPromises = mediaList.map((file) =>
+            uploadFileInChunks1(user_id, file, 1024 * 600, (progress) => {
+                // Update the total progress for the file being uploaded
+                totalChunksProcessed += progress;
+                onProgress(progress);
+            })
+        );
+
+        const results = await Promise.all(uploadPromises);
+        return results.flat();
+    } catch (error) {
+        console.log('Error uploading files to Cloudflare:', error.message);
+        throw error;
+    }
+};
+
+
 
 export const addPost = async ({
     mediaList,
@@ -61,7 +213,7 @@ export const addPost = async ({
             throw new Error("No media found");
         }
 
-        const media = await uploadFilesToCloudflareV2(user.id, mediaList);
+        const media = await uploadFilesToCloudflareV3(user.id, mediaList);
 
         if (!media || media.length === 0) {
             throw new Error("Failed to upload media");

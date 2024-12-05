@@ -277,6 +277,10 @@
     const createPostAssociationsStore = store.getters.getCreatePostAssociations;
 
     createPostAssociationsStore.onUpdated((data) => {
+      if (!data || !data.association_id || !data.association_type) {
+        return;
+      }
+
       actionsGrid.open();
       $('.add-post-btn').click();
     });
@@ -352,10 +356,10 @@
                 return;
               }
 
-              // if (await isRunningOnWeb()) {
-              //   $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
-              //   return;
-              // }
+              if (await isRunningOnWeb()) {
+                $f7.dialog.alert('This feature is not available on the web version of the app. Please use the mobile app to create a post.');
+                return;
+              }
 
               if (!await checkMediaPermission()) {
                 $f7.dialog.alert('Please allow access to your camera and photos to create a post.');

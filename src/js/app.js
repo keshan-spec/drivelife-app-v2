@@ -247,9 +247,9 @@ CapacitorApp.addListener('backButton', async () => {
     } else if (view.history[0] == '/') {
       if (view.history.length > 1) {
         // if routes have '/post-add/' or '/post-add-tags/ then dont go back
-        if (view.history.includes('/post-add/') || view.history.includes('/post-add-tags/')) {
-          return false;
-        }
+        // if (view.history.includes('/post-add/') || view.history.includes('/post-add-tags/')) {
+        //   return false;
+        // }
 
         view.router.back();
         return false;

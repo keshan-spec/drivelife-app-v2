@@ -151,10 +151,10 @@ export const checkMediaPermission = async () => {
 
 
 export async function getGalleryPhotos() {
-    const image = await Camera.pickImages({
-        quality: 90,
+    const images = await Camera.pickImages({
+        quality: 85,
         allowEditing: false,
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.Base64,
         correctOrientation: true,
         presentationStyle: 'fullscreen',
         width: 2000,
@@ -163,11 +163,12 @@ export async function getGalleryPhotos() {
         limit: 5,
     });
 
-    const data = image.photos.map(async (photo) => {
+    const data = images.photos.map(async (photo) => {
         const base64 = await getImageURI(photo);
 
         return {
-            base64: `data:image/${photo.format};base64,${base64}`,
+            // base64: `data:image/${photo.format};base64,${base64}`,
+            base64: base64,
             uri: photo.webPath, // webPath is the path to the image on the web
             ...photo
         };
@@ -176,7 +177,7 @@ export async function getGalleryPhotos() {
     return await Promise.all(data);
 }
 
-async function getImageURI(photo) {
+export async function getImageURI(photo) {
     try {
         const isWeb = await isRunningOnWeb();
 

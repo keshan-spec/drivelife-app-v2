@@ -581,6 +581,9 @@
     /* Optional border */
     border-radius: 8px;
     /* Optional rounded corners */
+    position: fixed;
+    width: 100%;
+    z-index: 9999;
 }
 
 .create-post-indicator-media img {
@@ -596,15 +599,53 @@
     /* Space between image and text */
 }
 
-.create-post-indicator-text {
+.create-post-indicator-text span {
     font-size: 16px;
-    /* Adjust text size */
     color: #333;
-    /* Text color */
     white-space: nowrap;
-    /* Prevent text wrapping */
     overflow: hidden;
-    /* Hide overflowing text */
     text-overflow: ellipsis;
-    /* Add ellipsis to overflowing text */
+}
+
+.create-post-indicator-media {
+    margin-right: 10px;
+}
+
+.create-post-indicator-media img {
+    width: 50px;
+    /* Small thumbnail size */
+    height: 50px;
+    object-fit: cover;
+    /* Ensures the image doesn't stretch */
+    border-radius: 5px;
+    /* Optional: add a rounded border */
+}
+
+.create-post-indicator-text {
+    flex-grow: 1;
+    /* Allow text container to take remaining space */
+}
+
+.create-post-indicator-text span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.create-post-indicator-progress {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.create-post-indicator-progress-inner {
+    width: 0%;
+    /* Start with 0%, will be updated with JS */
+    height: 6px;
+    background-color: #b89855;
+    /* Progress color */
+    transition: width 0.3s ease-in-out;
+    /* Smooth progress animation */
 }

@@ -65,6 +65,11 @@
 
     const { store } = $f7;
     const isPostCreatingStore = store.getters.getIsPostCreating;
+    const postUploadProgressStore = store.getters.getPostUploadProgress;
+
+    postUploadProgressStore.onUpdated((progress) => {
+      updateProgressBar(progress);
+    });
 
     isPostCreatingStore.onUpdated((value) => {
       if (!value) {
@@ -74,7 +79,9 @@
 
     $on('pageBeforeIn', (e, page) => {
       if (isPostCreatingStore.value === true) {
-        renderIndicator();
+        setTimeout(() => {
+          renderIndicator();
+        }, 100);
       }
     });
 
@@ -98,11 +105,22 @@
                 <img src="${mediaUrl}" alt="Post thumbnail" />
               </div>
               <div class="create-post-indicator-text">
-                Creating Post...
+                <span>Creating Post...</span>
+                <div class="create-post-indicator-progress">
+                  <div class="create-post-indicator-progress-inner"></div>
+                </div>
               </div>
             </div>`);
         }
       }
+    }
+
+
+    function updateProgressBar(progress) {
+      const progressBar = document.querySelector('.create-post-indicator-progress-inner');
+      if (!progressBar) return;
+
+      progressBar.style.width = `${progress}%`;
     }
 
     return $render;
