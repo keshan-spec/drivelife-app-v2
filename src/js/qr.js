@@ -131,6 +131,11 @@ $(document).on('page:beforeout', function (e) {
     initListners();
 });
 
+$(document).on('tab:show', function (e) {
+    unInitListeners();
+    initListners();
+});
+
 initListners();
 
 function initListners() {
