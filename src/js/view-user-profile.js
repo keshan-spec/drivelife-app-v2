@@ -7,7 +7,6 @@ import {
 } from "./api/garage.js";
 import {
     getFollowersForUser,
-    maybeFollowUser
 } from "./api/profile.js";
 import app from "./app.js";
 import {
@@ -23,10 +22,10 @@ import $ from 'dom7';
 var totalPostPages = 1;
 var totalFPostPages = 1;
 var currentPostPage = 1;
+var refreshed = false;
 var currentFPostPage = 1;
 
 var isFetchingPosts = false;
-var refreshed = false;
 
 var userId = null;
 
@@ -74,28 +73,14 @@ $(document).on('page:init', '.page[data-name="profile-view"]', async function (e
 
 });
 
-$(document).on('click', '.user-follow-btn', async function () {
-    const followButton = $(this);
-    const isFollowing = followButton.text() === 'Following';
-
-    // change the button text
-    followButton.text(isFollowing ? 'Follow' : 'Following');
-    const response = await maybeFollowUser(followButton.attr('data-user-id'));
-
-    if (response && response.success) {
-        store.dispatch('updateUserDetails', {
-            external: true
-        });
-    }
-});
-
 async function renderProfileData(cachedData, userId) {
     var view = app.views.current;
 
-    refreshed = false;
-
     if (!cachedData) {
-        $('.loading-fullscreen').show();
+        if (!refreshed) {
+            $('.loading-fullscreen').show();
+        }
+
         const data = await getUserById(userId);
 
         if (!data || data.error) {
@@ -175,6 +160,7 @@ async function renderProfileData(cachedData, userId) {
     }
 
     $('.loading-fullscreen').hide();
+    refreshed = false;
 }
 
 function populateUsersPosts(data) {
@@ -280,6 +266,7 @@ $(document).on('ptr:refresh', '.profile-landing-page.view-page.ptr-content', asy
     try {
         currentPostPage = 1;
         currentFPostPage = 1;
+        refreshed = true;
 
         store.dispatch('removePathData', `/user/${userId}`);
 
@@ -295,7 +282,6 @@ $(document).on('ptr:refresh', '.profile-landing-page.view-page.ptr-content', asy
             clear: true
         });
 
-        refreshed = true;
     } catch (error) {
         console.log('Error refreshing profile page:', error);
     }

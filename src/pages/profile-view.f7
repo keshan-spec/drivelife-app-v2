@@ -196,7 +196,34 @@
     </div>
 </template>
 <script>
-    export default () => {
+    import {
+        maybeFollowUser
+    } from "../js/api/profile.js";
+
+    export default (props, { $, $on, $f7 }) => {
+        const { store } = $f7;
+
+        $on('pageBeforeIn', (e, page) => {
+            $(document).on('click', '.user-follow-btn', async function () {
+                const followButton = $(this);
+                const isFollowing = followButton.text() === 'Following';
+
+                // change the button text
+                followButton.text(isFollowing ? 'Follow' : 'Following');
+                const response = await maybeFollowUser(followButton.attr('data-user-id'));
+
+                if (response && response.success) {
+                    store.dispatch('updateUserDetails', {
+                        external: true
+                    });
+                }
+            });
+        });
+
+        $on('pageBeforeOut', (e, page) => {
+            $(document).off('click', '.user-follow-btn');
+        });
+
         return $render;
     }
 </script>

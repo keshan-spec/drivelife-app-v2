@@ -100,7 +100,291 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    getSessionUser,
+  } from "../js/api/auth.js";
+
+  import {
+    addUserProfileLinks,
+    removeProfileLink,
+    updateSocialLinks
+  } from "../js/api/profile.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageInit', async (e, page) => {
+      var view = $f7.views.current;
+
+      const user = await getSessionUser();
+
+      if (!user) {
+        view.router.navigate('/login');
+        return;
+      }
+
+      const externalLinks = user.profile_links || {};
+
+      $f7.popup.create({
+        el: '.add-link-popup',
+        swipeToClose: 'to-bottom'
+      });
+
+      // Populate form fields
+      page.$el.find('input[name="social_instagram"]').val(externalLinks.instagram || '');
+      page.$el.find('input[name="social_facebook"]').val(externalLinks.facebook || '');
+      page.$el.find('input[name="social_tiktok"]').val(externalLinks.tiktok || '');
+      page.$el.find('input[name="social_youtube"]').val(externalLinks.youtube || '');
+      page.$el.find('input[name="social_mivia"]').val(externalLinks.mivia || '');
+      page.$el.find('input[name="social_custodian"]').val(externalLinks.custodian || '');
+
+      // .social-other-links ul
+      const externalLinksContainer = $('.social-other-links ul')[0];
+
+      externalLinks.external_links?.forEach(linkObj => {
+        const listItem = document.createElement('li');
+
+        listItem.innerHTML = `
+        <a class="item-link item-content" href="${linkObj.link.url}" data-link-id="${linkObj.id}">
+            <div class="item-inner">
+                <div class="item-title">
+                    ${linkObj.link.label}
+                </div>
+                <div class="item-after delete-external-link"><i class="icon f7-icons">xmark_circle</i></div>
+            </div>
+        </a>
+        `;
+        externalLinksContainer.appendChild(listItem);
+      });
+    });
+
+    $on('pageBeforeIn', async (e, page) => {
+      // Add event listener for the Save button
+      $(document).on('click', '#add-link-btn', async function () {
+        const linkTitle = $('input[name="custom_link_title"]').val();
+        const linkUrl = $('input[name="custom_link_url"]').val();
+
+        // Validate the inputs
+        if (linkTitle === '') {
+          console.log('Please enter a link title.', $('input[name="custom_link_title"]'));
+          showToast('Please enter a link title.', 'Error');
+          return;
+        }
+
+        if (linkUrl === '') {
+          showToast('Please enter a link URL.', 'Error');
+          return;
+        }
+
+
+        const urlPattern = /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g;
+        if (!urlPattern.test(linkUrl)) {
+          showToast('Please enter a valid URL.', 'Error');
+          return;
+        }
+
+        // Mock API request (POST request)
+        const requestData = {
+          label: linkTitle,
+          url: linkUrl
+        };
+
+        $f7.popup.close();
+
+        $f7.preloader.show();
+
+        const response = await addUserProfileLinks({
+          type: 'external_links',
+          link: requestData
+        });
+
+        if (response && response.success) {
+          showToast('Link added successfully', 'Success');
+
+          // Add the new link to the list
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <a class="item-link item-content" href="${linkUrl}" data-link-id="${response.id}">
+                <div class="item-inner">
+                    <div class="item-title">
+                        ${linkTitle}
+                    </div>
+                    <div class="item-after"><i class="icon f7-icons delete-external-link">xmark_circle</i></div>
+                </div>
+            </a>
+        `;
+
+          const externalLinksContainer = $('.social-other-links ul')[0];
+          externalLinksContainer.appendChild(listItem);
+          store.dispatch('updateUserDetails');
+        }
+
+        $f7.preloader.hide();
+      });
+
+      // Save social links
+      $(document).on('click', '#save-profile-socials', async function () {
+        var view = $f7.views.current;
+
+        const user = await getSessionUser();
+
+        let instagram = $('input[name="social_instagram"]').val();
+        let facebook = $('input[name="social_facebook"]').val();
+        let tiktok = $('input[name="social_tiktok"]').val();
+        let youtube = $('input[name="social_youtube"]').val();
+        let mivia = $('input[name="social_mivia"]').val();
+        let custodian = $('input[name="social_custodian"]').val();
+
+        const links = {
+          instagram,
+          facebook,
+          tiktok,
+          youtube,
+          mivia,
+          custodian
+        };
+
+        // Define the allowed username pattern (alphanumeric, _, -, .)
+        const usernamePattern = /^[a-zA-Z0-9._-]+$/;
+
+        // Define a function to strip '@' from the start of a username
+        function cleanUsername(username) {
+          return username.startsWith('@') ? username.substring(1) : username;
+        }
+
+        // Clean and validate Instagram username
+        if (instagram) {
+          instagram = cleanUsername(instagram);
+          links.instagram = instagram;
+
+          if (!usernamePattern.test(instagram)) {
+            showToast('Please enter a valid Instagram username (letters, numbers, underscores, periods, hyphens only)', 'Error');
+            return;
+          }
+        }
+
+        // Clean and validate TikTok username
+        if (tiktok) {
+          tiktok = cleanUsername(tiktok);
+          links.tiktok = tiktok;
+
+          if (!usernamePattern.test(tiktok)) {
+            showToast('Please enter a valid TikTok username (letters, numbers, underscores, periods, hyphens only)', 'Error');
+            return;
+          }
+        }
+
+        // Clean and validate YouTube username
+        if (youtube) {
+          youtube = cleanUsername(youtube);
+          links.youtube = youtube;
+
+          if (!usernamePattern.test(youtube)) {
+            showToast('Please enter a valid YouTube username (letters, numbers, underscores, periods, hyphens only)', 'Error');
+            return;
+          }
+        }
+
+        // Clean and validate Mivia username
+        if (mivia) {
+          mivia = cleanUsername(mivia);
+          links.mivia = mivia;
+
+          if (!usernamePattern.test(mivia)) {
+            showToast('Please enter a valid Mivia username (letters, numbers, underscores, periods, hyphens only)', 'Error');
+            return;
+          }
+        }
+
+        // Allow URL with "https://" for Custodian and validate it
+        const urlPattern = /^https:\/\/[\da-z\.-]+\.[a-z]{2,6}\/?$/;
+        // Allow any URL that starts with "https://"
+        if (custodian && !custodian.startsWith('https://')) {
+          showToast('Please enter a valid Custodian URL that starts with https://', 'Error');
+          return;
+        }
+
+        // Clean and validate Facebook username
+        if (facebook) {
+          facebook = cleanUsername(facebook);
+          links.facebook = facebook;
+
+          if (!usernamePattern.test(facebook)) {
+            showToast('Please enter a valid Facebook username (letters, numbers, underscores, periods, hyphens only)', 'Error');
+            return;
+          }
+        }
+
+
+        // check if the request data is the same as userdata
+        let dirtied = false;
+
+        for (const key in links) {
+          if (links[key] !== user.profile_links[key]) {
+            dirtied = true;
+            break;
+          }
+        }
+
+        if (!dirtied) {
+          return;
+        }
+
+        $f7.preloader.show();
+
+        const response = await updateSocialLinks(links);
+
+        $f7.preloader.hide();
+
+        if (response && response.success) {
+          showToast('Social links updated successfully', 'Success');
+          view.router.navigate('/profile/');
+          store.dispatch('updateUserDetails');
+        } else {
+          showToast('Failed to update social links', 'Error');
+        }
+      });
+
+      // Delete link
+      $(document).on('click', '.delete-external-link', async function (e) {
+        const linkId = e.target.closest('.item-link').dataset.linkId;
+
+        // confirm dialog
+        $f7.dialog.confirm('Are you sure you want to delete this link?', 'Delete Link', async function () {
+          $f7.preloader.show();
+
+          const response = await removeProfileLink(linkId);
+
+          $f7.preloader.hide();
+
+          if (response) {
+            showToast('Link deleted successfully', 'Success');
+            // remove the link from the list
+            e.target.closest('.item-link').remove();
+            store.dispatch('updateUserDetails');
+
+          } else {
+            showToast('Failed to delete link', 'Error');
+          }
+        });
+      });
+    });
+
+    $on('pageBeforeOut', async (e, page) => {
+      $(document).off('click', '#save-profile-socials');
+      $(document).off('click', '#add-link-btn');
+      $(document).off('click', '.delete-external-link');
+    });
+
+    const showToast = (text, type = 'default') => {
+      $f7.toast.create({
+        text: text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: `toast-${type}`,
+      }).open();
+    };
+
     return $render;
   }
 </script>
