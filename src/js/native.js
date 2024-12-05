@@ -80,13 +80,13 @@ export const addListeners = async () => {
         });
     });
 
-    await PushNotifications.addListener('registrationError', err => {
-        alert('Error on registration: ' + JSON.stringify(err));
-    });
+    // await PushNotifications.addListener('registrationError', err => {
+    //     alert('Error on registration: ' + JSON.stringify(err));
+    // });
 
-    await PushNotifications.addListener('pushNotificationReceived', notification => {
-        alert('Push received: ' + JSON.stringify(notification));
-    });
+    // await PushNotifications.addListener('pushNotificationReceived', notification => {
+    //     alert('Push received: ' + JSON.stringify(notification));
+    // });
 
     await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
         console.log('Push notification action performed', notification.actionId, notification.inputValue);
