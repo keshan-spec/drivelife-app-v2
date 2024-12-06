@@ -3,12 +3,14 @@ import {
   getPostById
 } from "./api/posts.js";
 import {
-  formatPostDate
+  formatPostDate,
+  setImageStyle
 } from "./utils.js";
 import store from "./store.js";
 
 import $ from 'dom7';
 import { togglePostLike } from "./homepage.js";
+import { createActionsSection, createBottomSection, createMediaSection } from "./post-ui-card.js";
 
 var containerWidth = window.innerWidth;
 
@@ -74,7 +76,6 @@ function displaySinglePost(post) {
     }
   }
 
-
   let profile_link;
 
   if (post.user_id == user.id) {
@@ -93,7 +94,23 @@ function displaySinglePost(post) {
   </a>`;
   }
 
+  const mediaSection = createMediaSection(post.media);
+  const actionsSection = createActionsSection(post_actions, post.likes_count);
+  const bottomSection = createBottomSection(post.username, shortDescription, isLongDescription, post.caption, post.comments_count, post.id);
+
   const postItem = `
+    <div class="media-post single" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
+      <div class="media-post-content">
+        ${profile_link}
+        ${mediaSection}
+      </div>
+      ${actionsSection}
+      ${bottomSection}
+    </div>
+  `;
+
+
+  const postItem1 = `
   <div class="media-post single" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
     <div class="media-single-post-content">
       ${profile_link}
@@ -153,6 +170,25 @@ function displaySinglePost(post) {
     }
 
     togglePostLike(postId);
+  });
+
+  app.swiper.create('.post-view-swiper', {
+    speed: 400,
+    spaceBetween: 0,
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+    },
+  });
+
+  document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
+    if (img.complete) {
+      setImageStyle(img);
+    } else {
+      img.onload = () => {
+        setImageStyle(img);
+      };
+    }
   });
 }
 

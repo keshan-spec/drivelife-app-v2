@@ -1,6 +1,23 @@
 import { verifyEmail } from "./api/auth";
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
+export function preloadImage(url) {
+    const MAX_PRELOADS = 10;
+
+    // Get all preloaded images
+    const preloadedImages = document.querySelectorAll('.post-media-preloader');
+
+    // If there are more than 10 preloaded images, remove the first one
+    if (preloadedImages.length >= MAX_PRELOADS) {
+        preloadedImages[0].remove();
+    }
+
+    // Preload the image
+    document.head.insertAdjacentHTML('beforeend', `
+    <link rel="preload" href="${url}" as="image" class="post-media-preloader" />
+  `);
+}
+
 //Image Size Function
 export function setImageStyle(img) {
     if (img.naturalWidth > img.naturalHeight) {
