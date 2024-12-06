@@ -289,13 +289,13 @@
       actionsGrid.open();
     };
 
-    $on('pageBeforeIn', (e, page) => {
-      $(document).on('click', '.view-profile', function (e) {
+    $on('pageInit', (e, page) => {
+      $('#app').on('click', '.view-profile', function (e) {
         $('.view-profile-link').click();
       });
 
       // logout-button
-      $(document).on('click', '.logout-button', async function (e) {
+      $('#app').on('click', '.logout-button', async function (e) {
         $('.init-loader').show();
 
         $f7.dialog.close();
@@ -308,7 +308,7 @@
         window.location.reload();
       });
 
-      $(document).on('mousedown', '.toolbar-bottom a', async function (e) {
+      $('#app').on('mousedown', '.toolbar-bottom a', async function (e) {
         var targetHref = $(this).attr('href');
         var validTabs = ['#view-social', '#view-discover', '#view-store', '#view-profile'];
 
@@ -333,15 +333,7 @@
           }
         }
       });
-    });
 
-    $on('pageBeforeOut', () => {
-      $(document).off('click', '.view-profile');
-      $(document).off('click', '.logout-button');
-      $(document).off('mousedown', '.toolbar-bottom a');
-    });
-
-    $on('pageInit', (e, page) => {
       actionsGrid = $f7.actions.create({
         grid: true,
         buttons: [

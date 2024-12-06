@@ -241,7 +241,7 @@ function addCategoryOptions(categories) {
 }
 
 // Event listener for the submit button
-$(document).on('click', '.apply-filters', function (e) {
+$('#app').on('click', '.apply-filters', function (e) {
     const dateFilters = document.querySelector('#date-filters ul');
     const locationFilters = document.querySelector('#location-filters ul');
     const categoryFilters = document.querySelector('#category-filters ul');
@@ -565,9 +565,4 @@ $(document).on('ptr:refresh', '.discover-page.ptr-content', async function (e) {
 
     refreshed = false;
     app.ptr.get('.discover-page.ptr-content').done();
-});
-
-$(document).on('click', '#featured-event-link', function (e) {
-    e.preventDefault();
-    window.open(e.target.href, '_blank');
 });

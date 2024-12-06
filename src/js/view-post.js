@@ -109,14 +109,13 @@ function displaySinglePost(post) {
     </div>
   `;
 
-
   const postItem1 = `
   <div class="media-post single" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
     <div class="media-single-post-content">
       ${profile_link}
       <div class="media-single-post-content">
       <swiper-container pagination class="demo-swiper-multiple" space-between="50">
-            ${post.media.map((mediaItem, index) => {
+            ${post.media.map((mediaItem) => {
 
     return `<swiper-slide class="swiper-slide post-media ${mediaItem.media_type === 'video' ? 'video' : ''}" style="height: ${imageHeight}px; ">
                 ${mediaItem.media_type === 'video' ?
