@@ -123,13 +123,13 @@ $(document).on('page:init', '.page[data-name="discover-view-venue"]', async func
 });
 
 // event-location-map
-$(document).on('click', '.event-time-address span a', function (e) {
+$('#app').on('click', '.event-time-address span a', function (e) {
     e.preventDefault();
     const mapLink = $(this).attr('href');
     window.open(mapLink, '_blank');
 });
 
-$(document).on('click', '#copy-venue-link', function () {
+$('#app').on('click', '#copy-venue-link', function () {
     const venueId = $(this).attr('data-venue-id');
     const eventLink = `https://app.mydrivelife.com/discover-view-venue/${venueId}`;
 
@@ -142,7 +142,7 @@ $(document).on('click', '#copy-venue-link', function () {
 });
 
 // #share-email-venue-link click event
-$(document).on('click', '#share-email-venue-link', function () {
+$('#app').on('click', '#share-email-venue-link', function () {
     const venueId = $(this).attr('data-venue-id');
     const eventLink = `https://app.mydrivelife.com/discover-view-venue/${venueId}`;
 

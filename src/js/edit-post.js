@@ -23,7 +23,7 @@ $(document).on('page:beforein', '.page[data-name="post-edit"]', async function (
 
 });
 
-$(document).on('click', '#update-post', async function (e) {
+$('#app').on('click', '#update-post', async function (e) {
     var view = app.views.current;
 
     const description = $('#post_content').val();

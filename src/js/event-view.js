@@ -123,7 +123,7 @@ $(document).on('page:init', '.page[data-name="discover-view-event"]', async func
     }
 });
 
-$(document).on('click', '#favourite_event', async function () {
+$('#app').on('click', '#favourite_event', async function () {
     // get the event id from the button
     const eventId = $(this).attr('data-event-id');
     const isFavourite = $(this).hasClass('favourite');
@@ -141,7 +141,7 @@ $(document).on('click', '#favourite_event', async function () {
     await maybeFavoriteEvent(eventId);
 });
 
-$(document).on('click', '#copy-event-link', function () {
+$('#app').on('click', '#copy-event-link', function () {
     const eventId = $(this).attr('data-event-id');
     const eventLink = `https://app.mydrivelife.com/discover-view-event/${eventId}`;
 
@@ -154,7 +154,7 @@ $(document).on('click', '#copy-event-link', function () {
     }).open();
 });
 
-$(document).on('click', '#share-email-event-link', function () {
+$('#app').on('click', '#share-email-event-link', function () {
     const eventId = $(this).attr('data-event-id');
     const eventLink = `https://app.mydrivelife.com/discover-view-event/${eventId}`;
 
