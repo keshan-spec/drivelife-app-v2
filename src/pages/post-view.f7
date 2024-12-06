@@ -89,6 +89,8 @@
                     return;
                 }
 
+                $('.loading-fullscreen.post-view').hide();
+
                 store.dispatch('setPathData', {
                     path: `/post/${postId}`,
                     data: post,
