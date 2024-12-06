@@ -12,24 +12,6 @@ import {
     verifyUser
 } from './api/auth.js';
 
-$(document).on('click', '#forgot-password', function (e) {
-    // open the url in a new tab
-    window.open($(this).attr('href'), '_blank');
-});
-
-// SSO with CarEvents
-$(document).on('click', '#sso-ce-button', function (e) {
-
-    // URL encode the redirect URI (the app URL)
-    const appRedirectUri = encodeURIComponent('https://app.mydrivelife.com/'); // Replace with your app's redirect URL
-
-    // Build the CarEvents login URL with the state and app_redirect
-    const loginUrl = `https://www.carevents.com/uk/login?app_redirect=${appRedirectUri}`;
-
-    // Store the state in localStorage or sessionStorage for validation later
-    window.open(loginUrl, '_blank');
-});
-
 // Handle login form submission;
 $(document).on('submit', '.login-screen-content form', async function (e) {
     e.preventDefault();
@@ -76,17 +58,6 @@ $(document).on('submit', '.login-screen-content form', async function (e) {
         }
     } catch (error) {
         app.dialog.alert('Login failed, please try again');
-    }
-});
-
-$(document).on('click', '.toggle-password', function () {
-    var input = $(this).prev('input');
-    if (input.attr('type') === 'password') {
-        input.attr('type', 'text');
-        $(this).html('<i class="fa fa-eye-slash"></i>');
-    } else {
-        input.attr('type', 'password');
-        $(this).html('<i class="fa fa-eye"></i>');
     }
 });
 
