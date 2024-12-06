@@ -341,12 +341,25 @@ const store = createStore({
       state
     }, {
       association_id,
-      association_type
+      association_type,
+      association_label,
     }) {
       state.createPostAssociations = {
         association_id: association_id,
         association_type: association_type,
+        association_label: association_label
       };
+
+      // update tagged entities
+      state.createPostTaggedEntities = [{
+        x: 1,
+        y: 1,
+        index: 0,
+        label: association_label,
+        type: 'car',
+        id: association_id,
+        arr_idx: 0,
+      }];
     },
     setHomeListenersInitialized({
       state
@@ -365,10 +378,7 @@ const store = createStore({
       state.createPostContent = null;
       state.createPostTaggedEntities = [];
       state.isPostCreating = false;
-      state.createPostAssociations = {
-        association_id: null,
-        association_type: null,
-      };
+      state.createPostAssociations = null;
 
       state.postUploadProgress = 0;
     },

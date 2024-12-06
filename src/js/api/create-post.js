@@ -4,6 +4,7 @@ import { getSessionUser } from "./auth";
 import { API_URL } from "./consts";
 import { LocalNotifications } from '@capacitor/local-notifications';
 
+/* Unused functions */
 const uploadSingleFileToCloudflare = async (user_id, file) => {
     try {
         const formData = new FormData();
@@ -97,8 +98,9 @@ const uploadFilesToCloudflareV2 = async (user_id, mediaList) => {
         throw error;
     }
 };
+/* Unused functions */
 
-const uploadFileInChunks1 = async (userId, file, chunkSize = 1024 * 600, onProgress) => {
+const uploadFileInChunksv1 = async (userId, file, chunkSize = 1024 * 600, onProgress) => {
     try {
         const base64Data = file.base64; // Base64 string of the file
         const totalChunks = Math.ceil(base64Data.length / chunkSize);
@@ -175,7 +177,7 @@ const uploadFilesToCloudflareV3 = async (user_id, mediaList) => {
         };
 
         const uploadPromises = mediaList.map((file) =>
-            uploadFileInChunks1(user_id, file, 1024 * 600, (progress) => {
+            uploadFileInChunksv1(user_id, file, 1024 * 600, (progress) => {
                 // Update the total progress for the file being uploaded
                 totalChunksProcessed += progress;
                 onProgress(progress);
@@ -189,8 +191,6 @@ const uploadFilesToCloudflareV3 = async (user_id, mediaList) => {
         throw error;
     }
 };
-
-
 
 export const addPost = async ({
     mediaList,

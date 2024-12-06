@@ -232,8 +232,6 @@
             association_type: null,
         };
 
-        console.log('createPostAssociations', createPostAssociations);
-
         taggedEntityStore.onUpdated((data) => {
             taggedEntities = data || [];
             renderTaggedEntities(taggedEntities);
@@ -475,12 +473,14 @@
                         let subText = '';
                         let itemName = item.name;
 
-                        if (item.type === 'car' && item.vehicle_name) {
-                            subText = `<div class="item-subtitle">${item.vehicle_name}</div>`;
-                        }
+                        if (item.entity_id !== 'search_q') {
+                            if (item.type === 'car' && item.vehicle_name) {
+                                subText = `<div class="item-subtitle">${item.vehicle_name}</div>`;
+                            }
 
-                        if (item.type === 'car' && !item.registration) {
-                            itemName = item.vehicle_name;
+                            if (item.type === 'car' && !item.name) {
+                                itemName = item.vehicle_name;
+                            }
                         }
 
                         if (item.type === 'event') {
@@ -494,6 +494,9 @@
                             subText += `<div class="item-subtitle">${item.location}</div>`;
                         }
 
+                        // check if entity is already tagged
+                        const isTagged = taggedEntities.find((tag) => tag.id == item.entity_id && tag.index === activeImageIndex);
+
                         render += `
                         <li>
                             <a class="item-link search-result item-content" href="#">
@@ -504,7 +507,7 @@
                                 </div>
 
                                 <button class="tag-entity-btn button button-fill" data-name="${itemName}" data-id="${item.entity_id}" data-type="${item.type}">
-                                    Tag    
+                                    ${isTagged ? 'Tagged' : 'Tag'}
                                 </button>
                             </a>
                         </li>

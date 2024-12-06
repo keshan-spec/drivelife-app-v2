@@ -567,6 +567,11 @@ store.getters.getGarageViewPosts.onUpdated((data) => {
       return;
     }
 
+    if (data.page === 1) {
+      // clear the grid before adding new posts
+      const profileGrid = document.getElementById('garage-posts-tab');
+      profileGrid.innerHTML = '';
+    }
 
     // Call the function to fill the grid
     fillGridWithPosts(posts, 'garage-posts-tab');
@@ -588,6 +593,12 @@ store.getters.getGarageViewTags.onUpdated((data) => {
       const profileGrid = document.getElementById('garage-tags-tab');
       profileGrid.innerHTML = '<p></p><p>No tagged posts yet</p>';
       return;
+    }
+
+    if (data.page === 1) {
+      // clear the grid before adding new posts
+      const profileGrid = document.getElementById('garage-tags-tab');
+      profileGrid.innerHTML = '';
     }
 
     // Call the function to fill the grid

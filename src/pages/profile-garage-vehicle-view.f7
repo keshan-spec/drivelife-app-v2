@@ -116,9 +116,21 @@
         const user = await getSessionUser();
 
         if (user && user.id) {
+          const cachedData = pathStore.value[`/garage/${garageId}`];
+          let label = 'Garage';
+
+          if (cachedData) {
+            if (cachedData.registration) {
+              label = `${cachedData.registration}`;
+            } else {
+              label = `${cachedData.make} ${cachedData.model}`;
+            }
+          }
+
           store.dispatch('setCreatePostAssociations', {
             association_id: garageId,
-            association_type: 'garage'
+            association_type: 'garage',
+            association_label: label,
           });
           // $f7.views.current.router.navigate(`/post-add/?garage_id=${garageId}`);
         } else {

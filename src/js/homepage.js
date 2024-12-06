@@ -5,7 +5,8 @@ import store from "./store.js";
 
 import {
   detectDoubleTapClosure,
-  formatPostDate
+  formatPostDate,
+  hapticsImpactLight
 } from './utils.js';
 import {
   fetchComments,
@@ -758,6 +759,8 @@ function initDoubleTapLike() {
         return;
       }
 
+      // Play the Lottie animation
+      hapticsImpactLight();
       togglePostLike(postId);
     });
   });
