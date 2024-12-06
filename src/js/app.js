@@ -24,16 +24,13 @@ import {
   getIDFromQrCode
 } from './api/scanner.js';
 
-import {
-  displayProfile
-} from './profile.js';
-
 import { getQueryParameter, handleSSOSignIn, verifyUserEmail } from './utils.js';
 import {
   openModal,
 } from './qr.js';
 
 import { addListeners, getCurrentPosition, getDeliveredNotifications, registerNotifications } from './native.js';
+import { displayProfile } from './profile-ui-helpers.js';
 
 var app;
 var toolbarEl;

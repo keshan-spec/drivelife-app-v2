@@ -19,127 +19,129 @@
             </div>
         </div>
 
-        <div class="page-content profile-landing-page infinite-scroll-content view-page ptr-content ptr-watch-scrollable"
+        <div class="page-content profile-landing-page infinite-scroll-content view-page ptr-content ptr-watch-scrollable profile-view"
             data-infinite-distance="50" data-ptr-distance="130">
-
-            <div class="ptr-preloader">
-                <div class="preloader"></div>
-                <div class="ptr-arrow"></div>
-            </div>
-
-            <div class="loading-fullscreen">
-                <div class="preloader preloader-central">
-                    <span class="preloader-inner"><span class="preloader-inner-line"></span><span
-                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                            class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
-                            class="preloader-inner-line"></span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="profile-background" style="background-color:gray;">
-            </div>
-
-            <div class="profile-head">
-                <div class="profile-image" style="background-color: gray;"></div>
-                <div class="profile-user-info">
-                    <div class="profile-usernames">
-                        <h3 class="name profile-username">@</h3>
-                        <h5 class="subtext profile-name"></h5>
-                    </div>
-
-                    <div class="pview profile-followers">
-                        <h3></h3>
-                        <h5 class="subtext">Followers</h5>
-                    </div>
-
-                    <div class="profile-posts">
-                        <h3></h3>
-                        <h5 class="subtext">Posts</h5>
-                    </div>
-                    <div class="clearfix"></div>
+            <div id="profile-view-container">
+                <div class="ptr-preloader">
+                    <div class="preloader"></div>
+                    <div class="ptr-arrow"></div>
                 </div>
 
-                <div class="mt-12">
-                    <div class="btn w-100 bg-dark user-follow-btn">
-                        <div class="skeleton-block" style="width: 80px"></div>
+                <div class="loading-fullscreen">
+                    <div class="preloader preloader-central">
+                        <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span>
+                        </span>
                     </div>
                 </div>
-            </div>
 
-            <div class="profile-links">
-                <div class="profile-links-external d-flex">
-                    <a class="profile-link social-link link external " id="instagram" target="_blank"
-                        href="https://www.instagram.com/"><img src="img/icon-instagram.svg" />
-                        <span>Instagram</span></a>
-                    <a class="profile-link social-link link external " id="facebook" target="_blank"
-                        href="https://www.facebook.com"><img src="img/icon-facebook.svg" />
-                        <span>Facebook</span></a>
-                    <a class="profile-link social-link link external " id="tiktok" target="_blank"
-                        href="https://www.tiktok.com"><img src="img/icon-tiktok.svg" /> <span>Tiktok</span></a>
-                    <a class="profile-link social-link link external " id="youtube" target="_blank"
-                        href="https://www.youtube.com"><img src="img/icon-youtube.svg" />
-                        <span>YouTube</span></a>
-                    <a class="profile-link social-link popup-open" data-popup=".links-popup"><img
-                            src="img/icon-link.svg?v=1.4" />
-                        <span>More</span></a>
-                </div>
-            </div>
-
-            <div class="profile-lower">
-                <div class="profile-tabs">
-                    <a href="#profileview-posts-tab" class="tab-link tab-link-active" id="my-posts">Posts</a>
-                    <a href="#profileview-garage-tab" class="tab-link" id="my-garage">Garage</a>
-                    <a href="#profileview-tags-tab" class="tab-link" id="my-tags">Tags</a>
+                <div class="profile-background" style="background-color:gray;">
                 </div>
 
-                <swiper-container class="tabs">
-
-                    <swiper-slide id="profileview-posts-tab" class="tab  tab-active">
-                        <div class="swiper-inner-container">
-                            <div class="profile-grid list virtual-list" id="profile-view-grid-posts">
-                                <!-- Content generates here -->
-                            </div>
-
-                            <!-- Preloader for infinite scroll -->
-                            <div class="infinite-scroll-preloader posts-tab view-profile">
-                                <div class="preloader"></div>
-                            </div>
+                <div class="profile-head">
+                    <div class="profile-image" style="background-color: gray;"></div>
+                    <div class="profile-user-info">
+                        <div class="profile-usernames">
+                            <h3 class="name profile-username">@</h3>
+                            <h5 class="subtext profile-name"></h5>
                         </div>
-                    </swiper-slide>
 
-                    <swiper-slide id="profileview-garage-tab" class="tab">
-                        <div class="swiper-inner-container">
-                            <div class="listview-title garage-sub-title">Current Vehicles</div>
-
-                            <ul
-                                class="listview image-listview media transparent flush pt-1 pview-current-vehicles-list">
-                                <!-- Content generates here -->
-                            </ul>
-
-                            <div class="listview-title garage-sub-title mt-2">Past Vehicles</div>
-                            <ul class="listview image-listview media transparent flush pt-1 pview-past-vehicles-list">
-                                <!-- Content generates here -->
-                            </ul>
-
+                        <div class="pview profile-followers">
+                            <h3></h3>
+                            <h5 class="subtext">Followers</h5>
                         </div>
-                    </swiper-slide>
 
-
-                    <swiper-slide id="profileview-tags-tab" class="tab">
-                        <div class="swiper-inner-container">
-                            <div class="profile-grid list virtual-list" id="profile-view-grid-tags">
-                                <!-- Content generates here -->
-                            </div>
-
-                            <!-- Preloader for infinite scroll -->
-                            <div class="infinite-scroll-preloader tags-tab view-profile">
-                                <div class="preloader"></div>
-                            </div>
+                        <div class="profile-posts">
+                            <h3></h3>
+                            <h5 class="subtext">Posts</h5>
                         </div>
-                    </swiper-slide>
-                </swiper-container>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="mt-12">
+                        <div class="btn w-100 bg-dark user-follow-btn">
+                            <div class="skeleton-block" style="width: 80px"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-links">
+                    <div class="profile-links-external d-flex">
+                        <a class="profile-link social-link link external " id="instagram" target="_blank"
+                            href="https://www.instagram.com/"><img src="img/icon-instagram.svg" />
+                            <span>Instagram</span></a>
+                        <a class="profile-link social-link link external " id="facebook" target="_blank"
+                            href="https://www.facebook.com"><img src="img/icon-facebook.svg" />
+                            <span>Facebook</span></a>
+                        <a class="profile-link social-link link external " id="tiktok" target="_blank"
+                            href="https://www.tiktok.com"><img src="img/icon-tiktok.svg" /> <span>Tiktok</span></a>
+                        <a class="profile-link social-link link external " id="youtube" target="_blank"
+                            href="https://www.youtube.com"><img src="img/icon-youtube.svg" />
+                            <span>YouTube</span></a>
+                        <a class="profile-link social-link popup-open" data-popup=".links-popup"><img
+                                src="img/icon-link.svg?v=1.4" />
+                            <span>More</span></a>
+                    </div>
+                </div>
+
+                <div class="profile-lower">
+                    <div class="profile-tabs">
+                        <a href="#profileview-posts-tab" class="tab-link tab-link-active" id="my-posts">Posts</a>
+                        <a href="#profileview-garage-tab" class="tab-link" id="my-garage">Garage</a>
+                        <a href="#profileview-tags-tab" class="tab-link" id="my-tags">Tags</a>
+                    </div>
+
+                    <swiper-container class="tabs">
+
+                        <swiper-slide id="profileview-posts-tab" class="tab  tab-active">
+                            <div class="swiper-inner-container">
+                                <div class="profile-grid list virtual-list" id="profile-view-grid-posts">
+                                    <!-- Content generates here -->
+                                </div>
+
+                                <!-- Preloader for infinite scroll -->
+                                <div class="infinite-scroll-preloader posts-tab view-profile">
+                                    <div class="preloader"></div>
+                                </div>
+                            </div>
+                        </swiper-slide>
+
+                        <swiper-slide id="profileview-garage-tab" class="tab">
+                            <div class="swiper-inner-container">
+                                <div class="listview-title garage-sub-title">Current Vehicles</div>
+
+                                <ul
+                                    class="listview image-listview media transparent flush pt-1 pview-current-vehicles-list">
+                                    <!-- Content generates here -->
+                                </ul>
+
+                                <div class="listview-title garage-sub-title mt-2">Past Vehicles</div>
+                                <ul
+                                    class="listview image-listview media transparent flush pt-1 pview-past-vehicles-list">
+                                    <!-- Content generates here -->
+                                </ul>
+
+                            </div>
+                        </swiper-slide>
+
+
+                        <swiper-slide id="profileview-tags-tab" class="tab">
+                            <div class="swiper-inner-container">
+                                <div class="profile-grid list virtual-list" id="profile-view-grid-tags">
+                                    <!-- Content generates here -->
+                                </div>
+
+                                <!-- Preloader for infinite scroll -->
+                                <div class="infinite-scroll-preloader tags-tab view-profile">
+                                    <div class="preloader"></div>
+                                </div>
+                            </div>
+                        </swiper-slide>
+                    </swiper-container>
+                </div>
             </div>
         </div>
 
@@ -197,32 +199,181 @@
 </template>
 <script>
     import {
-        maybeFollowUser
+        getSessionUser,
+        getUserById
+    } from "../js/api/auth.js";
+
+    import {
+        getUserGarage
+    } from "../js/api/garage.js";
+
+    import {
+        getFollowersForUser,
+        maybeFollowUser,
     } from "../js/api/profile.js";
 
+    import { createGarageContent, displayFollowers, fillGridWithPosts, displayProfile } from "../js/profile-ui-helpers.js";
+
     export default (props, { $, $on, $f7 }) => {
+        var userId = null;
+        var refreshed = false;
+
         const { store } = $f7;
 
-        $on('pageBeforeIn', (e, page) => {
-            $(document).on('click', '.user-follow-btn', async function () {
-                const followButton = $(this);
-                const isFollowing = followButton.text() === 'Following';
+        $on('pageInit', async (e, page) => {
+            userId = page.route.params.id;
 
-                // change the button text
-                followButton.text(isFollowing ? 'Follow' : 'Following');
-                const response = await maybeFollowUser(followButton.attr('data-user-id'));
+            var pathStore = store.getters.getPathData;
 
-                if (response && response.success) {
-                    store.dispatch('updateUserDetails', {
-                        external: true
-                    });
+            if (!userId || userId === '-1') {
+                return;
+            }
+
+            const sessionUser = await getSessionUser();
+
+            if (!sessionUser || !sessionUser.id) {
+                return;
+            }
+
+            // Follow button
+            const followButton = $('.user-follow-btn');
+            const sessionFollowings = sessionUser.following;
+
+            if (sessionFollowings.includes(`${userId}`)) {
+                followButton.text('Following');
+            } else {
+                followButton.text('Follow');
+            }
+
+            followButton.attr('data-user-id', userId);
+
+            let cachedData = null;
+            try {
+                if (pathStore && pathStore.value[`/user/${userId}`]) {
+                    cachedData = pathStore.value[`/user/${userId}`];
                 }
-            });
+            } catch (error) {
+                console.error('Error fetching cached data:', error);
+            }
+
+            await renderProfileData(cachedData, userId, page.$el);
+
         });
 
-        $on('pageBeforeOut', (e, page) => {
-            $(document).off('click', '.user-follow-btn');
+        $on('ptr:refresh', async (e, page) => {
+            try {
+                refreshed = true;
+
+                store.dispatch('removePathData', `/user/${userId}`);
+
+                await renderProfileData(null, userId, page);
+
+                store.dispatch('getUserPosts', {
+                    user_id: userId,
+                    clear: true
+                });
+
+                store.dispatch('getUserTags', {
+                    user_id: userId,
+                    clear: true
+                });
+
+            } catch (error) {
+                console.log('Error refreshing profile page:', error);
+            }
+
+            e.detail();
         });
+
+        async function renderProfileData(cachedData, userId, dom) {
+            var view = $f7.views.current;
+
+            if (!cachedData) {
+                if (!refreshed) {
+                    $('.loading-fullscreen').show();
+                }
+
+                const data = await getUserById(userId);
+
+                if (!data || data.error) {
+                    $('.loading-fullscreen').hide();
+                    $f7.dialog.alert('User not found', 'Error');
+
+                    view.router.back(view.history[0], {
+                        force: true
+                    });
+                    return;
+                }
+
+                displayProfile(data.user, 'profile-view');
+
+                $('.loading-fullscreen').hide();
+
+                store.dispatch('getUserPosts', {
+                    user_id: userId,
+                    clear: true
+                });
+
+                store.dispatch('getUserTags', {
+                    user_id: userId,
+                    clear: true
+                });
+
+                const garage = await getUserGarage(userId);
+
+                if (garage) {
+                    createGarageContent(garage, '.pview-current-vehicles-list', '.pview-past-vehicles-list');
+                }
+
+                const followersData = await getFollowersForUser(userId);
+
+                $('.pview.profile-followers').attr('data-popup', ".profile-followers-popup");
+                $('.pview.profile-followers').addClass('popup-open');
+
+                let followers = null;
+                if (followersData && followersData.success) {
+                    followers = followersData.followers;
+                }
+
+                store.dispatch('setPathData', {
+                    path: `/user/${userId}`,
+                    data: {
+                        user: data.user,
+                        garage: garage,
+                        followers: followers
+                    },
+                });
+
+                displayFollowers(followers, data.following || [], 'profile-view');
+            } else {
+                displayProfile(cachedData.user, 'profile-view');
+
+                store.dispatch('getUserPosts', {
+                    user_id: userId,
+                    clear: true
+                });
+
+                store.dispatch('getUserTags', {
+                    user_id: userId,
+                    clear: true
+                });
+
+                if (cachedData.garage) {
+                    createGarageContent(cachedData.garage, '.pview-current-vehicles-list', '.pview-past-vehicles-list');
+                }
+
+                if (cachedData.followers) {
+                    displayFollowers(cachedData.followers, cachedData.user.following || [], 'profile-view');
+                }
+
+
+                $('.pview.profile-followers').attr('data-popup', ".profile-followers-popup");
+                $('.pview.profile-followers').addClass('popup-open');
+            }
+
+            $('.loading-fullscreen').hide();
+            refreshed = false;
+        }
 
         return $render;
     }
