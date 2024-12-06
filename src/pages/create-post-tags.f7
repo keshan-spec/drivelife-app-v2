@@ -24,7 +24,7 @@
         <div class="page-content">
             <div class="post-add">
                 <!-- Post Images -->
-                <div class="post-add-images">
+                <div class="post-view-images">
                     <!-- Slider container -->
                     <div class="swiper post-add-tags-swiper">
                         <div class="swiper-pagination"></div>
@@ -321,7 +321,7 @@
             contentData = store.getters.getCreatePostContent.value || '';
 
             renderTaggedEntities(taggedEntities);
-            const postMediaList = page.$el.find('.post-add-images .post-add-tags-swiper');
+            const postMediaList = page.$el.find('.post-view-images .post-add-tags-swiper');
             postMediaList.html(renderMedia(mediaData));
 
             page.$el.find('.swiper-slide .swiper-slide-image').forEach(img => {
