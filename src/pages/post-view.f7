@@ -40,7 +40,199 @@
     </div>
 </template>
 <script>
-    export default () => {
+    import {
+        getPostById
+    } from "../js/api/posts.js";
+    import {
+        formatPostDate,
+        setImageStyle
+    } from "../js/utils.js";
+
+    import { createActionsSection, createBottomSection, createMediaSection, togglePostLike } from "../js/post-ui-card.js";
+
+    export default (props, { $, $on, $f7 }) => {
+        const { store } = $f7;
+
+        $on('pageInit', async (e, page) => {
+            const { id } = page.route.params;
+            var pathStore = store.getters.getPathData;
+
+            var postId = id;
+            var query = page.route.query;
+
+            let commentId;
+
+            if (query && query.commentId) {
+                commentId = query.commentId;
+            }
+
+            if (!postId || postId === '-1') {
+                return;
+            }
+
+            let cachedData = null;
+
+            try {
+                if (pathStore && pathStore.value[`/post/${postId}`]) {
+                    cachedData = pathStore.value[`/post/${postId}`];
+                }
+            } catch (error) {
+                console.error('Error fetching cached data:', error);
+            }
+
+            if (!cachedData) {
+                $('.loading-fullscreen.post-view').show();
+
+                const post = await getPostById(postId);
+                if (!post) {
+                    $f7.dialog.alert('Post not found', 'Error');
+                    return;
+                }
+
+                store.dispatch('setPathData', {
+                    path: `/post/${postId}`,
+                    data: post,
+                });
+
+                cachedData = post;
+            } else {
+                $('.loading-fullscreen.post-view').hide();
+            }
+
+            displaySinglePost(cachedData, page);
+
+            if (commentId) {
+                $('.media-post-comment').click();
+
+                setTimeout(() => {
+                    // find .comment data-comment-id="${comment.id}" and animate it to glow#
+                    if (commentId) {
+                        const comment = $(`.comment[data-comment-id="${commentId}"]`);
+
+                        if (comment.length > 0) {
+                            comment.addClass('target-highlight');
+                            // Scroll to the comment
+                            document.querySelector(`.comment[data-comment-id="${commentId}"]`).scrollIntoView({
+                                behavior: 'smooth', // Optional, adds smooth scrolling
+                                block: 'start', // Aligns the element to the top of the view
+                                inline: 'nearest' // Aligns the element horizontally in the viewport
+                            });
+
+                        }
+
+                        setTimeout(() => {
+                            comment.removeClass('target-highlight');
+                        }, 3000);
+                    }
+                }, 2000);
+            }
+        });
+
+
+        function displaySinglePost(post, page) {
+            const postsContainer = page.$el.find('#post-view-container');
+            postsContainer.innerHTML = ''; // Clear any existing posts
+
+            const user = store.getters.user.value;
+
+            let post_actions = `
+                <div class="media-post-actions">
+                    <div class="media-post-like" data-post-id="${post.id}">
+                    <i class="icon f7-icons ${post.is_liked ? 'text-red' : ''}" data-post-id="${post.id}">${post.is_liked ? 'heart_fill' : 'heart'}</i>
+                    </div>
+                    <div class="media-post-comment popup-open" data-popup=".comments-popup" data-post-id="${post.id}">
+                    <i class="icon f7-icons">chat_bubble</i>
+                    </div>
+                    <div class="media-post-share popup-open" data-popup=".share-popup">
+                    <i class="icon f7-icons">paperplane</i>
+                </div>
+            `;
+
+            if (post.user_id == user.id) {
+                post_actions += `<div class="media-post-edit popup-open" data-popup=".edit-post-popup" data-post-id="${post.id}">
+                    <i class="icon f7-icons">gear_alt</i>
+                    </div>
+                `;
+            }
+
+            post_actions += `</div>`;
+
+            const date = formatPostDate(post.post_date);
+            const maxDescriptionLength = 200; // Set your character limit here
+            const isLongDescription = post.caption.length > maxDescriptionLength;
+            const shortDescription = isLongDescription ? post.caption.slice(0, maxDescriptionLength) : post.caption;
+
+            let profile_link;
+
+            if (post.user_id == user.id) {
+                profile_link = `
+                <a href="#" class="view-profile media-post-header">
+                    <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
+                    <div class="media-post-user">${post.username}</div>
+                    <div class="media-post-date">${date}</div>
+                </a>`;
+            } else {
+                profile_link = `
+                    <a href="/profile-view/${post.user_id}" class="media-post-header">
+                        <div class="media-post-avatar" style="background-image: url('${post.user_profile_image || 'img/profile-placeholder.jpg'}');"></div>
+                        <div class="media-post-user">${post.username}</div>
+                        <div class="media-post-date">${date}</div>
+                    </a>`;
+            }
+
+            const mediaSection = createMediaSection(post.media);
+            const actionsSection = createActionsSection(post_actions, post.likes_count);
+            const bottomSection = createBottomSection(post.username, shortDescription, isLongDescription, post.caption, post.comments_count, post.id);
+
+            const postItem = `
+            <div class="media-post single" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
+                <div class="media-post-content">
+                    ${profile_link}
+                    ${mediaSection}
+                </div>
+                ${actionsSection}
+                ${bottomSection}
+            </div>`;
+
+            postsContainer.append(postItem);
+
+            // Add Hammer.js double tap event listener
+            const elem = $('.media-post.single[data-post-id="' + post.id + '"]')[0];
+            const mc = new Hammer(elem);
+
+            // listen to events...
+            mc.on("doubletap", function (ev) {
+                const postId = elem.getAttribute('data-post-id');
+                const isLiked = elem.getAttribute('data-is-liked') === 'true';
+
+                if (isLiked) {
+                    return;
+                }
+
+                togglePostLike(postId);
+            });
+
+            // Initialize Swiper
+            $f7.swiper.create('.post-view-swiper', {
+                speed: 400,
+                spaceBetween: 0,
+                pagination: {
+                    el: '.swiper-pagination',
+                    type: 'bullets',
+                },
+            });
+
+            document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
+                if (img.complete) {
+                    setImageStyle(img);
+                } else {
+                    img.onload = () => {
+                        setImageStyle(img);
+                    };
+                }
+            });
+        }
+
         return $render;
     }
 </script>

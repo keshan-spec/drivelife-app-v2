@@ -4,12 +4,11 @@ import app, {
 import store from "./store.js";
 
 import {
-  detectDoubleTapClosure,
   formatPostDate,
   hapticsImpactLight,
-  preloadImage,
   setImageStyle
 } from './utils.js';
+
 import {
   fetchComments,
   maybeLikePost,
@@ -23,7 +22,7 @@ import {
 } from "./api/auth.js";
 
 import $ from 'dom7';
-import { createActionsSection, createBottomSection, createMediaSection } from "./post-ui-card.js";
+import { createActionsSection, createBottomSection, createMediaSection, togglePostLike } from "./post-ui-card.js";
 
 var currentPostsPage = 1;
 var currentFollowingPostsPage = 1;
@@ -40,9 +39,6 @@ var totalFPostPages = 0;
 var isFetchingPosts = false;
 var activeTab = 'latest';
 var refreshed = false;
-
-//screen width
-var containerWidth = window.innerWidth;
 
 // Function to pause all videos
 function pauseAllVideos() {
@@ -180,10 +176,6 @@ userStore.onUpdated((data) => {
     if (!listenersInitialized) {
       initializeListeners();
     }
-  } else {
-    if (listenersInitialized) {
-      unInitiallizeListeners();
-    }
   }
 });
 
@@ -261,7 +253,7 @@ function unInitiallizeListeners() {
 function initializeListeners() {
   store.dispatch('setHomeListenersInitialized', true);
 
-  $(document).on('click', '.media-post-readmore', function () {
+  $('#app').on('click', '.media-post-readmore', function () {
     const postDescription = this.previousElementSibling.previousElementSibling; // The short description
     const fullDescription = this.previousElementSibling; // The full description
 
@@ -276,7 +268,7 @@ function initializeListeners() {
     }
   });
 
-  $(document).on('click', '.media-post-like i', (e) => {
+  $('#app').on('click', '.media-post-like i', (e) => {
     const postId = e.target.getAttribute('data-post-id');
 
     const parent = e.target.closest('.media-post');
@@ -286,14 +278,14 @@ function initializeListeners() {
   });
 
   // set the post id as a data attribute from the edit post popup
-  $(document).on('click', '.media-post-edit', function () {
+  $('#app').on('click', '.media-post-edit', function () {
     const postId = $(this).closest('.media-post').attr('data-post-id');
     const isSingleView = $(this).closest('.media-post').hasClass('single');
     $('.edit-post-popup').attr('data-post-id', postId);
     $('.edit-post-popup').attr('data-is-single', isSingleView);
   });
 
-  $(document).on('click', '#delete-post', function () {
+  $('#app').on('click', '#delete-post', function () {
     var view = app.views.current;
 
     // set the post id as a data attribute from the edit post popup
@@ -332,7 +324,7 @@ function initializeListeners() {
     });
   });
 
-  $(document).on('click', '#edit-post', function () {
+  $('#app').on('click', '#edit-post', function () {
     var view = app.views.current;
 
     // set the post id as a data attribute from the edit post popup
@@ -345,7 +337,7 @@ function initializeListeners() {
   });
 
   // media-post-video click
-  $(document).on('click', '.media-post-video', function () {
+  $('#app').on('click', '.media-post-video', function () {
     if (this.paused) {
       this.play();
     } else {
@@ -354,7 +346,7 @@ function initializeListeners() {
   });
 
   // on .popup-open click
-  $(document).on('click', '.media-post-comment, .media-post-commentcount', async function () {
+  $('#app').on('click', '.media-post-comment, .media-post-commentcount', async function () {
     const postId = this.getAttribute('data-post-id');
 
     if (!postId) {
@@ -383,14 +375,14 @@ function initializeListeners() {
     }
   });
 
-  $(document).on('click', '.media-post-share', function () {
+  $('#app').on('click', '.media-post-share', function () {
     // set the post id as a data attribute 
     const postId = $(this).closest('.media-post').attr('data-post-id');
     $('.share-popup').attr('data-post-id', postId);
     $('#copy-link').attr('data-clipboard-text', `https://app.mydrivelife.com/post-view/${postId}`);
   });
 
-  $(document).on('click', '#share-post-email', function () {
+  $('#app').on('click', '#share-post-email', function () {
     const postId = $(this).closest('.popup').attr('data-post-id');
     const postLink = `https://app.mydrivelife.com/post-view/${postId}`;
 
@@ -399,7 +391,7 @@ function initializeListeners() {
   });
 
   // data-clipboard-text click
-  $(document).on('click', '#copy-link', function () {
+  $('#app').on('click', '#copy-link', function () {
     const copyText = $(this).attr('data-clipboard-text');
     navigator.clipboard.writeText(copyText);
 
@@ -410,7 +402,7 @@ function initializeListeners() {
   });
 
   // on .comment-replies-toggle click
-  $(document).on('click', '.comment-replies-toggle', function () {
+  $('#app').on('click', '.comment-replies-toggle', function () {
     const commentRepliesContainer = this.nextElementSibling;
     commentRepliesContainer.classList.toggle('show');
     const repliesCount = this.getAttribute('data-replies-count');
@@ -463,7 +455,7 @@ function initializeListeners() {
   });
 
   //.comment-reply click
-  $(document).on('click', '.comment-reply', function () {
+  $('#app').on('click', '.comment-reply', function () {
     // get the comment id, and comment owner id
     const commentId = this.closest('.comment').getAttribute('data-comment-id');
     const ownerId = this.closest('.comment').getAttribute('data-owner-id');
@@ -482,7 +474,7 @@ function initializeListeners() {
     document.getElementById('comment-form').prepend(replyingTo);
   });
 
-  $(document).on('click', '.comment-delete', async function () {
+  $('#app').on('click', '.comment-delete', async function () {
     app.dialog.confirm('Are you sure you want to delete this comment? This will remove all replies to this comment', 'Delete Comment', async () => {
       try {
         const commentId = this.getAttribute('data-comment-id');
@@ -499,7 +491,7 @@ function initializeListeners() {
     });
   });
 
-  $(document).on('click', '.comment a', function (e) {
+  $('#app').on('click', '.comment a', function (e) {
     var view = app.views.current;
     // hide the comments popup
     app.popup.close();
@@ -520,45 +512,45 @@ function initializeListeners() {
   });
 
   // event listener for tab change
-  $(document).on('click', '.social-tabs .tab-link', async function (e) {
+  $('#app').on('click', '.social-tabs .tab-link', async function (e) {
     const type = this.getAttribute('data-type');
     activeTab = type;
   });
 }
 
-$(document).on('tab:hide', '#view-social', function (e) {
-  unInitiallizeListeners();
-});
+// $(document).on('tab:hide', '#view-social', function (e) {
+//   unInitiallizeListeners();
+// });
 
-$(document).on('tab:show', '#view-social', function (e) {
-  const listenersInitialized = store.getters.homeListenersInitialized.value;
+// $(document).on('tab:show', '#view-social', function (e) {
+//   const listenersInitialized = store.getters.homeListenersInitialized.value;
 
-  if (listenersInitialized) return; // Prevent multiple attachments
+//   if (listenersInitialized) return; // Prevent multiple attachments
 
-  initializeListeners();
-});
+//   initializeListeners();
+// });
 
-$(document).on('page:beforein', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
-  const session = userStore.value;
+// $(document).on('page:beforein', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
+//   const session = userStore.value;
 
-  if (!session || !session.id) {
-    return;
-  }
+//   if (!session || !session.id) {
+//     return;
+//   }
 
-  const listenersInitialized = store.getters.homeListenersInitialized.value;
-  app.toolbar.show('.toolbar.toolbar-bottom', true);
+//   const listenersInitialized = store.getters.homeListenersInitialized.value;
+//   app.toolbar.show('.toolbar.toolbar-bottom', true);
 
-  if (listenersInitialized) return; // Prevent multiple attachments
+//   if (listenersInitialized) return; // Prevent multiple attachments
 
-  initializeListeners();
-});
+//   initializeListeners();
+// });
 
-$(document).on('page:beforeout', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
-  const listenersInitialized = store.getters.homeListenersInitialized.value;
-  if (!listenersInitialized) return; // Prevent multiple attachments
+// $(document).on('page:beforeout', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
+//   const listenersInitialized = store.getters.homeListenersInitialized.value;
+//   if (!listenersInitialized) return; // Prevent multiple attachments
 
-  unInitiallizeListeners();
-});
+//   unInitiallizeListeners();
+// });
 
 async function displayPosts(posts, following = false) {
   const postsContainer = $(following ? '#tab-following .data' : '#tab-latest .data');
@@ -603,34 +595,6 @@ async function displayPosts(posts, following = false) {
     const actionsSection = createActionsSection(post_actions, post.likes_count);
     const bottomSection = createBottomSection(post.username, shortDescription, isLongDescription, post.caption, post.comments_count, post.id);
 
-    let imageHeight = 400;
-
-    if (post.media.length > 0) {
-      const intrinsicWidth = post.media[0].media_width;
-      const intrinsicHeight = post.media[0].media_height;
-      const media_type = post.media[0].media_type;
-
-      // Calculate intrinsic aspect ratio
-      const intrinsicRatio = intrinsicWidth / intrinsicHeight;
-
-      // Calculate the rendered height based on the container width
-      const renderedHeight = containerWidth / intrinsicRatio;
-
-      // Use either the rendered height or the fallback height
-      if (renderedHeight > 0) {
-        if (renderedHeight > 500) {
-          imageHeight = 500;
-        } else {
-          imageHeight = renderedHeight;
-        }
-
-
-        if (media_type === 'video') {
-          imageHeight = renderedHeight;
-        }
-      }
-    }
-
     let profile_link;
 
     if (post.user_id == user.id) {
@@ -659,43 +623,6 @@ async function displayPosts(posts, following = false) {
       ${bottomSection}
     </div>
   `;
-
-    const postItem1 = `
-      <div class="media-post" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
-        <div class="media-post-content">
-          ${profile_link}
-          <div class="media-post-content">
-          <swiper-container pagination class="demo-swiper-multiple" space-between="50">
-                ${post.media.map((mediaItem, index) => {
-      // Preload the first image in the post
-      if (index === 0 && mediaItem.media_type !== 'video') {
-        preloadImage(mediaItem.media_url);
-      }
-
-      return `
-          <swiper-slide class="swiper-slide post-media ${mediaItem.media_type === 'video' ? 'video' : ''}" style="height: ${imageHeight}px; ">
-                    ${mediaItem.media_type === 'video' ?
-          `Not implemented`
-          : `<img src="${mediaItem.media_url}" 
-                  alt="${mediaItem.caption || post.username + 's post'}"
-                  style="text-align: center;"
-                  onerror = "this.style.display='none';"
-              />`}
-            </swiper-slide>`;
-    }).join('')}
-      </swiper-container>
-    </div>
-          ${post_actions}
-          <div class="media-post-likecount" data-like-count="${post.likes_count}">${post.likes_count} likes</div>
-          <div class="media-post-description">
-            <strong>${post.username}</strong> <br/> <span class="post-caption">${shortDescription}</span>
-            <span class="full-description hidden">${post.caption}</span>
-            ${isLongDescription ? `<span class="media-post-readmore">... more</span>` : ''}
-          </div>
-          ${post.comments_count > 0 ? `<div class="media-post-commentcount popup-open" data-popup=".comments-popup" data-post-id="${post.id}">View ${post.comments_count} comments</div>` : ''}
-        </div>
-      </div>
-    `;
 
     postsContainer.append(postItem);
   });
@@ -744,56 +671,6 @@ function initDoubleTapLike() {
       togglePostLike(postId);
     });
   });
-}
-
-export function togglePostLike(postId, single = false) {
-  // Find all post elements with the specified postId
-  let container = single ? `.media-post.single[data-post-id="${postId}"]` : `.media-post[data-post-id="${postId}"]`;
-  const postElements = document.querySelectorAll(container);
-
-  // Iterate through all matching post elements and update them
-  postElements.forEach(postElement => {
-    const likeIcon = postElement.querySelector('.media-post-like i');
-    const isLiked = postElement.getAttribute('data-is-liked') === 'true';
-    const likeCountElem = postElement.querySelector('.media-post-likecount');
-    let likeCount = parseInt(likeCountElem.getAttribute('data-like-count'));
-
-    // Toggle the like state
-    if (isLiked) {
-      likeIcon.classList.remove('text-red');
-      likeIcon.innerText = 'heart';
-      likeCount--;
-      postElement.setAttribute('data-is-liked', 'false');
-    } else {
-      likeIcon.classList.add('text-red');
-      likeIcon.innerText = 'heart_fill';
-      likeCount++;
-      postElement.setAttribute('data-is-liked', 'true');
-    }
-
-    // Update like count
-    likeCountElem.innerText = `${likeCount} likes`;
-    likeCountElem.setAttribute('data-like-count', likeCount);
-
-    if (single) {
-      var pathStore = store.getters.getPathData;
-
-      if (pathStore && pathStore.value[`/post/${postId}`]) {
-        var post = pathStore.value[`/post/${postId}`];
-        post.is_liked = !isLiked;
-        post.likes_count = likeCount;
-
-        store.dispatch('setPathData', {
-          path: `/post/${postId}`,
-          data: post,
-        });
-      }
-    }
-  });
-
-
-  // Optionally, make an API call to update the like status on the server
-  maybeLikePost(postId);
 }
 
 function displayComments(comments, postId) {
