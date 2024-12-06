@@ -6,7 +6,8 @@ import store from "./store.js";
 import {
   detectDoubleTapClosure,
   formatPostDate,
-  hapticsImpactLight
+  hapticsImpactLight,
+  setImageStyle
 } from './utils.js';
 import {
   fetchComments,
@@ -343,34 +344,6 @@ function initializeListeners() {
     app.popup.close('.edit-post-popup');
   });
 
-  // $(document).on('touchstart', '.media-post-content .post-media', detectDoubleTapClosure((e) => {
-  //   const parent = e.closest('.media-post');
-  //   const postId = parent.getAttribute('data-post-id');
-  //   const isLiked = parent.getAttribute('data-is-liked') === 'true';
-
-  //   if (isLiked) {
-  //     return;
-  //   }
-
-  //   togglePostLike(postId);
-  // }), {
-  //   passive: false
-  // });
-
-  // $(document).on('touchstart', '.media-single-post-content .post-media', detectDoubleTapClosure((e) => {
-  //   const parent = e.closest('.media-post');
-  //   const postId = parent.getAttribute('data-post-id');
-  //   const isLiked = parent.getAttribute('data-is-liked') === 'true';
-
-  //   if (isLiked) {
-  //     return;
-  //   }
-
-  //   togglePostLike(postId);
-  // }), {
-  //   passive: false
-  // });
-
   // media-post-video click
   $(document).on('click', '.media-post-video', function () {
     if (this.paused) {
@@ -643,6 +616,10 @@ async function displayPosts(posts, following = false) {
     const isLongDescription = post.caption.length > maxDescriptionLength;
     const shortDescription = isLongDescription ? post.caption.slice(0, maxDescriptionLength) : post.caption;
 
+    const mediaSection = createMediaSection(post.media);
+    const actionsSection = createActionsSection(post_actions, post.likes_count);
+    const bottomSection = createBottomSection(post.username, shortDescription, isLongDescription, post.caption, post.comments_count, post.id);
+
     let imageHeight = 400;
 
     if (post.media.length > 0) {
@@ -690,6 +667,17 @@ async function displayPosts(posts, following = false) {
     }
 
     const postItem = `
+    <div class="media-post" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
+      <div class="media-post-content">
+        ${profile_link}
+        ${mediaSection}
+      </div>
+      ${actionsSection}
+      ${bottomSection}
+    </div>
+  `;
+
+    const postItem1 = `
       <div class="media-post" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
         <div class="media-post-content">
           ${profile_link}
@@ -701,20 +689,11 @@ async function displayPosts(posts, following = false) {
         preloadImage(mediaItem.media_url);
       }
 
+
       return `
           <swiper-slide class="swiper-slide post-media ${mediaItem.media_type === 'video' ? 'video' : ''}" style="height: ${imageHeight}px; ">
                     ${mediaItem.media_type === 'video' ?
-          `<video 
-              style="height: ${imageHeight}px;" 
-              class="video-js" 
-              data-src="${mediaItem.media_url}/manifest/video.m3u8" 
-              preload="auto" 
-              playsinline 
-              loop 
-              controls 
-              autoplay 
-              poster="${mediaItem.media_url}/thumbnails/thumbnail.jpg"
-            ></video>`
+          `Not implemented`
           : `<img src="${mediaItem.media_url}" 
                   alt="${mediaItem.caption || post.username + 's post'}"
                   style="text-align: center;"
@@ -722,8 +701,8 @@ async function displayPosts(posts, following = false) {
               />`}
             </swiper-slide>`;
     }).join('')}
-          </swiper-container>
-          </div>
+      </swiper-container>
+    </div>
           ${post_actions}
           <div class="media-post-likecount" data-like-count="${post.likes_count}">${post.likes_count} likes</div>
           <div class="media-post-description">
@@ -739,11 +718,30 @@ async function displayPosts(posts, following = false) {
     postsContainer.append(postItem);
   });
 
-  loadVideos();
+  // loadVideos();
   initDoubleTapLike();
 }
 
 function initDoubleTapLike() {
+  app.swiper.create('.post-view-swiper', {
+    speed: 400,
+    spaceBetween: 0,
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+    },
+  });
+
+  document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
+    if (img.complete) {
+      setImageStyle(img);
+    } else {
+      img.onload = () => {
+        setImageStyle(img);
+      };
+    }
+  });
+
   // get all the media-post elements
   const mediaPosts = document.querySelectorAll('.media-post');
 
@@ -977,3 +975,68 @@ function toggleCommentLike(commentId, ownerId) {
 
   maybeLikeComment(commentId, ownerId);
 }
+
+// New function to handle rendering of posts with multiple or single images
+const createMediaSection = (mediaItems) => {
+  if (mediaItems.length === 1) {
+    // Render a single image post
+    return `
+      <div class="single-image">
+        <img class="media-image" src="${mediaItems[0].media_url}" 
+             alt="${mediaItems[0].caption || 'Post image'}" 
+             style="text-align: center;" 
+             onerror="this.style.display='none';">
+        <img class="media-image-background" src="${mediaItems[0].media_url}" 
+             alt="${mediaItems[0].caption || 'Post image'}" 
+             style="text-align: center;" 
+             onerror="this.style.display='none';">
+      </div>
+    `;
+  }
+
+  // Render a carousel (Swiper) for multiple images
+  return `
+    <div class="post-view-images">
+      <div class="swiper post-view-swiper">
+        <div class="swiper-wrapper">
+          ${mediaItems.map((mediaItem, index) => {
+    // Preload the first image in the post
+    if (index === 0 && mediaItem.media_type !== 'video') {
+      preloadImage(mediaItem.media_url);
+    }
+
+    // Return the individual slide
+    return `
+              <div class="swiper-slide" data-id="${index + 1}">
+                <img class="swiper-slide-image" src="${mediaItem.media_url}" alt="${mediaItem.caption || 'Post image'}" />
+                <img class="swiper-slide-background" src="${mediaItem.media_url}" alt="${mediaItem.caption || 'Post image'}" />
+              </div>
+            `;
+  }).join('')}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  `;
+};
+
+
+const createActionsSection = (postActions, likeCount) => {
+  return `
+    ${postActions}
+    <div class="media-post-likecount" data-like-count="${likeCount}">${likeCount} likes</div>
+  `;
+};
+
+const createBottomSection = (username, shortDescription, isLongDescription, fullDescription, commentsCount, postId) => {
+  return `
+    <div class="media-post-description">
+      <strong>${username}</strong> <br/> <span class="post-caption">${shortDescription}</span>
+      <span class="full-description hidden">${fullDescription}</span>
+      ${isLongDescription ? `<span class="media-post-readmore">... more</span>` : ''}
+    </div>
+    ${commentsCount > 0 ?
+      `<div class="media-post-commentcount popup-open" data-popup=".comments-popup" data-post-id="${postId}">View ${commentsCount} comments</div>` :
+      ''}
+  `;
+};

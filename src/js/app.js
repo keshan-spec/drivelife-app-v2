@@ -65,7 +65,6 @@ if (window.f7App !== undefined) {
       closeTimeout: 3000,
       closeButton: true,
     },
-
     el: '#app', // App root element
     component: App, // App main component
     // App store
@@ -268,6 +267,13 @@ CapacitorApp.addListener('backButton', async () => {
     }
   } catch (error) {
     console.log(error);
+  }
+});
+
+// App state change
+CapacitorApp.addListener('appStateChange', async (state) => {
+  if (!state.isActive) {
+    store.dispatch('setHomeListenersInitialized', false);
   }
 });
 

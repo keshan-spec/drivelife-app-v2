@@ -1,6 +1,15 @@
 import { verifyEmail } from "./api/auth";
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
+//Image Size Function
+export function setImageStyle(img) {
+    if (img.naturalWidth > img.naturalHeight) {
+        img.style.objectFit = 'contain';
+    } else {
+        img.style.objectFit = 'cover';
+    }
+}
+
 export const hapticsImpactMedium = async () => {
     await Haptics.impact({ style: ImpactStyle.Medium });
 };
