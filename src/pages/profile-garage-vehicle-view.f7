@@ -58,12 +58,12 @@
 
       <div class="profile-lower">
         <div class="profile-tabs garage-view">
-          <a href="#tab-1" class="tab-link tab-link-active" id="garage-posts">Posts</a>
-          <a href="#tab-2" class="tab-link" id="garage-tags">Tags</a>
+          <a href="#tab-vehicle-1" class="tab-link tab-link-active" id="garage-posts">Posts</a>
+          <a href="#tab-vehicle-2" class="tab-link" id="garage-tags">Tags</a>
         </div>
 
         <swiper-container class="tabs">
-          <swiper-slide id="tab-1" class="tab">
+          <swiper-slide id="tab-vehicle-1" class="tab tab-active">
             <div class="swiper-inner-container">
               <div class="profile-grid" id="garage-posts-tab">
               </div>
@@ -74,7 +74,7 @@
               </div>
             </div>
           </swiper-slide>
-          <swiper-slide id="tab-2" class="tab">
+          <swiper-slide id="tab-vehicle-2" class="tab">
             <div class="swiper-inner-container">
               <div class="profile-grid" id="garage-tags-tab">
               </div>
