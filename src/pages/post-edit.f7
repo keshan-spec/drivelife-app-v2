@@ -39,7 +39,97 @@
   </div>
 </template>
 <script>
-  export default () => {
+  import {
+    updatePost
+  } from "../js/api/posts.js";
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+
+    $on('pageInit', async (e, page) => {
+      const postId = page.route.params.id;
+      const posts = store.getters.myPosts.value;
+
+      if (!postId || postId == -1) {
+        return;
+      }
+
+      const post = posts.data.find(p => p.id == postId);
+
+
+      page.$el.find('#edit_post_id').val(postId);
+      page.$el.find('#post_content').val(post?.caption || '');
+    });
+
+    $on('pageAfterIn', (e, page) => {
+      $(document).on('click', '#update-post', async (e) => {
+        var view = $f7.views.current;
+
+        const description = $('#post_content').val();
+        const postId = $('#edit_post_id').val();
+
+        const data = {
+          post_id: postId,
+          caption: description
+        };
+
+        try {
+          $f7.preloader.show();
+
+          const response = await updatePost(data);
+
+          $f7.preloader.hide();
+
+          if (!response || response.error) {
+            throw new Error(response.error);
+          }
+
+          showToast('Post updated successfully');
+
+          // fine elem with data-post-id="52" and update the .media-post-description .post-caption text
+          var postElem = $(`[data-post-id="${postId}"]`).find('.media-post-description');
+
+          const maxDescriptionLength = 200; // Set your character limit here
+          const isLongDescription = description.length > maxDescriptionLength;
+          const shortDescription = isLongDescription ? description.slice(0, maxDescriptionLength) : description;
+
+          // for each postElem, loop through and update the .post-caption and .full-description hidden input
+          postElem.each(function () {
+            var postCaption = $(this).find('.post-caption');
+            var fullDescription = $(this).find('.full-description');
+
+            postCaption.text(shortDescription);
+            fullDescription.val(description);
+          });
+
+          store.dispatch('updatePost', {
+            post_id: postId,
+            caption: description
+          });
+
+          view.router.back();
+        } catch (error) {
+          $f7.notification.create({
+            titleRightText: 'now',
+            subtitle: 'Oops, something went wrong',
+            text: error.message || 'Failed to update post',
+          }).open();
+          $f7.preloader.hide();
+        }
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#update-post');
+    });
+
+    const showToast = (text) => {
+      $f7.toast.create({
+        text: text,
+        closeTimeout: 2000,
+        position: 'bottom',
+      }).open();
+    };
+
     return $render;
   }
 </script>

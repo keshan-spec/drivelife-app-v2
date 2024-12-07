@@ -4,7 +4,6 @@ import $ from 'dom7';;
 
 import Swiper from 'swiper';
 
-
 var trendingEventsStore = store.getters.getTrendingEvents;
 var trendingVenuesStore = store.getters.getTrendingVenues;
 var eventCategories = store.getters.getEventCategories;
@@ -24,28 +23,7 @@ var totalVenuesPages = 1;
 var totalUsersPages = 1;
 var totalVehiclePages = 1;
 
-var autocomplete;
 var filters = {};
-
-//AUTOCOMPLETE FUNCTIONS
-function initAutocomplete() {
-    autocomplete = new google.maps.places.Autocomplete(
-        document.getElementById("autocomplete"), {
-        types: ["establishment", "geocode"],
-        componentRestrictions: {
-            country: 'GB'
-        }
-    }
-    );
-    autocomplete.setFields(["geometry", "address_component"]);
-    autocomplete.addListener("place_changed", fillInAddress);
-}
-
-function fillInAddress() {
-    const place = autocomplete.getPlace();
-    document.getElementById('lat').value = place.geometry.location.lat();
-    document.getElementById('lng').value = place.geometry.location.lng();
-}
 
 function populateEventCard(data = [], isSwiper = true) {
     const swiperContainer = document.querySelector('#trending-events');
@@ -240,78 +218,6 @@ function addCategoryOptions(categories) {
     });
 }
 
-// Event listener for the submit button
-$('#app').on('click', '.apply-filters', function (e) {
-    const dateFilters = document.querySelector('#date-filters ul');
-    const locationFilters = document.querySelector('#location-filters ul');
-    const categoryFilters = document.querySelector('#category-filters ul');
-
-    e.preventDefault(); // Prevent form submission if you're handling it via JavaScript
-    const selectedCats = [...categoryFilters.querySelectorAll('input[type="checkbox"]:checked')].map(cb => cb.value);
-    const selectedLocation = [...locationFilters.querySelectorAll('input[type="radio"]:checked')].map(cb => cb.value);
-    const dateFilter = [...dateFilters.querySelectorAll('input[type="checkbox"]:checked')].map(cb => cb.value);
-
-    const latitude = document.getElementById('lat').value;
-    const longitude = document.getElementById('lng').value;
-
-    let location = null;
-
-    if (latitude && longitude) {
-        location = {
-            latitude,
-            longitude
-        };
-    }
-
-    filters = {
-        'event_location': selectedLocation,
-        'custom_location': location,
-        'event_date': dateFilter,
-        //  'event_start': customDateRange?.start,
-        //  'event_end': customDateRange?.end,
-        'event_category': !selectedCats?.includes(0) ? selectedCats : undefined,
-    };
-
-    // get active tab
-    const activeTab = document.querySelector('.tabbar-nav .tab-link-active').getAttribute('data-id');
-
-    if (activeTab === 'events') {
-        store.dispatch('filterEvents', {
-            page: 1,
-            filters
-        });
-
-        currentEventsPage = 1;
-        isFetchingPosts = false;
-
-        const eventsTabContainer = document.querySelector('#filtered-events-tab');
-        eventsTabContainer.innerHTML = '';
-    }
-
-    if (activeTab === 'venues') {
-        // remove unwanted filters
-        delete filters.event_date;
-        delete filters.event_category;
-        delete filters.event_location;
-
-        filters['location'] = selectedLocation;
-
-        store.dispatch('filterVenues', {
-            page: 1,
-            filters
-        });
-
-        currentVenuesPage = 1;
-        isFetchingPosts = false;
-
-        const venuesTabContainer = document.querySelector('#filtered-venues-tab');
-        venuesTabContainer.innerHTML = '';
-    }
-
-    // close popup
-    app.popup.close();
-});
-
 $(document).on('change', '#category-filters ul', function (e) {
     const categoryFilters = document.querySelector('#category-filters ul');
     var allCheckbox = categoryFilters.querySelector('input[name="all"]');
@@ -451,6 +357,8 @@ trendingVehiclesStore.onUpdated((data) => {
 
 // Filtered views
 filteredEventsStore.onUpdated((data) => {
+    console.log(data);
+
     const eventsTabContainer = document.querySelector('#filtered-events-tab');
     if (!data || data.data.length === 0) {
         eventsTabContainer.innerHTML = `
@@ -469,6 +377,8 @@ filteredEventsStore.onUpdated((data) => {
         $('.infinite-scroll-preloader.events-tab').show();
     }
 
+    filters = data.filters;
+
     populateEventCard(data.new_data, false);
 });
 
@@ -486,6 +396,8 @@ filteredVenuesStore.onUpdated((data) => {
         return;
     }
 
+    filters = data.filters;
+
     if ((totalVenuesPages == data.page) || (totalVenuesPages == 0) || (data.new_data.length == 0)) {
         $('.infinite-scroll-preloader.venues-tab').hide();
         totalVenuesPages = 0;
@@ -494,10 +406,6 @@ filteredVenuesStore.onUpdated((data) => {
         totalVenuesPages = data.total_pages;
         populateVenueCard(data.new_data, false);
     }
-});
-
-$(document).on('page:afterin', '.page[data-name="discover"]', function (e) {
-    // initAutocomplete();
 });
 
 $(document).on('infinite', '.discover-page.infinite-scroll-content', async function (e) {

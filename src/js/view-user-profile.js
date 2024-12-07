@@ -1,7 +1,3 @@
-import {
-    maybeFollowUser,
-} from "./api/profile.js";
-
 import { fillGridWithPosts, } from "./profile-ui-helpers.js";
 import store from "./store.js";
 
@@ -124,20 +120,5 @@ $(document).on('infinite', '.profile-landing-page.infinite-scroll-content.view-p
             });
             isFetchingPosts = false;
         }
-    }
-});
-
-$('#app').on('click', '.user-follow-btn', async function () {
-    const followButton = $(this);
-    const isFollowing = followButton.text() === 'Following';
-
-    // change the button text
-    followButton.text(isFollowing ? 'Follow' : 'Following');
-    const response = await maybeFollowUser(followButton.attr('data-user-id'));
-
-    if (response && response.success) {
-        store.dispatch('updateUserDetails', {
-            external: true
-        });
     }
 });

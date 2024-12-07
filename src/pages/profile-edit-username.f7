@@ -109,6 +109,12 @@
         }
 
         if (username === user.username) {
+          $f7.preloader.show();
+
+          setTimeout(() => {
+            $f7.preloader.hide();
+            view.router.navigate('/profile/');
+          }, 1000);
           return;
         }
 

@@ -221,6 +221,21 @@
         const { store } = $f7;
 
         $on('pageInit', async (e, page) => {
+            page.$el.find('.user-follow-btn').on('click', async function () {
+                const followButton = $(this);
+                const isFollowing = followButton.text() === 'Following';
+
+                // change the button text
+                followButton.text(isFollowing ? 'Follow' : 'Following');
+                const response = await maybeFollowUser(followButton.attr('data-user-id'));
+
+                if (response && response.success) {
+                    store.dispatch('updateUserDetails', {
+                        external: true
+                    });
+                }
+            });
+
             userId = page.route.params.id;
 
             var pathStore = store.getters.getPathData;
@@ -236,7 +251,7 @@
             }
 
             // Follow button
-            const followButton = $('.user-follow-btn');
+            const followButton = page.$el.find('.user-follow-btn');
             const sessionFollowings = sessionUser.following;
 
             if (sessionFollowings.includes(`${userId}`)) {
@@ -257,7 +272,6 @@
             }
 
             await renderProfileData(cachedData, userId, page.$el);
-
         });
 
         $on('ptr:refresh', async (e, page) => {

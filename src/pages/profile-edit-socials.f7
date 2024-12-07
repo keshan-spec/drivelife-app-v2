@@ -326,9 +326,9 @@
           }
         }
 
-        if (!dirtied) {
-          return;
-        }
+        // if (!dirtied) {
+        //   return;
+        // }
 
         $f7.preloader.show();
 

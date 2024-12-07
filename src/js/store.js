@@ -482,6 +482,7 @@ const store = createStore({
           total_pages: events.total_pages,
           page: page,
           limit: events.limit,
+          filters: filters,
         };
 
         state.filteredEvents = data;
@@ -493,6 +494,7 @@ const store = createStore({
           total_pages: 0,
           page: 1,
           limit: 10,
+          filters: {},
         };
       }
     },
@@ -603,6 +605,7 @@ const store = createStore({
           total_pages: events.total_pages,
           page: page,
           limit: events.limit,
+          filters: filters,
         };
 
         state.filteredVenues = data;
@@ -614,6 +617,7 @@ const store = createStore({
           total_pages: 0,
           page: 1,
           limit: 10,
+          filters: {},
         };
       }
     },
