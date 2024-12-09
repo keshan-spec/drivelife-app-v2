@@ -143,14 +143,37 @@
                     </swiper-container>
                 </div>
             </div>
-        </div>
 
-        <div class="popup links-popup three-quarter-popup">
-            <div class="view">
+            <div class="popup links-popup three-quarter-popup">
+                <div class="view">
+                    <div class="page">
+                        <div class="navbar">
+                            <div class="navbar-inner">
+                                <div class="title">More Links</div>
+                                <div class="right">
+                                    <!-- Link to close popup -->
+                                    <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-content">
+                            <div class="block profile-external-links">
+                                <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
+                                    <ul>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Followers Slider -->
+            <div class="popup profile-followers-popup three-quarter-popup">
                 <div class="page">
                     <div class="navbar">
                         <div class="navbar-inner">
-                            <div class="title">More Links</div>
+                            <div class="title">Followers</div>
                             <div class="right">
                                 <!-- Link to close popup -->
                                 <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
@@ -158,43 +181,20 @@
                         </div>
                     </div>
                     <div class="page-content">
-                        <div class="block profile-external-links">
-                            <div class="list links-list list-outline-ios list-strong-ios list-dividers-ios">
-                                <ul>
-                                </ul>
+                        <div class="notification-list profile-followers-list">
+                            <!-- Follower -->
+                            <div class="notification-item">
+                                <div class="notification-left">
+                                    <div class="notification-text">No followers</div>
+                                </div>
                             </div>
+                            <!-- * Follower -->
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- * Followers Slider -->
         </div>
-
-        <!-- Followers Slider -->
-        <div class="popup profile-followers-popup three-quarter-popup">
-            <div class="page">
-                <div class="navbar">
-                    <div class="navbar-inner">
-                        <div class="title">Followers</div>
-                        <div class="right">
-                            <!-- Link to close popup -->
-                            <a class="link popup-close"><i class="icon f7-icons">xmark</i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="page-content">
-                    <div class="notification-list profile-followers-list">
-                        <!-- Follower -->
-                        <div class="notification-item">
-                            <div class="notification-left">
-                                <div class="notification-text">No followers</div>
-                            </div>
-                        </div>
-                        <!-- * Follower -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- * Followers Slider -->
     </div>
 </template>
 <script>
@@ -319,7 +319,10 @@
                     return;
                 }
 
-                displayProfile(data.user, 'profile-view');
+                // update .page-content with data-user-id
+                dom.find('.page-content').attr('data-user-id', userId);
+
+                displayProfile(data.user, 'profile-view', userId);
 
                 $('.loading-fullscreen').hide();
 
@@ -336,7 +339,7 @@
                 const garage = await getUserGarage(userId);
 
                 if (garage) {
-                    createGarageContent(garage, '.pview-current-vehicles-list', '.pview-past-vehicles-list');
+                    createGarageContent(garage, `.page-content[data-user-id="${userId}"] .pview-current-vehicles-list`, `.page-content[data-user-id="${userId}"] .pview-past-vehicles-list`);
                 }
 
                 const followersData = await getFollowersForUser(userId);
@@ -358,9 +361,12 @@
                     },
                 });
 
-                displayFollowers(followers, data.following || [], 'profile-view');
+                displayFollowers(followers, data.following || [], 'profile-view', userId);
             } else {
-                displayProfile(cachedData.user, 'profile-view');
+                // update .page-content with data-user-id
+                dom.find('.page-content').attr('data-user-id', userId);
+
+                displayProfile(cachedData.user, 'profile-view', userId);
 
                 store.dispatch('getUserPosts', {
                     user_id: userId,
@@ -373,11 +379,11 @@
                 });
 
                 if (cachedData.garage) {
-                    createGarageContent(cachedData.garage, '.pview-current-vehicles-list', '.pview-past-vehicles-list');
+                    createGarageContent(cachedData.garage, `.page-content[data-user-id="${userId}"] .pview-current-vehicles-list`, `.page-content[data-user-id="${userId}"] .pview-past-vehicles-list`);
                 }
 
                 if (cachedData.followers) {
-                    displayFollowers(cachedData.followers, cachedData.user.following || [], 'profile-view');
+                    displayFollowers(cachedData.followers, cachedData.user.following || [], 'profile-view', userId);
                 }
 
 

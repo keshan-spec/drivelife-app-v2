@@ -123,7 +123,7 @@ myPostsStore.onUpdated((data) => {
     }
 
     // Call the function to fill the grid
-    fillGridWithPosts(posts, 'profile-grid-posts', data.cleared || false);
+    fillGridWithPosts(posts, '#profile-grid-posts', data.cleared || false);
   }
 });
 
@@ -144,7 +144,7 @@ myTagsStore.onUpdated((data) => {
     }
 
     // Call the function to fill the grid
-    fillGridWithPosts(posts, 'profile-grid-tags', data.cleared || false);
+    fillGridWithPosts(posts, '#profile-grid-tags', data.cleared || false);
   }
 });
 
@@ -248,7 +248,7 @@ store.getters.getGarageViewPosts.onUpdated((data) => {
     }
 
     // Call the function to fill the grid
-    fillGridWithPosts(posts, 'garage-posts-tab');
+    fillGridWithPosts(posts, '#garage-posts-tab');
   }
 });
 
@@ -276,7 +276,7 @@ store.getters.getGarageViewTags.onUpdated((data) => {
     }
 
     // Call the function to fill the grid
-    fillGridWithPosts(posts, 'garage-tags-tab');
+    fillGridWithPosts(posts, '#garage-tags-tab');
   }
 });
 

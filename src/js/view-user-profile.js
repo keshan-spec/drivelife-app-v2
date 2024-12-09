@@ -14,6 +14,8 @@ var isFetchingPosts = false;
 var userId = null;
 
 $(document).on('page:init', '.page[data-name="profile-view"]', async function (e) {
+    console.log('profile-view page:init');
+
     userId = e.detail.route.params.id;
 
     currentPostPage = 1;
@@ -36,7 +38,7 @@ function populateUsersPosts(data) {
 
             // Only update the DOM if there are new posts
             if (data[postsKey].new_data && data[postsKey].new_data.length > 0) {
-                fillGridWithPosts(data[postsKey].new_data, 'profile-view-grid-posts', reset);
+                fillGridWithPosts(data[postsKey].new_data, `.page-content[data-user-id="${userId}"] #profile-view-grid-posts`, reset);
                 // Clear new_data after processing to avoid re-rendering
 
                 data[postsKey].new_data = [];
@@ -44,11 +46,11 @@ function populateUsersPosts(data) {
 
             if ((data[postsKey].page === totalPostPages) || (totalPostPages == 0)) {
                 // hide preloader
-                $('.infinite-scroll-preloader.posts-tab.view-profile').hide();
+                $(`.page-content[data-user-id="${userId}"] .infinite-scroll-preloader.posts-tab.view-profile`).hide();
             }
 
             if (data[postsKey].data.length === 0) {
-                const profileGrid = document.getElementById('profile-view-grid-posts');
+                const profileGrid = document.querySelector(`.page-content[data-user-id="${userId}"] #profile-view-grid-posts`);
                 profileGrid.innerHTML = '<p></p><p>No posts</p>';
                 return;
             }
@@ -64,18 +66,18 @@ function populateUsersPosts(data) {
 
             // Only update the DOM if there are new tags
             if (data[tagsKey].new_data && data[tagsKey].new_data.length > 0) {
-                fillGridWithPosts(data[tagsKey].new_data, 'profile-view-grid-tags', reset);
+                fillGridWithPosts(data[tagsKey].new_data, `.page-content[data-user-id="${userId}"] #profile-view-grid-tags`, reset);
                 // Clear new_data after processing to avoid re-rendering
                 data[tagsKey].new_data = [];
             }
 
             if ((data[tagsKey].page === totalFPostPages) || (totalFPostPages == 0)) {
                 // hide preloader
-                $('.infinite-scroll-preloader.tags-tab.view-profile').hide();
+                $(`.page-content[data-user-id="${userId}"] .infinite-scroll-preloader.tags-tab.view-profile`).hide();
             }
 
             if (data[tagsKey].data.length === 0) {
-                const profileGrid = document.getElementById('profile-view-grid-tags');
+                const profileGrid = document.querySelector(`.page-content[data-user-id="${userId}"] #profile-view-grid-tags`);
                 profileGrid.innerHTML = '<p></p><p>No tagged posts</p>';
                 return;
             }

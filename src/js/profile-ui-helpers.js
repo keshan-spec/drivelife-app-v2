@@ -1,11 +1,17 @@
-export function displayProfile(user, container = 'profile', dom = document) {
+export function displayProfile(user, container = 'profile', userId = null) {
     if (!user) {
         console.error('User object not provided');
         return;
     }
 
     // Select the container element
-    const containerElem = dom.querySelector(`.page[data-name="${container}"]`);
+    let containerElem = document.querySelector(`.page[data-name="${container}"]`);
+
+    if (container == 'profile-view' && userId) {
+        containerElem = document.querySelector(`.page-content[data-user-id="${userId}"]`);
+    }
+
+
     if (!containerElem) {
         console.error(`Container element with data-name="${container}" not found.`);
         return;
@@ -155,10 +161,15 @@ export function displayProfile(user, container = 'profile', dom = document) {
     }
 }
 
-export function displayGarage(garage) {
+export function displayGarage(garage, userId = null) {
     if (!garage) return;
 
-    const garageContainer = document.getElementById('profile-garage'); // Make sure you have a container with this ID
+    let garageContainer = document.getElementById('profile-garage'); // Make sure you have a container with this ID
+
+    if (userId) {
+        garageContainer = document.querySelector(`.page-content[data-user-id="${userId}"] #profile-garage`);
+    }
+
     garageContainer.innerHTML = createGarageContent(garage);
 }
 
@@ -257,7 +268,7 @@ function generatePostGridItem(post) {
 // Calculate the number of posts and decide if we need to add empty items
 export function fillGridWithPosts(posts, profileGridID, reset = false) {
     // Select the container where the posts will be displayed
-    const profileGrid = document.getElementById(profileGridID);
+    const profileGrid = document.querySelector(profileGridID);
 
     if (reset) {
         profileGrid.innerHTML = ''; // Clear the grid before adding new posts
@@ -268,12 +279,19 @@ export function fillGridWithPosts(posts, profileGridID, reset = false) {
     });
 }
 
-export function displayFollowers(followersList, userFollowingList, container = 'profile') {
-    const containerElem = document.querySelector(`.page[data-name="${container}"]`);
-    if (!containerElem) {
-        console.error(`Container element with data-name="${container}" not found.`);
-        return;
+export function displayFollowers(followersList, userFollowingList, container = 'profile', userId = null) {
+    // const containerElem = document.querySelector(`.page[data-name="${container}"]`);
+    // if (!containerElem) {
+    //     console.error(`Container element with data-name="${container}" not found.`);
+    //     return;
+    // }
+
+    let containerElem = document.querySelector(`.page[data-name="${container}"]`);
+
+    if (container == 'profile-view' && userId) {
+        containerElem = document.querySelector(`.page-content[data-user-id="${userId}"]`);
     }
+
 
     const followersContainer = containerElem.querySelector('.profile-followers-list');
     if (!followersContainer) {
