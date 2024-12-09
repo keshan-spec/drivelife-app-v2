@@ -518,40 +518,6 @@ function initializeListeners() {
   });
 }
 
-// $(document).on('tab:hide', '#view-social', function (e) {
-//   unInitiallizeListeners();
-// });
-
-// $(document).on('tab:show', '#view-social', function (e) {
-//   const listenersInitialized = store.getters.homeListenersInitialized.value;
-
-//   if (listenersInitialized) return; // Prevent multiple attachments
-
-//   initializeListeners();
-// });
-
-// $(document).on('page:beforein', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
-//   const session = userStore.value;
-
-//   if (!session || !session.id) {
-//     return;
-//   }
-
-//   const listenersInitialized = store.getters.homeListenersInitialized.value;
-//   app.toolbar.show('.toolbar.toolbar-bottom', true);
-
-//   if (listenersInitialized) return; // Prevent multiple attachments
-
-//   initializeListeners();
-// });
-
-// $(document).on('page:beforeout', '.page[data-name="home"], .page[data-name="post-view"]', function (e) {
-//   const listenersInitialized = store.getters.homeListenersInitialized.value;
-//   if (!listenersInitialized) return; // Prevent multiple attachments
-
-//   unInitiallizeListeners();
-// });
-
 async function displayPosts(posts, following = false) {
   const postsContainer = $(following ? '#tab-following .data' : '#tab-latest .data');
 
@@ -627,7 +593,7 @@ async function displayPosts(posts, following = false) {
     postsContainer.append(postItem);
   });
 
-  // loadVideos();
+  // loadVideos();z
   initDoubleTapLike();
 }
 

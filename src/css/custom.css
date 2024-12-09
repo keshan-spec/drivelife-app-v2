@@ -523,9 +523,9 @@ img.image-square {
     width: 110%;
     object-fit: cover;
     z-index: 1;
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
-    opacity: 0.5;
+    /* filter: blur(8px);
+    -webkit-filter: blur(8px); */
+    /* opacity: 0.5; */
     display: block;
 }
 
@@ -617,8 +617,8 @@ img.image-square {
     object-fit: cover;
     object-position: center center;
     z-index: 1;
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
+    /* filter: blur(8px); */
+    /* -webkit-filter: blur(8px); */
     opacity: 0.5;
 }
 

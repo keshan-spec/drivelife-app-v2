@@ -12,7 +12,7 @@ export const createMediaSection = (mediaItems) => {
              alt="${mediaItems[0].caption || 'Post image'}" 
              style="text-align: center;" 
              onerror="this.style.display='none';">
-        <img class="media-image-background" src="${mediaItems[0].media_url}" 
+        <img class="media-image-background" src="${mediaItems[0].blurred_url}" 
              alt="${mediaItems[0].caption || 'Post image'}" 
              style="text-align: center;" 
              onerror="this.style.display='none';">
@@ -35,7 +35,7 @@ export const createMediaSection = (mediaItems) => {
     return `
               <div class="swiper-slide" data-id="${index + 1}">
                 <img class="swiper-slide-image" src="${mediaItem.media_url}" alt="${mediaItem.caption || 'Post image'}" />
-                <img class="swiper-slide-background" src="${mediaItem.media_url}" alt="${mediaItem.caption || 'Post image'}" />
+                <img class="swiper-slide-background" src="${mediaItem.blurred_url}" alt="${mediaItem.caption || 'Post image'}" />
               </div>
             `;
   }).join('')}
