@@ -404,20 +404,8 @@
         }
 
         $on('pageInit', () => {
-            autocomplete = new google.maps.places.Autocomplete(
-                document.getElementById("autocomplete"), {
-                types: ["establishment", "geocode"],
-                componentRestrictions: {
-                    country: 'GB'
-                }
-            }
-            );
-            autocomplete.setFields(["geometry", "address_component"]);
-            autocomplete.addListener("place_changed", fillInAddress);
-
-
             //SEARCH BAR
-            $('.discover-search').on('mousedown', function (event) {
+            $('.discover-search').on('click', function (event) {
                 event.preventDefault();
                 $f7.views.discover.router.navigate('/search/');
             });
@@ -474,6 +462,18 @@
                 el: '.filter-bylocation-popup',
                 swipeToClose: 'to-bottom'
             });
+
+
+            autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById("autocomplete"), {
+                types: ["establishment", "geocode"],
+                componentRestrictions: {
+                    country: 'GB'
+                }
+            });
+
+            autocomplete.setFields(["geometry", "address_component"]);
+            autocomplete.addListener("place_changed", fillInAddress);
         });
 
         $on('pageBeforeIn', (e, page) => {
