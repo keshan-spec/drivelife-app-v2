@@ -1,4 +1,4 @@
-import $ from 'dom7';
+import $, { on } from 'dom7';
 import Framework7 from 'framework7/bundle';
 import Swiper from 'swiper';
 
@@ -197,10 +197,42 @@ userStore.onUpdated(async (data) => {
     await registerNotifications();
     await getCurrentPosition();
 
-    addListeners();
+    addListeners(onNotificationReceived, onNotificationOpened);
     getDeliveredNotifications();
   }
 });
+
+
+function onNotificationReceived(notification) {
+  // alert('Notification received');
+  // alert(JSON.stringify(notification));
+
+  // var view = app.views.current;
+  // if (notification && notification.data) {
+  //   const { url } = notification.data;
+
+  //   if (url) {
+  //     view.router.navigate(url);
+  //   }
+  // }
+}
+
+function onNotificationOpened(notificationObj) {
+  try {
+    const notification = notificationObj.notification;
+
+    var view = app.views.current;
+    if (notification && notification.data) {
+      const { url } = notification.data;
+
+      if (url) {
+        view.router.navigate(url);
+      }
+    }
+  } catch (error) {
+    alert(JSON.stringify(error));
+  }
+}
 
 notificationCountStore.onUpdated((data) => {
   document.querySelectorAll('.notification-count').forEach((el) => {

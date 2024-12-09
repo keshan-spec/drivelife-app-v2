@@ -3,7 +3,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { AndroidSettings, IOSSettings, NativeSettings } from 'capacitor-native-settings';
 import { Device } from '@capacitor/device';
 import { Clipboard } from '@capacitor/clipboard';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { Filesystem } from '@capacitor/filesystem';
 
 import store from './store.js';
@@ -69,7 +69,7 @@ export const registerNotifications = async () => {
     return true;
 };
 
-export const addListeners = async () => {
+export const addListeners = async (onNotificationReceived, onNotificationOpened) => {
     if (await isRunningOnWeb()) {
         return;
     }
@@ -84,12 +84,12 @@ export const addListeners = async () => {
     //     alert('Error on registration: ' + JSON.stringify(err));
     // });
 
-    // await PushNotifications.addListener('pushNotificationReceived', notification => {
-    //     alert('Push received: ' + JSON.stringify(notification));
-    // });
+    await PushNotifications.addListener('pushNotificationReceived', notification => {
+        onNotificationReceived(notification);
+    });
 
     await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-        console.log('Push notification action performed', notification.actionId, notification.inputValue);
+        onNotificationOpened(notification);
     });
 };
 
