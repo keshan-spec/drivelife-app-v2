@@ -65,6 +65,8 @@
 
   export default (props, { $, $on, $f7 }) => {
     const { store } = $f7;
+    var profileImage = null;
+    var coverImage = null;
 
     $on('pageInit', async (e, page) => {
       var view = $f7.views.current;
@@ -92,11 +94,16 @@
 
 
     $on('pageBeforeIn', (e, page) => {
+      profileImage = null;
+      coverImage = null;
+
       $(document).on('change', 'input[name="cover_image"]', function (e) {
         const file = e.target.files[0];
         const reader = new FileReader();
 
         reader.onload = function (event) {
+          coverImage = event.target.result;
+
           $('.custom-file-upload.cover')
             .find('label')
             .css('background-image', `url('${event.target.result}')`)
@@ -113,6 +120,8 @@
         const reader = new FileReader();
 
         reader.onload = function (event) {
+          profileImage = event.target.result;
+
           $('.custom-file-upload.profile')
             .find('label')
             .css('background-image', `url('${event.target.result}')`)
@@ -134,25 +143,27 @@
         let profileBase64 = null;
 
         if (cover_image) {
-          // Wrap the FileReader in a Promise to wait for it to complete
-          coverBase64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(cover_image);
+          // // Wrap the FileReader in a Promise to wait for it to complete
+          // coverBase64 = await new Promise((resolve, reject) => {
+          //   const reader = new FileReader();
+          //   reader.readAsDataURL(cover_image);
 
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Failed to read image as base64'));
-          });
+          //   reader.onload = () => resolve(reader.result);
+          //   reader.onerror = () => reject(new Error('Failed to read image as base64'));
+          // });
+          coverBase64 = coverImage;
         }
 
         if (profile_image) {
-          // Wrap the FileReader in a Promise to wait for it to complete
-          profileBase64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(profile_image);
+          // // Wrap the FileReader in a Promise to wait for it to complete
+          // profileBase64 = await new Promise((resolve, reject) => {
+          //   const reader = new FileReader();
+          //   reader.readAsDataURL(profile_image);
 
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Failed to read image as base64'));
-          });
+          //   reader.onload = () => resolve(reader.result);
+          //   reader.onerror = () => reject(new Error('Failed to read image as base64'));
+          // });
+          profileBase64 = profileImage;
         }
 
         if (!coverBase64 && !profileBase64) {

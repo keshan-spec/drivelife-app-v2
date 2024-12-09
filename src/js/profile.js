@@ -99,6 +99,7 @@ garageStore.onUpdated((garage) => {
   store.dispatch('clearPathData');
   garageUpdated = garage;
   createGarageContent(garage, '.current-vehicles-list', '.past-vehicles-list');
+  createGarageContent(garage, '#garage-edit-current-list', '#garage-edit-past-list');
 });
 
 myFollowersStore.onUpdated((data) => {

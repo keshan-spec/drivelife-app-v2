@@ -150,7 +150,7 @@ export const checkMediaPermission = async () => {
 };
 
 
-export async function getGalleryPhotos() {
+export async function getGalleryPhotos(limit = 5) {
     const images = await Camera.pickImages({
         quality: 85,
         allowEditing: false,
@@ -160,7 +160,7 @@ export async function getGalleryPhotos() {
         width: 2000,
         height: 2000,
         // source: CameraSource., // Camera, Photos or Prompt!
-        limit: 5,
+        limit: limit,
     });
 
     const data = images.photos.map(async (photo) => {

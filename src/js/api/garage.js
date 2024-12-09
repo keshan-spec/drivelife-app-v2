@@ -1,10 +1,10 @@
 import {
     getSessionUser
-} from './auth.js'
+} from './auth.js';
 import {
     API_URL,
     TIMEOUT_MS_HIGH,
-} from './consts.js'
+} from './consts.js';
 
 export const getUserGarage = async (profileId) => {
     try {
@@ -14,18 +14,18 @@ export const getUserGarage = async (profileId) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-            })
+            });
 
-        const data = await response.json()
+        const data = await response.json();
         if (response.status !== 200) {
-            return []
+            return [];
         }
 
-        return data
+        return data;
     } catch (error) {
-        return []
+        return [];
     }
-}
+};
 
 export const getGargeById = async (garageId) => {
     try {
@@ -35,20 +35,20 @@ export const getGargeById = async (garageId) => {
             headers: {
                 "Content-Type": "application/json",
             },
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
         if (response.status !== 200) {
-            throw new Error('Failed to fetch users posts')
+            throw new Error('Failed to fetch users posts');
         }
 
-        return data
+        return data;
     } catch (error) {
-        console.error(error)
-        return null
+        console.error(error);
+        return null;
     }
-}
+};
 
 export const getPostsForGarage = async (garageId, page = 1, tagged = false) => {
     try {
@@ -57,11 +57,11 @@ export const getPostsForGarage = async (garageId, page = 1, tagged = false) => {
             page,
             limit: 9,
             tagged: tagged ? 1 : 0
-        })
+        });
 
         const response = await fetch(`${API_URL}/wp-json/app/v2/get-garage-posts?${query}`, {
             method: "GET",
-            cache: "force-cache",
+            // cache: "force-cache",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -71,30 +71,30 @@ export const getPostsForGarage = async (garageId, page = 1, tagged = false) => {
             //     limit: 10,
             //     tagged
             // }),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
         if (response.status !== 200) {
-            return null
+            return null;
         }
 
-        return data
+        return data;
     } catch (error) {
-        return null
+        return null;
     }
-}
+};
 
 export const addVehicleToGarage = async (data) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGH)
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/add-vehicle-to-garage`, {
             method: "POST",
@@ -106,10 +106,10 @@ export const addVehicleToGarage = async (data) => {
                 user_id: user.id,
             }),
             signal
-        })
+        });
 
-        const res = await response.json()
-        return res
+        const res = await response.json();
+        return res;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -120,19 +120,19 @@ export const addVehicleToGarage = async (data) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};
 
 export const updateVehicleInGarage = async (data, garageId) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGH)
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/update-garage`, {
             method: "POST",
@@ -145,10 +145,10 @@ export const updateVehicleInGarage = async (data, garageId) => {
                 garage_id: garageId,
             }),
             signal
-        })
+        });
 
-        const res = await response.json()
-        return res
+        const res = await response.json();
+        return res;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -159,19 +159,19 @@ export const updateVehicleInGarage = async (data, garageId) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};
 
 export const deleteVehicleFromGarage = async (garageId) => {
-    const controller = new AbortController()
-    const signal = controller.signal
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     try {
-        const user = await getSessionUser()
-        if (!user) return
+        const user = await getSessionUser();
+        if (!user) return;
 
         setTimeout(() => {
-            controller.abort()
-        }, TIMEOUT_MS_HIGH)
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/delete-garage`, {
             method: "POST",
@@ -183,10 +183,10 @@ export const deleteVehicleFromGarage = async (garageId) => {
                 garage_id: garageId,
             }),
             signal
-        })
+        });
 
-        const res = await response.json()
-        return res
+        const res = await response.json();
+        return res;
     } catch (error) {
         if (error.name === 'AbortError') {
             throw {
@@ -197,4 +197,4 @@ export const deleteVehicleFromGarage = async (garageId) => {
             throw error; // Rethrow any other errors
         }
     }
-}
+};

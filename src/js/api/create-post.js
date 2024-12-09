@@ -227,10 +227,10 @@ export const addPost = async ({
         formData.append("media", JSON.stringify(media));
 
         if (association_id && association_type) {
-            // if (association_type !== 'garage') {
-            formData.append("association_id", association_id);
-            formData.append("association_type", association_type);
-            // }
+            if (association_type !== 'car') {
+                formData.append("association_id", association_id);
+                formData.append("association_type", association_type);
+            }
         }
 
         const response = await fetch(`${API_URL}/wp-json/app/v1/create-post`, {
@@ -242,6 +242,15 @@ export const addPost = async ({
         if (!data || data.error || response.status !== 200) {
             await addNotification("Failed to create post", data.error || "Failed to create post");
             throw new Error(data.error || "Post creation failed, status: " + response.status);
+        }
+
+
+        // If association_id is present and association_type is garage
+        // Check if the same entity is in the taggedEntities
+        if (association_id && association_type === 'garage') {
+            taggedEntities = taggedEntities.filter((entity) => {
+                return entity.type == 'car' && entity.entity_id != association_id;
+            });
         }
 
         if (taggedEntities.length > 0) {

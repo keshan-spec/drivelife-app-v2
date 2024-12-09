@@ -237,8 +237,13 @@
     addVehicleToGarage,
   } from "../js/api/garage.js";
 
+  import {
+    getGalleryPhotos,
+  } from "../js/native.js";
+
   export default (props, { $, $on, $f7 }) => {
     const { store } = $f7;
+    var base64 = null;
 
     $on('pageInit', (e, page) => {
       $f7.calendar.create({
@@ -262,22 +267,38 @@
 
       // input vehicle_image
       page.$el.find('input[name="vehicle_image"]').on('change', function (e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
+        try {
+          const file = e.target.files[0];
+          const reader = new FileReader();
 
-        reader.onload = function (e) {
-          document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
-          document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
-        };
+          reader.onload = function (e) {
+            base64 = e.target.result;
 
-        reader.readAsDataURL(file);
+            document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
+            document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
+          };
+
+          reader.readAsDataURL(file);
+        } catch (error) {
+          alert(`Failed to read image: ${error.message}`);
+        }
       });
     });
 
     $on('pageBeforeIn', (e, page) => {
       $(document).on('click', '#submit-add-vehicle-form', async function (e) {
-        var view = $f7.views.current;
+        onSubmit(page);
+      });
+    });
 
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '#submit-add-vehicle-form');
+    });
+
+    async function onSubmit(dom) {
+      var view = $f7.views.current;
+
+      try {
         const form = $('form#addVehicleForm');
 
         // values
@@ -327,65 +348,58 @@
           return;
         }
 
-        if (!cover_image) {
+        if (!cover_image || !base64) {
           showToast('Please upload a cover image');
           return;
         }
 
-        let base64 = null;
+        // let base64 = null;
+        // if (cover_image) {
+        //   // Wrap the FileReader in a Promise to wait for it to complete
+        //   base64 = await new Promise((resolve, reject) => {
+        //     const reader = new FileReader();
+        //     reader.readAsDataURL(cover_image);
 
-        if (cover_image) {
-          // Wrap the FileReader in a Promise to wait for it to complete
-          base64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(cover_image);
+        //     reader.onload = () => resolve(reader.result);
+        //     reader.onerror = () => reject(new Error('Failed to read image as base64: ' + reader.error));
+        //   });
+        // }
 
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Failed to read image as base64'));
-          });
+        $f7.preloader.show();
+
+        const response = await addVehicleToGarage({
+          make,
+          model,
+          variant,
+          registration: reg,
+          colour,
+          ownedFrom: owned_from,
+          ownedTo: owned_to,
+          primary_car,
+          allow_tagging,
+          cover_photo: base64,
+          vehicle_period: primary_car,
+          description
+        });
+
+        if (!response || !response.success) {
+          throw new Error('Failed to update vehicle');
         }
 
-        try {
-          $f7.preloader.show();
+        $f7.preloader.hide();
 
-          const response = await addVehicleToGarage({
-            make,
-            model,
-            variant,
-            registration: reg,
-            colour,
-            ownedFrom: owned_from,
-            ownedTo: owned_to,
-            primary_car,
-            allow_tagging,
-            cover_photo: base64,
-            vehicle_period: primary_car,
-            description
-          });
+        store.dispatch('getMyGarage');
+        showToast('Vehicle added successfully');
 
-          if (!response || !response.success) {
-            throw new Error('Failed to update vehicle');
-          }
+        view.router.back(`/profile-garage-vehicle-view/${response.id}`, {
+          force: true
+        });
+      } catch (error) {
+        $f7.preloader.hide();
 
-          $f7.preloader.hide();
-
-          store.dispatch('getMyGarage');
-          showToast('Vehicle added successfully');
-
-          view.router.back(`/profile-garage-vehicle-view/${response.id}`, {
-            force: true
-          });
-        } catch (error) {
-          $f7.preloader.hide();
-
-          showToast(error.message || 'Failed to add vehicle');
-        }
-      });
-    });
-
-    $on('pageBeforeOut', (e, page) => {
-      $(document).off('click', '#submit-add-vehicle-form');
-    });
+        showToast(error.message || 'Failed to add vehicle');
+      }
+    }
 
     const toggleOwnedToDatePicker = (e) => {
       const ownedToInput = document.querySelector('input[name="vehicle_owned_to"]');

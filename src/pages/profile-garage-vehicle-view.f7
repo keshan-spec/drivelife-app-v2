@@ -129,7 +129,7 @@
 
           store.dispatch('setCreatePostAssociations', {
             association_id: garageId,
-            association_type: 'garage',
+            association_type: cachedData.owner_id == user.id ? 'garage' : 'car',
             association_label: label,
           });
           // $f7.views.current.router.navigate(`/post-add/?garage_id=${garageId}`);

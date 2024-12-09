@@ -264,6 +264,7 @@
 
   export default (props, { $, $on, $f7 }) => {
     const { store } = $f7;
+    var base64 = null;
 
     var pathStore = store.getters.getPathData;
 
@@ -291,6 +292,8 @@
         const reader = new FileReader();
 
         reader.onload = function (e) {
+          base64 = e.target.result;
+
           document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
           document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
         };
@@ -355,7 +358,6 @@
 
 
       page.$el.find('input[name="garage_id"]').val(garageId);
-      // document.querySelector('input[name="garage_id"]').value = garageId;
 
       // Populate form fields with garage data
       page.$el.find('select[name="vehicle_make"]').val(data.make);
@@ -438,66 +440,66 @@
       $(document).on('click', '#submit-vehicle-form', async function (e) {
         var view = $f7.views.current;
 
-        // form data
-        const form = $('form#vehicleForm');
-
-        // values
-        const garageId = form.find('input[name="garage_id"]').val();
-
-        const make = form.find('select[name="vehicle_make"]').val();
-        const model = form.find('input[name="vehicle_model"]').val();
-        const variant = form.find('input[name="vehicle_variant"]').val();
-        const reg = form.find('input[name="vehicle_reg"]').val();
-        const colour = form.find('input[name="vehicle_colour"]').val();
-        const description = form.find('textarea[name="vehicle_description"]').val();
-
-        const owned_from = form.find('input[name="vehicle_owned_from"]').val();
-        const owned_to = form.find('input[name="vehicle_owned_to"]').val();
-
-        const primary_car = form.find('select[name="vehicle_ownership"]').val();
-        const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
-
-        const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
-
-        if (!make || make === "0") {
-          showToast('Please select a vehicle make');
-          return;
-        }
-
-        if (!model) {
-          showToast('Please enter a vehicle model');
-          return;
-        }
-
-        if (owned_to && owned_from) {
-          const ownedFromDate = parseDate(owned_from.trim());
-          const ownedToDate = parseDate(owned_to.trim());
-
-          if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
-            showToast('One or both of the dates are invalid.');
-            return;
-          }
-
-          if (ownedToDate < ownedFromDate) {
-            showToast('Owned to date cannot be less than owned from date');
-            return;
-          }
-        }
-
-        let base64 = null;
-
-        if (cover_image) {
-          // Wrap the FileReader in a Promise to wait for it to complete
-          base64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(cover_image);
-
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Failed to read image as base64'));
-          });
-        }
-
         try {
+          // form data
+          const form = $('form#vehicleForm');
+
+          // values
+          const garageId = form.find('input[name="garage_id"]').val();
+
+          const make = form.find('select[name="vehicle_make"]').val();
+          const model = form.find('input[name="vehicle_model"]').val();
+          const variant = form.find('input[name="vehicle_variant"]').val();
+          const reg = form.find('input[name="vehicle_reg"]').val();
+          const colour = form.find('input[name="vehicle_colour"]').val();
+          const description = form.find('textarea[name="vehicle_description"]').val();
+
+          const owned_from = form.find('input[name="vehicle_owned_from"]').val();
+          const owned_to = form.find('input[name="vehicle_owned_to"]').val();
+
+          const primary_car = form.find('select[name="vehicle_ownership"]').val();
+          const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
+
+          const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
+
+          if (!make || make === "0") {
+            showToast('Please select a vehicle make');
+            return;
+          }
+
+          if (!model) {
+            showToast('Please enter a vehicle model');
+            return;
+          }
+
+          if (owned_to && owned_from) {
+            const ownedFromDate = parseDate(owned_from.trim());
+            const ownedToDate = parseDate(owned_to.trim());
+
+            if (isNaN(ownedFromDate) || isNaN(ownedToDate)) {
+              showToast('One or both of the dates are invalid.');
+              return;
+            }
+
+            if (ownedToDate < ownedFromDate) {
+              showToast('Owned to date cannot be less than owned from date');
+              return;
+            }
+          }
+
+          // let base64 = null;
+
+          // if (cover_image) {
+          //   // Wrap the FileReader in a Promise to wait for it to complete
+          //   base64 = await new Promise((resolve, reject) => {
+          //     const reader = new FileReader();
+          //     reader.readAsDataURL(cover_image);
+
+          //     reader.onload = () => resolve(reader.result);
+          //     reader.onerror = () => reject(new Error('Failed to read image as base64'));
+          //   });
+          // }
+
           $f7.preloader.show();
 
           const response = await updateVehicleInGarage({
