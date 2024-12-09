@@ -222,54 +222,55 @@ export const getPostsForUser = async (profileId, page = 1, tagged = false, limit
     return data;
 };
 
-export const getPostById = async (post_id) => {
+export const getPostById = async (post_id, forceRefresh = false) => {
     const user = await getSessionUser();
     if (!user || !user.id) return null;
 
 
-    try {
-        const existingPosts = store.getters.posts.value;
-        const pathStore = store.getters.getPathData;
+    if (!forceRefresh) {
+        try {
+            const existingPosts = store.getters.posts.value;
+            const pathStore = store.getters.getPathData;
 
-        if (existingPosts?.data && existingPosts?.data.length > 0) {
-            const post = existingPosts.data.find(p => p.id == post_id);
-            if (post) {
-                return post;
+            if (existingPosts?.data && existingPosts?.data.length > 0) {
+                const post = existingPosts.data.find(p => p.id == post_id);
+                if (post) {
+                    return post;
+                }
             }
-        }
 
-        // // Check if the post exists in IndexedDB
-        // const cachedPost = await getPostFromDB(post_id);
-        // if (cachedPost) {
-        //     return cachedPost;
-        // }
+            // // Check if the post exists in IndexedDB
+            // const cachedPost = await getPostFromDB(post_id);
+            // if (cachedPost) {
+            //     return cachedPost;
+            // }
 
-        let cachedData = null;
-        if (pathStore && pathStore.value[`/post/${post_id}`]) {
-            cachedData = pathStore.value[`/post/${post_id}`];
-        }
+            let cachedData = null;
+            if (pathStore && pathStore.value[`/post/${post_id}`]) {
+                cachedData = pathStore.value[`/post/${post_id}`];
+            }
 
-        if (cachedData) {
-            return cachedData;
+            if (cachedData) {
+                return cachedData;
+            }
+        } catch (error) {
+            console.log("Error getting post from store", error);
         }
-    } catch (error) {
-        console.log("Error getting post from store", error);
     }
 
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v2/get-post?post_id=${post_id}&user_id=${user.id}`, {
             method: "GET",
-            cache: "force-cache",
+            cache: forceRefresh ? "no-store" : "force-cache", // Force refetch if needed
             headers: {
                 "Content-Type": "application/json",
             }
         });
+
         const data = await response.json();
 
-        if (data && data.id) {
-            // Save the fetched post to IndexedDB
-            // await savePostToDB(data);
 
+        if (data && data.id) {
             store.dispatch('setPathData', {
                 path: `/post/${post_id}`,
                 data: data,
