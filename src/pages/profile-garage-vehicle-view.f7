@@ -37,7 +37,11 @@
       </div>
 
       <div class="vehicle-profile-background" style="background-color:gray;">
-        <a class="vehicle-profile-image" href="/profile/" style="background-color:gray;"></a>
+        <div class="vehicle-profile-owner" data-location="profile.php">
+          <div class="vehicle-profile-image" href="/profile/" style="background-color:gray;"></div>
+          <div class="vehicle-profile-username">Owner <div>@</div>
+          </div>
+        </div>
       </div>
 
       <div class="profile-garage-intro text-center">
@@ -51,6 +55,31 @@
         <div class="skeleton-block" style="width: 100px"></div>
         </p>
 
+        <div class="profile-garage-stats">
+
+          <div class="profile-garage-stat">
+            <h3>500</h3>
+            <h5 class="subtext">BHP</h5>
+          </div>
+
+          <div class="profile-garage-stat">
+            <h3>3.1</h3>
+            <h5 class="subtext">0-62</h5>
+          </div>
+
+          <div class="profile-garage-stat">
+            <h3>140<span>mph</span></h3>
+            <h5 class="subtext">Top Speed</h5>
+          </div>
+
+          <div class="profile-garage-stat">
+            <h3>1</h3>
+            <h5 class="subtext">Mods</h5>
+          </div>
+
+          <div class="clearfix"></div>
+
+        </div>
         <div class="profile-links-edit garage d-flex">
           <div class="profile-link dark-bg garage-add-post">Add Post</div>
         </div>
@@ -59,6 +88,7 @@
       <div class="profile-lower">
         <div class="profile-tabs garage-view">
           <a href="#tab-vehicle-1" class="tab-link tab-link-active" id="garage-posts">Posts</a>
+          <a href="#tab-vehicle-mods" class="tab-link" id="garage-mods">Mods</a>
           <a href="#tab-vehicle-2" class="tab-link" id="garage-tags">Tags</a>
         </div>
 
@@ -71,6 +101,39 @@
               <!-- Preloader for infinite scroll -->
               <div class="infinite-scroll-preloader garage-posts-tab">
                 <div class="preloader"></div>
+              </div>
+            </div>
+          </swiper-slide>
+          <swiper-slide id="tab-vehicle-mods" class="tab">
+            <div class="swiper-inner-container">
+              <div class="modification-container">
+                <!-- Mod Category -->
+                <div class="modification-header">
+                  <div class="modification-header-title">Suspension</div>
+                  <div class="modification-header-count">1 mod</div>
+                  <div class="clearfix"></div>
+                </div>
+
+                <!-- Mod -->
+                <div class="modification-item">
+                  <div class="modification-title">
+                    Modification Title
+                  </div>
+                  <div class="modification-content">
+                    <div class="modification-desc">
+                      Modification Content Modification Content Modification Content Modification Content Modification
+                      Content Modification Content Modification Content Modification Content Modification Content
+                      Modification Content
+                    </div>
+                    <div class="modification-content-link">
+                      <a href="#" target="_blank"><i class="icon f7-icons">link</i> Product Link</a>
+                    </div>
+                  </div>
+                  <div class="modification-image">
+
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
               </div>
             </div>
           </swiper-slide>
@@ -140,6 +203,7 @@
     });
 
     $on('pageBeforeIn', async (e, page) => {
+
       var garageId = e.detail.route.params.id;
 
       if (!garageId) {
@@ -220,6 +284,12 @@
         profileImageElement.setAttribute('href', profile_link);
       }
 
+      // Update the username
+      const usernameElement = document.querySelector('.vehicle-profile-username');
+      if (usernameElement) {
+        usernameElement.innerHTML = `Owner <div>@${data.owner.username}</div>`;
+      }
+
       // Update the vehicle make and model
       const vehicleTitleElement = document.querySelector('.profile-garage-intro h1');
       if (vehicleTitleElement) {
@@ -264,6 +334,15 @@
       if (vehicleDescriptionElement) {
         vehicleDescriptionElement.textContent = data.short_description;
       }
+
+      // Mods
+      // Update the mod image with the vehicle image
+      const modImageElement = document.querySelector('.modification-image');
+      if (modImageElement) {
+        modImageElement.innerHTML = `<a data-fslightbox="garage-mods" href="${data.cover_photo}" style="background-image:url('${data.cover_photo}');"></a>`;
+      }
+
+      refreshFsLightbox();
     }
 
     return $render;

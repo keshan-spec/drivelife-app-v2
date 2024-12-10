@@ -268,6 +268,16 @@ CapacitorApp.addListener('backButton', async () => {
     var leftp = app.panel.left && app.panel.left.opened;
     var rightp = app.panel.right && app.panel.right.opened;
 
+    // Query all FS Lightbox elements
+    const lightboxes = document.querySelectorAll('.fslightbox-container');
+    if (lightboxes.length > 0) {
+      // garage-mods
+      if (window.fsLightboxInstances['garage-mods']) {
+        window.fsLightboxInstances['garage-mods'].close();
+        return false;
+      }
+    }
+
     if (leftp || rightp) {
       app.panel.close();
       return false;
