@@ -1,9 +1,10 @@
-import $, { on } from 'dom7';
+import $ from 'dom7';
 import Framework7 from 'framework7/bundle';
 import Swiper from 'swiper';
 
 import { App as CapacitorApp } from '@capacitor/app';
 import { Device } from '@capacitor/device';
+import { Network } from '@capacitor/network';
 
 // Import F7 Styles
 import 'framework7/css/bundle';
@@ -242,7 +243,7 @@ notificationCountStore.onUpdated((data) => {
 });
 
 networkErrors.onUpdated((data) => {
-  if (data) {
+  if (data === true) {
     app.dialog.alert('Poor network connection. Please check your internet connection and try again.');
   }
 });
@@ -303,6 +304,23 @@ CapacitorApp.addListener('backButton', async () => {
 CapacitorApp.addListener('appStateChange', async (state) => {
   if (!state.isActive) {
     store.dispatch('setHomeListenersInitialized', false);
+    Network.removeAllListeners();
+  } else {
+    const status = await Network.getStatus();
+
+    if (!status.connected) {
+      store.dispatch('setPoorNetworkError', true);
+    } else {
+      store.dispatch('setPoorNetworkError', false);
+    }
+  }
+});
+
+Network.addListener('networkStatusChange', status => {
+  if (!status.connected) {
+    store.dispatch('setPoorNetworkError', true);
+  } else {
+    store.dispatch('setPoorNetworkError', false);
   }
 });
 

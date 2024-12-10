@@ -332,6 +332,11 @@ const store = createStore({
     },
   },
   actions: {
+    setPoorNetworkError({
+      state
+    }, value) {
+      state.poorNetworkError = value;
+    },
     setPostUploadProgress({
       state
     }, progress) {
