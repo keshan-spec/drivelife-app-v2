@@ -11,12 +11,14 @@ import { removeFollower } from "./api/profile.js";
 import $ from 'dom7';
 
 import { createGarageContent, displayFollowers, displayProfile, fillGridWithPosts } from "./profile-ui-helpers.js";
+import { OFFLINE_HTML } from "./api/consts.js";
 
 
 var garageStore = store.getters.myGarage;
 var myPostsStore = store.getters.myPosts;
 var myFollowersStore = store.getters.myFollowers;
 var myTagsStore = store.getters.myTags;
+var networkErrors = store.getters.checkPoorNetworkError;
 var userStore = store.getters.user;
 var refreshed = false;
 
@@ -36,6 +38,14 @@ var totalGarageTagPages = 1;
 var currentGarageTagPage = 1;
 
 var garageUpdated = null;
+
+networkErrors.onUpdated((data) => {
+  if (data === true) {
+    // update the dom 
+    $('.my-profile .profile-links').hide();
+    $('.my-profile .profile-lower').html(OFFLINE_HTML);
+  }
+});
 
 $('#app').on('click', '.profile-external-links ul li a', function (e) {
   e.preventDefault();

@@ -23,6 +23,7 @@ import {
 
 import $ from 'dom7';
 import { createActionsSection, createBottomSection, createMediaSection, togglePostLike } from "./post-ui-card.js";
+import { OFFLINE_HTML } from "./api/consts.js";
 
 var currentPostsPage = 1;
 var currentFollowingPostsPage = 1;
@@ -30,7 +31,7 @@ var currentFollowingPostsPage = 1;
 var postsStore = store.getters.posts;
 var followingPostsStore = store.getters.followingPosts;
 var userStore = store.getters.user;
-
+var networkErrors = store.getters.checkPoorNetworkError;
 
 var totalPostPages = 0;
 var totalFPostPages = 0;
@@ -179,6 +180,13 @@ userStore.onUpdated((data) => {
   }
 });
 
+networkErrors.onUpdated((data) => {
+  if (data === true) {
+    // update the dom 
+    $('.home-page.social-content').html(OFFLINE_HTML);
+  }
+});
+
 $(document).on('infinite', '.infinite-scroll-content.home-page', async function () {
   if (isFetchingPosts) return;
 
@@ -227,28 +235,6 @@ $(document).on('ptr:refresh', '.ptr-content.home-page', async function (e) {
   isFetchingPosts = false;
   app.ptr.get('.ptr-content.home-page').done();
 });
-
-function unInitiallizeListeners() {
-  store.dispatch('setHomeListenersInitialized', false);
-
-  $(document).off('mousedown', '.toolbar-bottom a');
-  $(document).off('click', '.media-post-comment');
-  $(document).off('click', '.media-post-commentcount');
-  $(document).off('click', '.media-post-share');
-  $(document).off('click', '#share-post-email');
-  $(document).off('click', '#copy-link');
-  $(document).off('click', '.comment-replies-toggle');
-  $(document).off('click', '.comment-reply');
-  $(document).off('submit', '#comment-form');
-  $(document).off('click', '.comment-delete');
-  $(document).off('click', '.comment a');
-  $(document).off('click', '.media-post-like i');
-  $(document).off('click', '.media-post-edit');
-  $(document).off('click', '#delete-post');
-  $(document).off('click', '#edit-post');
-  $(document).off('click', '.media-post-video');
-  $(document).off('click', '.media-post-readmore');
-}
 
 function initializeListeners() {
   store.dispatch('setHomeListenersInitialized', true);

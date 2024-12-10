@@ -83,6 +83,14 @@ if (window.f7App !== undefined) {
           $('.init-loader').hide();
           $('.start-link').click();
         }
+
+        const status = await Network.getStatus();
+
+        if (!status.connected) {
+          store.dispatch('setPoorNetworkError', true);
+        } else {
+          store.dispatch('setPoorNetworkError', false);
+        }
       },
       pageInit: function (page) {
         if (page.name === 'profile') {
@@ -242,12 +250,6 @@ notificationCountStore.onUpdated((data) => {
   });
 });
 
-networkErrors.onUpdated((data) => {
-  if (data === true) {
-    app.dialog.alert('Poor network connection. Please check your internet connection and try again.');
-  }
-});
-
 /* Native listeners */
 CapacitorApp.addListener('backButton', async () => {
   const { platform } = await Device.getInfo();
@@ -304,15 +306,6 @@ CapacitorApp.addListener('backButton', async () => {
 CapacitorApp.addListener('appStateChange', async (state) => {
   if (!state.isActive) {
     store.dispatch('setHomeListenersInitialized', false);
-    Network.removeAllListeners();
-  } else {
-    const status = await Network.getStatus();
-
-    if (!status.connected) {
-      store.dispatch('setPoorNetworkError', true);
-    } else {
-      store.dispatch('setPoorNetworkError', false);
-    }
   }
 });
 

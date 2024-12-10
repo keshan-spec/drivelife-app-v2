@@ -1,3 +1,4 @@
+import { OFFLINE_HTML } from "./api/consts.js";
 import app from "./app.js";
 import store from "./store.js";
 import $ from 'dom7';;
@@ -22,6 +23,13 @@ var totalEventPages = 1;
 var totalVenuesPages = 1;
 var totalUsersPages = 1;
 var totalVehiclePages = 1;
+
+var networkErrors = store.getters.checkPoorNetworkError;
+networkErrors.onUpdated((data) => {
+    if (data === true) {
+        $('.discovery-wrap .container').html(OFFLINE_HTML);
+    }
+});
 
 var filters = {};
 

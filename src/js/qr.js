@@ -111,6 +111,13 @@ export function openModal() {
 }
 
 export async function openQRModal() {
+    const networkErrors = store.getters.checkPoorNetworkError.value;
+
+    if (networkErrors) {
+        app.dialog.alert('Please check your internet connection and try again.');
+        return;
+    }
+
     const permissionGranted = await checkCameraPermissions();
     if (!permissionGranted) return;
 

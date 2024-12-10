@@ -213,6 +213,7 @@
     } from "../js/api/profile.js";
 
     import { createGarageContent, displayFollowers, fillGridWithPosts, displayProfile } from "../js/profile-ui-helpers.js";
+    import { OFFLINE_HTML } from "../js/api/consts.js";
 
     export default (props, { $, $on, $f7 }) => {
         var userId = null;
@@ -221,6 +222,13 @@
         const { store } = $f7;
 
         $on('pageInit', async (e, page) => {
+            const networkErrors = store.getters.checkPoorNetworkError.value;
+
+            if (networkErrors) {
+                document.querySelector(`.page[data-name="profile-view"] #profile-view-container`).innerHTML = OFFLINE_HTML;
+                return;
+            }
+
             page.$el.find('.user-follow-btn').on('click', async function () {
                 const followButton = $(this);
                 const isFollowing = followButton.text() === 'Following';

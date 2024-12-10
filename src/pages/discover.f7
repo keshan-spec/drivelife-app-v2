@@ -404,8 +404,17 @@
         }
 
         $on('pageInit', () => {
+
+
             //SEARCH BAR
             $('.discover-search').on('click', function (event) {
+                const networkErrors = store.getters.checkPoorNetworkError.value;
+
+                if (networkErrors) {
+                    app.dialog.alert('Please check your internet connection and try again.');
+                    return;
+                }
+
                 event.preventDefault();
                 $f7.views.discover.router.navigate('/search/');
             });

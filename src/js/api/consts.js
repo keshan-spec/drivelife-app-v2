@@ -34,3 +34,12 @@ export const sendRNMessage = ({
         console.error(e);
     }
 };
+
+export const OFFLINE_HTML = `
+    <div class="network-error text-center">
+    <i class="icon f7-icons">wifi_exclamationmark</i>
+    <p>Please check your connection and try again</p>
+    <a href="#" class="button button-fill refresh-page"
+        onclick="window.location.reload()">Try Again</a>
+    </div>
+`;

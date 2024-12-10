@@ -79,12 +79,15 @@
         formatPostDate,
     } from "../js/utils.js";
 
+    import { OFFLINE_HTML } from "../js/api/consts.js";
+
     export default (props, { $, $on, $f7 }) => {
         const { store } = $f7;
 
         const userStore = store.getters.user;
         const notificationsStore = store.getters.getNotifications;
         const notificationCountStore = store.getters.getNotifCount;
+        const networkErrors = store.getters.checkPoorNetworkError;
 
         let notificationInterval;
 
@@ -126,6 +129,12 @@
                 renderNotifications($f7.$el, data);
             } else {
                 $('.no-notifications').show();
+            }
+        });
+
+        networkErrors.onUpdated((data) => {
+            if (data === true) {
+                $('.notification-page .notification-wrap').html(OFFLINE_HTML);
             }
         });
 

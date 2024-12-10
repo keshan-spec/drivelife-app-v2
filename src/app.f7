@@ -342,6 +342,12 @@
             icon: '<img src="/img/icon-add-post.svg" width="48" style="max-width: 100%"/>',
             onClick: async function () {
               const isPostCreatingStore = store.getters.getIsPostCreating.value;
+              const networkErrors = store.getters.checkPoorNetworkError.value;
+
+              if (networkErrors) {
+                $f7.dialog.alert('Please check your internet connection and try again.');
+                return;
+              }
 
               if (isPostCreatingStore) {
                 $f7.dialog.alert('You are already creating a post. Please complete the post before creating a new one.');
@@ -378,6 +384,13 @@
             text: '<div class="actions-grid-item">My Vehicles</div>',
             icon: '<img src="/img/icon-vehicle-add.svg" width="48" style="max-width: 100%;"/>',
             onClick: function () {
+              const networkErrors = store.getters.checkPoorNetworkError.value;
+
+              if (networkErrors) {
+                $f7.dialog.alert('Please check your internet connection and try again.');
+                return;
+              }
+
               var view = $f7.views.current;
               view.router.navigate('/profile-garage-edit/');
             }

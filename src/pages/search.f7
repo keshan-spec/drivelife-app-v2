@@ -24,7 +24,7 @@
     </div>
 
     <!-- Page content-->
-    <div class="page-content infinite-scroll-content">
+    <div class="page-content infinite-scroll-content discover-search-view">
       <div class="discovery-wrap">
         <div class="searchbar">
           <div class="searchbar-inner">
