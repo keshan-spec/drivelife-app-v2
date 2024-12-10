@@ -653,3 +653,22 @@
 .network-error {
     margin: 2rem;
 }
+
+.media-post-content,
+.media-post {
+    position: relative;
+}
+
+#lottie-animation {
+    height: 200px;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    z-index: 9999;
+}
+
+.hidden {
+    display: none;
+    pointer-events: none;
+}

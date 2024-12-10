@@ -568,6 +568,7 @@ async function displayPosts(posts, following = false) {
     const postItem = `
     <div class="media-post" data-post-id="${post.id}" data-is-liked="${post.is_liked}">
       <div class="media-post-content">
+        <div id="lottie-animation" class="hidden"></div>
         ${profile_link}
         ${mediaSection}
       </div>
@@ -583,7 +584,68 @@ async function displayPosts(posts, following = false) {
   initDoubleTapLike();
 }
 
+// function initDoubleTapLike() {
+//   app.swiper.create('.post-view-swiper', {
+//     speed: 400,
+//     spaceBetween: 0,
+//     pagination: {
+//       el: '.swiper-pagination',
+//       type: 'bullets',
+//     },
+//   });
+
+//   document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
+//     if (img.complete) {
+//       setImageStyle(img);
+//     } else {
+//       img.onload = () => {
+//         setImageStyle(img);
+//       };
+//     }
+//   });
+
+//   // get all the media-post elements
+//   const mediaPosts = document.querySelectorAll('.media-post');
+
+//   mediaPosts.forEach(post => {
+//     const mc = new Hammer(post);
+
+//     const anim = lottie.loadAnimation({
+//       container: post.querySelector('#lottie-animation'),
+//       renderer: 'svg',
+//       loop: false,
+//       autoplay: false,
+//       path: 'like.json'
+//     });
+
+//     // listen to events...
+//     mc.on("doubletap", function (ev) {
+//       const postId = post.getAttribute('data-post-id');
+//       const isLiked = post.getAttribute('data-is-liked') === 'true';
+
+//       // Play the animation
+//       anim.play();
+
+//       setTimeout(() => {
+//         // Pause the animation
+//         anim.pause();
+//         anim.goToAndStop(0);
+//       }, 1000);
+
+//       if (isLiked) {
+//         return;
+//       }
+
+//       // Play the Lottie animation
+//       hapticsImpactLight();
+//       togglePostLike(postId);
+
+//     });
+//   });
+// }
+
 function initDoubleTapLike() {
+  // Initialize swiper
   app.swiper.create('.post-view-swiper', {
     speed: 400,
     spaceBetween: 0,
@@ -593,6 +655,7 @@ function initDoubleTapLike() {
     },
   });
 
+  // Ensure images are styled
   document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
     if (img.complete) {
       setImageStyle(img);
@@ -603,16 +666,50 @@ function initDoubleTapLike() {
     }
   });
 
-  // get all the media-post elements
-  const mediaPosts = document.querySelectorAll('.media-post');
+  // Get all unprocessed media-post elements
+  const mediaPosts = document.querySelectorAll('.media-post:not([data-initialized])');
 
   mediaPosts.forEach(post => {
     const mc = new Hammer(post);
 
-    // listen to events...
-    mc.on("doubletap", function (ev) {
+    const anim = lottie.loadAnimation({
+      container: post.querySelector('#lottie-animation'),
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      path: 'like.json'
+    });
+
+    anim.setSpeed(1.5); // Double the speed of the animation
+    // Mark this post as initialized
+    post.setAttribute('data-initialized', 'true');
+
+    // Listen to double-tap events
+    mc.on("doubletap", function () {
+      // Add fade-out effect
+      post.querySelector('#lottie-animation').classList.remove('hidden');
+
       const postId = post.getAttribute('data-post-id');
       const isLiked = post.getAttribute('data-is-liked') === 'true';
+
+      // Play the animation forward
+      anim.setDirection(1); // Forward direction
+      anim.play();
+
+      setTimeout(() => {
+        // Reverse the animation
+        anim.setDirection(-1); // Reverse direction
+        anim.setSpeed(2); // Double the speed of the animation
+        anim.play();
+
+        // Pause and reset after reverse animation
+        setTimeout(() => {
+          // anim.pause();
+          anim.goToAndStop(0, true); // Reset to the first frame
+
+          post.querySelector('#lottie-animation').classList.add('hidden');
+        }, anim.totalFrames / anim.frameRate * 700); // Duration of reverse animation
+      }, 800);
 
       if (isLiked) {
         return;
@@ -624,6 +721,7 @@ function initDoubleTapLike() {
     });
   });
 }
+
 
 function displayComments(comments, postId) {
   const user = store.getters.user.value;
