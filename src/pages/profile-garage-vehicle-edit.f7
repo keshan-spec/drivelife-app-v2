@@ -172,6 +172,39 @@
           </ul>
         </div>
 
+        <div class="block-title">Vehicle Stats</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Power (BHP)</div>
+                <div class="item-input-wrap">
+                  <input type="number" pattern="[0-9]*" placeholder="Enter BHP" name="vehicle_bhp" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">0 - 62mph time</div>
+                <div class="item-input-wrap">
+                  <input type="number" inputmode="decimal" placeholder="Enter 0-62 time" name="vehicle_062" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Top Speed (MPH)</div>
+                <div class="item-input-wrap">
+                  <input type="number" inputmode="decimal" placeholder="Enter top speed" name="vehicle_top_speed" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
         <div class="block-title">Ownership Dates</div>
 
         <div class="list list-strong-ios list-dividers-ios inset-ios">
@@ -370,6 +403,11 @@
       page.$el.find('input[name="vehicle_tagging"]').prop('checked', data.allow_tagging === "1");
       page.$el.find('textarea[name="vehicle_description"]').val(data.short_description || '');
 
+      // New vehicle stats
+      page.$el.find('input[name="vehicle_bhp"]').val(data.vehicle_bhp || '');
+      page.$el.find('input[name="vehicle_062"]').val(data.vehicle_062 || '');
+      page.$el.find('input[name="vehicle_top_speed"]').val(data.vehicle_top_speed || '');
+
       // If a cover photo exists, use it as the background image of the upload label
       if (data.cover_photo) {
         page.$el.find('.custom-file-upload label').css('background-image', `url('${data.cover_photo}')`);
@@ -460,7 +498,12 @@
           const primary_car = form.find('select[name="vehicle_ownership"]').val();
           const allow_tagging = form.find('input[name="vehicle_tagging"]').is(':checked') ? 1 : 0;
 
-          const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
+          // New stats  
+          const vehicle_bhp = form.find('input[name="vehicle_bhp"]').val() || 0;
+          const vehicle_062 = form.find('input[name="vehicle_062"]').val() || 0;
+          const vehicle_top_speed = form.find('input[name="vehicle_top_speed"]').val() || 0;
+
+          // const cover_image = form.find('input[name="vehicle_image"]').prop('files')[0];
 
           if (!make || make === "0") {
             showToast('Please select a vehicle make');
@@ -487,19 +530,6 @@
             }
           }
 
-          // let base64 = null;
-
-          // if (cover_image) {
-          //   // Wrap the FileReader in a Promise to wait for it to complete
-          //   base64 = await new Promise((resolve, reject) => {
-          //     const reader = new FileReader();
-          //     reader.readAsDataURL(cover_image);
-
-          //     reader.onload = () => resolve(reader.result);
-          //     reader.onerror = () => reject(new Error('Failed to read image as base64'));
-          //   });
-          // }
-
           $f7.preloader.show();
 
           const response = await updateVehicleInGarage({
@@ -514,7 +544,10 @@
             allow_tagging,
             cover_photo: base64,
             vehicle_period: primary_car,
-            description
+            description,
+            vehicle_bhp,
+            vehicle_062,
+            vehicle_top_speed
           },
             garageId
           );

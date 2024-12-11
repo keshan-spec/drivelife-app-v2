@@ -941,6 +941,11 @@ img.image-square {
     gap: 5px;
 }
 
+.profile-link-double-btn {
+    padding: 10px 5px !important;
+    margin-bottom: 8px !important;
+}
+
 .profile-landing-page .profile-link {
     display: block;
     width: 100%;
@@ -1341,13 +1346,12 @@ img.image-square {
     display: block;
     width: 100%;
     margin: 10px auto 25px auto;
-    padding: 10px;
+    padding: 10px 10px 15px 10px;
     border-bottom: 1px solid #E1E1E1;
 }
 
 .modification-container .modification-item .modification-content {
-    width: calc(100% - 80px);
-    float: left;
+    width: calc(100% - 0px);
 }
 
 .modification-container .modification-item .modification-title {
@@ -1366,28 +1370,50 @@ img.image-square {
     display: block;
     width: 100%;
     margin: 10px 0 0 0;
-    font-size: 12px !important;
+    font-size: 15px !important;
 }
 
 .modification-container .modification-item .modification-content-link .icon {
-    font-size: 13px !important;
+    font-size: 15px !important;
 }
 
 .modification-container .modification-item .modification-image {
-    width: 60px;
-    height: 60px;
-    background-color: #a6a6a6;
-    float: right;
-    margin: 3px 0 0 0;
+    width: 100%;
+    margin: 15px 0 0 0;
 }
 
 .modification-image a {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 80px;
+    background-color: #a6a6a6;
     display: block;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.modification-content-edit {
+    display: block;
+    width: 100%;
+    margin: 15px auto 0 auto;
+}
+
+.modification-content-edit a {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background-color: #ae9159;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.modification-content-edit a:nth-of-type(2) {
+    background-color: #2e2e2e;
+}
+
+.modification-content-edit a .icon {
+    font-size: 13px;
 }
 
 
