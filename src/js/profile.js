@@ -53,11 +53,9 @@ $('#app').on('click', '.profile-external-links ul li a', function (e) {
   window.open(url, '_blank');
 });
 
-$('#app').on('click', '.follower-item', async function (e) {
+$('#app').on('click', '.profile-followers-list .follower-item', async function (e) {
   const view = app.views.current;
-
   const url = this.getAttribute('data-url');
-  console.log(url);
 
   if (!url) return;
 
@@ -71,7 +69,7 @@ $('#app').on('click', '.follower-item', async function (e) {
 
 });
 
-$('#app').on('click', '.remove-follower', async function (e) {
+$('#app').on('click', '.profile-followers-list .remove-follower', async function (e) {
   const followerId = e.target.getAttribute('data-follower-id');
 
   if (!followerId) return;
@@ -109,7 +107,6 @@ garageStore.onUpdated((garage) => {
   store.dispatch('clearPathData');
   garageUpdated = garage;
   createGarageContent(garage, '.current-vehicles-list', '.past-vehicles-list');
-  createGarageContent(garage, '#garage-edit-current-list', '#garage-edit-past-list');
 });
 
 myFollowersStore.onUpdated((data) => {

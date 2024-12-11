@@ -472,17 +472,20 @@
                 swipeToClose: 'to-bottom'
             });
 
+            try {
+                autocomplete = new google.maps.places.Autocomplete(
+                    document.getElementById("autocomplete"), {
+                    types: ["establishment", "geocode"],
+                    componentRestrictions: {
+                        country: 'GB'
+                    }
+                });
 
-            autocomplete = new google.maps.places.Autocomplete(
-                document.getElementById("autocomplete"), {
-                types: ["establishment", "geocode"],
-                componentRestrictions: {
-                    country: 'GB'
-                }
-            });
-
-            autocomplete.setFields(["geometry", "address_component"]);
-            autocomplete.addListener("place_changed", fillInAddress);
+                autocomplete.setFields(["geometry", "address_component"]);
+                autocomplete.addListener("place_changed", fillInAddress);
+            } catch (error) {
+                console.log(error);
+            }
         });
 
         $on('pageBeforeIn', (e, page) => {

@@ -31,7 +31,7 @@ export const getGargeById = async (garageId) => {
     try {
         const response = await fetch(`${API_URL}/wp-json/app/v2/get-garage?garage_id=${garageId}`, {
             method: "GET",
-            cache: "force-cache",
+            cache: "reload",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -61,16 +61,10 @@ export const getPostsForGarage = async (garageId, page = 1, tagged = false) => {
 
         const response = await fetch(`${API_URL}/wp-json/app/v2/get-garage-posts?${query}`, {
             method: "GET",
-            // cache: "force-cache",
             headers: {
                 "Content-Type": "application/json",
             },
-            // body: JSON.stringify({
-            //     garage_id: garageId,
-            //     page,
-            //     limit: 10,
-            //     tagged
-            // }),
+
         });
 
         const data = await response.json();
@@ -191,6 +185,162 @@ export const deleteVehicleFromGarage = async (garageId) => {
         if (error.name === 'AbortError') {
             throw {
                 message: "Failed to delete your vehicle, your connection timed out",
+                name: "TimeOutError"
+            };
+        } else {
+            throw error; // Rethrow any other errors
+        }
+    }
+};
+
+/* Vehicle Mods */
+export const getVehicleMods = async (garageId) => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v2/get-vehicle-mods?garage_id=${garageId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+        if (response.status !== 200) {
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const getModById = async (modId) => {
+    try {
+        const response = await fetch(`${API_URL}/wp-json/app/v2/get-vehicle-mod?mod_id=${modId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+        if (response.status !== 200) {
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const addVehicleMod = async (data) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
+
+        setTimeout(() => {
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
+
+        const response = await fetch(`${API_URL}/wp-json/app/v2/add-vehicle-mod`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                ...data,
+                user_id: user.id,
+            }),
+            signal
+        });
+
+        const res = await response.json();
+        return res;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw {
+                message: "Failed to add your vehicle mod, your connection timed out",
+                name: "TimeOutError"
+            };
+        } else {
+            throw error; // Rethrow any other errors
+        }
+    }
+};
+
+export const updateVehicleMod = async (data, modId) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
+
+        setTimeout(() => {
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
+
+        const response = await fetch(`${API_URL}/wp-json/app/v2/update-vehicle-mod`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                ...data,
+                user_id: user.id,
+                mod_id: modId,
+            }),
+            signal
+        });
+
+        const res = await response.json();
+        return res;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw {
+                message: "Failed to update your vehicle mod, your connection timed out",
+                name: "TimeOutError"
+            };
+        } else {
+            throw error; // Rethrow any other errors
+        }
+    }
+};
+
+export const deleteVehicleMod = async (modId) => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
+
+        setTimeout(() => {
+            controller.abort();
+        }, TIMEOUT_MS_HIGH);
+
+        const response = await fetch(`${API_URL}/wp-json/app/v2/delete-vehicle-mod`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user_id: user.id,
+                mod_id: modId,
+            }),
+            signal
+        });
+
+        const res = await response.json();
+        return res;
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw {
+                message: "Failed to delete your vehicle mod, your connection timed out",
                 name: "TimeOutError"
             };
         } else {

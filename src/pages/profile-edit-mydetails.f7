@@ -59,7 +59,7 @@
               <div class="item-inner">
                 <div class="item-title item-label">Tel No</div>
                 <div class="item-input-wrap">
-                  <input type="text" name="tel_no" placeholder="Enter tel no" />
+                  <input type="tel" name="tel_no" placeholder="Enter tel no" />
                   <span class="input-clear-button"></span>
                 </div>
               </div>

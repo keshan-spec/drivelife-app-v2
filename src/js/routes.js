@@ -24,6 +24,7 @@ import SearchPage from '../pages/search.f7';
 import ProfileGarageEditPage from '../pages/profile-garage-edit.f7';
 import ProfileGarageVehicleAddPage from '../pages/profile-garage-vehicle-add.f7';
 import ProfileGarageVehicleEditPage from '../pages/profile-garage-vehicle-edit.f7';
+import ProfileGarageVehicleModPage from '../pages/profile-garage-vehicle-mod.f7';
 import ProfileEditImagesPage from '../pages/profile-edit-images.f7';
 import ProfileEditSocialsPage from '../pages/profile-edit-socials.f7';
 import ProfileEditMyDetailsPage from '../pages/profile-edit-mydetails.f7';
@@ -153,6 +154,10 @@ var routes = [
   {
     path: '/profile-garage-vehicle-edit/:id',
     component: ProfileGarageVehicleEditPage,
+  },
+  {
+    path: '/profile-garage-vehicle-mod/:id',
+    component: ProfileGarageVehicleModPage,
   },
   {
     path: '/profile-edit-images/',

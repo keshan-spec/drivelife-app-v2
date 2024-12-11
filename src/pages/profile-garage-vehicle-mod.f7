@@ -1,0 +1,294 @@
+<template>
+  <div class="page no-toolbar" data-name="profile-garage-vehicle-mod">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a class="link back">
+            <i class="icon icon-back"></i>
+          </a>
+        </div>
+        <div class="middle">
+          <div class="header-logo"><img src="img/logo-dark.png" /></div>
+        </div>
+        <div class="right">
+          <a href="#" class="top-right-action">
+            Save
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="loading-fullscreen mod" style="display: none;">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
+
+      <form id="mod-form">
+        <div class="block-title">Modification Image</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <div class="custom-file-upload" id="fileUpload">
+            <input type="file" id="fileuploadInput" name="vehicle_mod_image" />
+            <label for="fileuploadInput">
+              <span>
+                <i class="icon f7-icons">cloud_upload</i>
+                <small>Tap to Upload</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="block-title">Modification Details</div>
+        <div class="list list-strong-ios list-dividers-ios inset-ios">
+          <ul>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Modification Type</div>
+                <div class="item-input-wrap input-dropdown-wrap">
+
+                  <select class="input-with-value" name="vehicle_mod_type" required>
+                    <option disabled="" selected="">Please Select</option>
+                    <option value="performance / ecu">Performance / ECU</option>
+                    <option value="engine">Engine</option>
+                    <option value="suspension">Suspension</option>
+                    <option value="wheels">Wheels</option>
+                    <option value="tires">Tires</option>
+                    <option value="brakes">Brakes</option>
+                    <option value="exhaust">Exhaust</option>
+                    <option value="interior">Interior</option>
+                    <option value="exterior">Exterior</option>
+                    <option value="lighting">Lighting</option>
+                    <option value="audio">Audio</option>
+                    <option value="visual">Visual</option>
+                    <option value="safety">Safety</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="body">Body</option>
+                    <option value="transmission">Transmission</option>
+                    <option value="drivetrain">Drivetrain</option>
+                    <option value="cooling">Cooling</option>
+                  </select>
+
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Modification Title</div>
+                <div class="item-input-wrap">
+                  <input type="text" placeholder="" name="vehicle_mod_title" required />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Description</div>
+                <div class="item-input-wrap">
+                  <textarea name="vehicle_mod_description" placeholder="" maxlength="200" class=""></textarea>
+                </div>
+              </div>
+            </li>
+            <li class="item-content item-input">
+              <div class="item-inner">
+                <div class="item-title item-label">Link to buy product</div>
+                <div class="item-input-wrap">
+                  <input type="url" placeholder="" name="vehicle_mod_link" />
+                  <span class="input-clear-button"></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+  import {
+    addVehicleMod,
+    updateVehicleMod,
+    getModById
+  } from "../js/api/garage.js";
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+    var base64 = null;
+
+    $on('pageInit', (e, page) => {
+      page.$el.find('input[name="vehicle_mod_image"]').on('change', function (e) {
+        try {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            base64 = e.target.result;
+
+            document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${e.target.result}')`;
+            document.querySelector('.custom-file-upload label').style.backgroundSize = 'cover';
+          };
+
+          reader.readAsDataURL(file);
+        } catch (error) {
+          alert(`Failed to read image: ${error.message}`);
+        }
+      });
+    });
+
+    $on('pageBeforeIn', async (e, page) => {
+      var garageId = e.detail.route.params.id;
+      var modId = null;
+
+      if (!garageId) {
+        $f7.dialog.alert('Garage ID not provided');
+        $f7.views.main.router.back();
+        return;
+      }
+
+      if (garageId == -1) {
+        return;
+      }
+
+      try {
+        const queryParams = e.detail.route.query || {};
+
+        if (queryParams.mod_id) {
+          $('.loading-fullscreen.mod').show();
+          modId = queryParams.mod_id;
+          const response = await getModById(modId);
+
+          if (!response || !response.success) {
+            throw new Error(response.message || 'Failed to load vehicle mod');
+          }
+
+          const mod = response.mod;
+
+          page.$el.find('select[name="vehicle_mod_type"]').val(mod.mod_type || '');
+          page.$el.find('input[name="vehicle_mod_title"]').val(mod.title || '');
+          page.$el.find('textarea[name="vehicle_mod_description"]').val(mod.description || '');
+          page.$el.find('input[name="vehicle_mod_link"]').val(mod.product_link || '');
+
+          // set image
+          // .custom-file-upload label
+          document.querySelector('.custom-file-upload label').style.backgroundImage = `url('${mod.image}')`;
+          $('.loading-fullscreen.mod').hide();
+        }
+      } catch (error) {
+        $f7.dialog.alert('Failed to load vehicle mod');
+        $f7.views.main.router.back();
+        return;
+      }
+
+      $(document).on('click', '.top-right-action', async function (e) {
+        onSubmit(garageId, modId);
+      });
+    });
+
+    $on('pageBeforeOut', (e, page) => {
+      $(document).off('click', '.top-right-action');
+    });
+
+    async function onSubmit(garageId, modId) {
+      var view = $f7.views.current;
+
+      try {
+        const form = $('form#mod-form');
+
+        // values
+        const mod_type = form.find('select[name="vehicle_mod_type"]').val();
+        const mod_title = form.find('input[name="vehicle_mod_title"]').val();
+        const mod_description = form.find('textarea[name="vehicle_mod_description"]').val();
+        const mod_link = form.find('input[name="vehicle_mod_link"]').val();
+        const mod_image = form.find('input[name="vehicle_mod_image"]').prop('files')[0];
+
+        if (!mod_type) {
+          showToast('Please select a modification type');
+          return;
+        }
+
+        if (!mod_title) {
+          showToast('Please enter a modification title');
+          return;
+        }
+
+        if (modId) {
+          $f7.preloader.show();
+
+          const response = await updateVehicleMod({
+            garage_id: garageId,
+            mod_type,
+            mod_title,
+            mod_description,
+            product_link: mod_link,
+            mod_image: base64
+          }, modId);
+
+          if (!response || !response.success) {
+            throw new Error('Failed to update vehicle');
+          }
+
+          $f7.preloader.hide();
+
+          showToast('Vehicle mod updated successfully');
+
+          store.dispatch('removePathData', `/garage/${garageId}/mods`);
+
+          view.router.back(`/profile-garage-vehicle-view/${garageId}`, {
+            force: true
+          });
+          return;
+        }
+
+        if (!mod_image || !base64) {
+          showToast('Please upload an image for the modification');
+          return;
+        }
+
+        $f7.preloader.show();
+
+        const response = await addVehicleMod({
+          garage_id: garageId,
+          mod_type,
+          mod_title,
+          mod_description,
+          product_link: mod_link,
+          mod_image: base64
+        });
+
+        if (!response || !response.success) {
+          throw new Error('Failed to add vehicle mod');
+        }
+
+        $f7.preloader.hide();
+
+        showToast('Vehicle mod added successfully');
+        store.dispatch('removePathData', `/garage/${garageId}/mods`);
+
+        view.router.back(`/profile-garage-vehicle-view/${garageId}`, {
+          force: true
+        });
+      } catch (error) {
+        $f7.preloader.hide();
+        showToast(error.message || 'Failed to add vehicle mod');
+      }
+    }
+
+    const showToast = (text, type = 'default') => {
+      $f7.toast.create({
+        text: text,
+        position: 'bottom',
+        closeTimeout: 2000,
+        cssClass: `toast-${type}`,
+      }).open();
+    };
+
+    return $render;
+  }
+</script>

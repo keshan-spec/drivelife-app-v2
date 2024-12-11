@@ -14,8 +14,6 @@ var isFetchingPosts = false;
 var userId = null;
 
 $(document).on('page:init', '.page[data-name="profile-view"]', async function (e) {
-    console.log('profile-view page:init');
-
     userId = e.detail.route.params.id;
 
     currentPostPage = 1;

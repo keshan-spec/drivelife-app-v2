@@ -560,14 +560,7 @@
           showToast('Vehicle updated successfully');
 
           // Clear cache
-          const pathStore = store.getters.getPathData;
-
-          if (pathStore && pathStore.value[`/garage/${garageId}`]) {
-            store.dispatch('setPathData', {
-              path: `/garage/${garageId}`,
-              data: null,
-            });
-          }
+          store.dispatch('removePathData', `/garage/${garageId}`);
 
           // refresh garage
           await store.dispatch('getMyGarage');

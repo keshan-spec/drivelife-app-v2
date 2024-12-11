@@ -141,7 +141,7 @@ export function displayProfile(user, container = 'profile', userId = null) {
                 {
                     link: {
                         label: 'Mivia',
-                        url: profileLinks.mivia
+                        url: `https://members.getmivia.app/user/${profileLinks.mivia}`
                     },
                     id: 'mivia'
                 }
