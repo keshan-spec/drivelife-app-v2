@@ -189,6 +189,25 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
   }, 300);
 });
 
+// Add this to verify when the element is appended to the DOM
+// const observer = new MutationObserver(() => {
+//   // console.log('DOM mutated, check for input-clear-button:', $('.input-clear-button').length);
+//   // Add event listener to the new element
+// });
+// observer.observe(document.body, { childList: true, subtree: true });
+
+$(document).on('page:beforein', function (e) {
+  $('.input-clear-button').off('click').on('click', function (e) {
+    console.log('clearing input'); // Debugging
+    const input = $(this).prev('input'); // Ensure you're targeting the correct element
+    if (input.length) {
+      input.val(''); // Clear input value
+    } else {
+      console.error('No input found before the button');
+    }
+  });
+});
+
 /* Store event listeners */
 userStore.onUpdated(async (data) => {
   if (data && data.id && !data.external_refresh && !data.refreshed) {
@@ -210,7 +229,6 @@ userStore.onUpdated(async (data) => {
     getDeliveredNotifications();
   }
 });
-
 
 function onNotificationReceived(notification) {
   // alert('Notification received');

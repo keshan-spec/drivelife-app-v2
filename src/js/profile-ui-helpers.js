@@ -110,31 +110,50 @@ export function displayProfile(user, container = 'profile', userId = null) {
         }
     }
 
-    // Display External Links
-    const externalLinks = profileLinks.external_links || []; // Assuming this is an array
+    // Create a new array by copying the existing links
+    let externalLinks = [...(profileLinks.external_links || [])]; // Shallow copy
+
+    // Append custodian to the external links if it doesn't already exist
+    if (profileLinks.custodian) {
+        const custodianLink = externalLinks.find(link => link.id === 'custodian');
+
+        if (!custodianLink) {
+            externalLinks = [
+                ...externalLinks,
+                {
+                    link: {
+                        label: 'Custodian Garage / Car Link',
+                        url: profileLinks.custodian
+                    },
+                    id: 'custodian'
+                }
+            ];
+        }
+    }
+
+    // Append mivia to the external links if it doesn't already exist
+    if (profileLinks.mivia) {
+        const miviaLink = externalLinks.find(link => link.id === 'mivia');
+
+        if (!miviaLink) {
+            externalLinks = [
+                ...externalLinks,
+                {
+                    link: {
+                        label: 'Mivia',
+                        url: profileLinks.mivia
+                    },
+                    id: 'mivia'
+                }
+            ];
+        }
+    }
+
     const linksList = containerElem.querySelector('.profile-external-links ul');
     if (linksList) {
         linksList.innerHTML = ''; // Clear any existing links
 
         if (externalLinks.length > 0) {
-
-            if (profileLinks.custodian) {
-                const listItem = document.createElement('li');
-                const link = document.createElement('a');
-                link.href = profileLinks.custodian;
-                link.target = '_blank';
-
-                link.onclick = (e) => {
-                    e.preventDefault();
-                    const url = new URL(profileLinks.custodian);
-                    window.open(url, '_blank');
-                };
-
-                link.textContent = 'Custodian Garage / Car Link';
-                listItem.appendChild(link);
-                linksList.appendChild(listItem);
-            }
-
             externalLinks.forEach(linkObj => {
                 const listItem = document.createElement('li');
                 const link = document.createElement('a');

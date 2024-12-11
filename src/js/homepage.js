@@ -11,7 +11,6 @@ import {
 
 import {
   fetchComments,
-  maybeLikePost,
   maybeLikeComment,
   addComment,
   deletePost,
@@ -676,7 +675,6 @@ function initDoubleTapLike() {
     });
   });
 }
-
 
 function displayComments(comments, postId) {
   const user = store.getters.user.value;

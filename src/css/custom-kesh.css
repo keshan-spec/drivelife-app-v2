@@ -672,3 +672,9 @@
     display: none;
     pointer-events: none;
 }
+
+.input-clear-button::before,
+.input-clear-button::after {
+    pointer-events: none;
+    /* Ensures pseudo-elements don't capture clicks */
+}
