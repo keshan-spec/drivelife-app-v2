@@ -45,8 +45,10 @@
             </ul>
           </div>
           <div class="block">
-            <p class="text-center"><a href="https://www.carevents.com/reset-password/" id="forgot-password">Forgot
-                Password?</a></p>
+            <p class="text-center">
+              <a href="https://www.carevents.com/reset-password/" id="forgot-password">Forgot
+                Password?</a>
+            </p>
           </div>
 
           <div class="login-buttons">
@@ -60,7 +62,18 @@
   </div>
 </template>
 <script>
-  export default () => {
+  export default (props, { $, $on, $f7 }) => {
+    $on('pageBeforeIn', (page) => {
+      $(document).on('click', '#forgot-password', function (e) {
+        // open the url in a new tab
+        window.open($(this).attr('href'), '_blank');
+      });
+    });
+
+    $on('pageBeforeOut', (page) => {
+      $(document).off('click', '#forgot-password');
+    });
+
     return $render;
   }
 </script>

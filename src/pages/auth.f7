@@ -24,13 +24,7 @@
 
 <script>
     export default (props, { $, $on, $f7 }) => {
-
         $on('pageBeforeIn', (page) => {
-            $(document).on('click', '#forgot-password', function (e) {
-                // open the url in a new tab
-                window.open($(this).attr('href'), '_blank');
-            });
-
             // SSO with CarEvents
             $(document).on('click', '#sso-ce-button', function (e) {
 
@@ -46,7 +40,6 @@
         });
 
         $on('pageBeforeOut', (page) => {
-            $(document).off('click', '#forgot-password');
             $(document).off('click', '#sso-ce-button');
         });
 
