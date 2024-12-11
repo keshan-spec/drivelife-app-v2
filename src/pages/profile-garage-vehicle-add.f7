@@ -270,10 +270,6 @@
     addVehicleToGarage,
   } from "../js/api/garage.js";
 
-  import {
-    getGalleryPhotos,
-  } from "../js/native.js";
-
   export default (props, { $, $on, $f7 }) => {
     const { store } = $f7;
     var base64 = null;

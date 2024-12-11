@@ -787,6 +787,12 @@ const store = createStore({
         state.paths[path] = {};
       }
 
+      // if data is null, remove the path
+      if (data === null) {
+        delete state.paths[path];
+        return;
+      }
+
       // Update the data for the given path
       state.paths[path] = {
         ...state.paths[path],
