@@ -584,65 +584,16 @@ async function displayPosts(posts, following = false) {
   initDoubleTapLike();
 }
 
-// function initDoubleTapLike() {
-//   app.swiper.create('.post-view-swiper', {
-//     speed: 400,
-//     spaceBetween: 0,
-//     pagination: {
-//       el: '.swiper-pagination',
-//       type: 'bullets',
-//     },
-//   });
-
-//   document.querySelectorAll('.swiper-slide .swiper-slide-image').forEach((img) => {
-//     if (img.complete) {
-//       setImageStyle(img);
-//     } else {
-//       img.onload = () => {
-//         setImageStyle(img);
-//       };
-//     }
-//   });
-
-//   // get all the media-post elements
-//   const mediaPosts = document.querySelectorAll('.media-post');
-
-//   mediaPosts.forEach(post => {
-//     const mc = new Hammer(post);
-
-//     const anim = lottie.loadAnimation({
-//       container: post.querySelector('#lottie-animation'),
-//       renderer: 'svg',
-//       loop: false,
-//       autoplay: false,
-//       path: 'like.json'
-//     });
-
-//     // listen to events...
-//     mc.on("doubletap", function (ev) {
-//       const postId = post.getAttribute('data-post-id');
-//       const isLiked = post.getAttribute('data-is-liked') === 'true';
-
-//       // Play the animation
-//       anim.play();
-
-//       setTimeout(() => {
-//         // Pause the animation
-//         anim.pause();
-//         anim.goToAndStop(0);
-//       }, 1000);
-
-//       if (isLiked) {
-//         return;
-//       }
-
-//       // Play the Lottie animation
-//       hapticsImpactLight();
-//       togglePostLike(postId);
-
-//     });
-//   });
-// }
+// Load the animation data once and reuse it
+var animationData = null;
+const loadLottieAnimation = async () => {
+  if (!animationData) {
+    // Fetch the JSON only once
+    const response = await fetch('like.json');
+    animationData = await response.json();
+  }
+  return animationData;
+};
 
 function initDoubleTapLike() {
   // Initialize swiper
@@ -669,15 +620,19 @@ function initDoubleTapLike() {
   // Get all unprocessed media-post elements
   const mediaPosts = document.querySelectorAll('.media-post:not([data-initialized])');
 
-  mediaPosts.forEach(post => {
+  mediaPosts.forEach(async (post) => {
     const mc = new Hammer(post);
+
+    // Load the Lottie animation data (cached)
+    const animationData = await loadLottieAnimation();
 
     const anim = lottie.loadAnimation({
       container: post.querySelector('#lottie-animation'),
       renderer: 'svg',
       loop: false,
       autoplay: false,
-      path: 'like.json'
+      // path: 'like.json'
+      animationData
     });
 
     anim.setSpeed(1.5); // Double the speed of the animation
