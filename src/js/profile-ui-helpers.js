@@ -311,6 +311,10 @@ export function displayFollowers(followersList, userFollowingList, container = '
         containerElem = document.querySelector(`.page-content[data-user-id="${userId}"]`);
     }
 
+    if (!containerElem) {
+        console.error(`Container element with data-name="${container}" not found.`);
+        return;
+    }
 
     const followersContainer = containerElem.querySelector('.profile-followers-list');
     if (!followersContainer) {

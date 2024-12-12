@@ -403,7 +403,9 @@
       });
     }
 
-    function renderVehicleMods(mods) {
+    async function renderVehicleMods(mods) {
+      const user = await getSessionUser();
+
       // Update the mod count
       const modsCountElement = document.querySelector('.mods-count h3');
       if (modsCountElement) {
@@ -496,28 +498,31 @@
             modLink.appendChild(link);
           }
 
-          const modEdit = document.createElement('div');
-          modEdit.className = 'modification-content-edit';
-
-          const editLink = document.createElement('a');
-          editLink.href = `/profile-garage-vehicle-mod/${garageId}?mod_id=${mod.id}`;
-          editLink.innerHTML = '<i class="icon f7-icons">pencil</i> Edit';
-
-          const deleteLink = document.createElement('a');
-          deleteLink.href = '#';
-          deleteLink.setAttribute('data-mod-id', mod.id);
-          deleteLink.className = 'delete-mod';
-          deleteLink.innerHTML = '<i class="icon f7-icons">delete_right_fill</i> Delete';
-
-          modEdit.appendChild(editLink);
-          modEdit.appendChild(deleteLink);
 
           // Append elements to the content
           modContent.appendChild(modTitle);
           modContent.appendChild(modDesc);
           modContent.appendChild(modImage);
           modContent.appendChild(modLink);
-          modContent.appendChild(modEdit);
+
+          if (user.id == mod.owner_id) {
+            const modEdit = document.createElement('div');
+            modEdit.className = 'modification-content-edit';
+
+            const editLink = document.createElement('a');
+            editLink.href = `/profile-garage-vehicle-mod/${garageId}?mod_id=${mod.id}`;
+            editLink.innerHTML = '<i class="icon f7-icons">pencil</i> Edit';
+
+            const deleteLink = document.createElement('a');
+            deleteLink.href = '#';
+            deleteLink.setAttribute('data-mod-id', mod.id);
+            deleteLink.className = 'delete-mod';
+            deleteLink.innerHTML = '<i class="icon f7-icons">delete_right_fill</i> Delete';
+
+            modEdit.appendChild(editLink);
+            modEdit.appendChild(deleteLink);
+            modContent.appendChild(modEdit);
+          }
 
           modItem.appendChild(modContent);
 

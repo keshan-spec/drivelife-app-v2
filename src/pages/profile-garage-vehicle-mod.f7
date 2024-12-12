@@ -246,10 +246,10 @@
           return;
         }
 
-        if (!mod_image || !base64) {
-          showToast('Please upload an image for the modification');
-          return;
-        }
+        // if (!mod_image || !base64) {
+        //   showToast('Please upload an image for the modification');
+        //   return;
+        // }
 
         $f7.preloader.show();
 
