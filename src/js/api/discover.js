@@ -32,7 +32,7 @@ export const getDiscoverData = async (search, type, page = 1, signal) => {
             user_id: user?.id,
             page,
             type,
-            per_page: 10,
+            per_page: 20,
             site
         }),
         signal
@@ -279,7 +279,7 @@ export const fetchTrendingUsers = async (page, is_vehicle = false) => {
             body: JSON.stringify({
                 user_id: user.id,
                 page,
-                per_page: 10,
+                per_page: 20,
                 is_vehicle
             }),
         });

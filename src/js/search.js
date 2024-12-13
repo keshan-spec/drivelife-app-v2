@@ -1,3 +1,4 @@
+import { getSessionUser } from "./api/auth.js";
 import {
     getDiscoverData
 } from "./api/discover.js";
@@ -214,7 +215,8 @@ function renderList(container, items, renderItem) {
 }
 
 // Function to render the search results
-function renderSearchResults(searchResults) {
+async function renderSearchResults(searchResults) {
+    const sessionUser = await getSessionUser();
     const eventsContainer = document.querySelector('#events-results .list ul');
     const usersContainer = document.querySelector('#users-results .list ul');
     const vehiclesContainer = document.querySelector('#vehicles-results .list ul');
@@ -244,7 +246,13 @@ function renderSearchResults(searchResults) {
     // Render users
     if (searchResults.users) {
         renderList(usersContainer, searchResults.users.data, (user) => {
-            const userLink = user.type == 'user' ? '/profile-view/' + user.id : '/profile-garage-vehicle-view/' + user.id;
+            let userLink = user.type == 'user' ? '/profile-view/' + user.id : '/profile-garage-vehicle-view/' + user.id;
+            let classList = 'item-link search-result item-content';
+            if (sessionUser && sessionUser.id == user.id && user.type == 'user') {
+                userLink = '#';
+                classList += ' view-profile';
+            }
+
             let contentText;
 
             if (user.type == 'user') {
@@ -256,7 +264,7 @@ function renderSearchResults(searchResults) {
             }
 
             return `
-                <a class="item-link search-result item-content" href="${userLink}">
+                <a class="${classList}" href="${userLink}">
                     <div class="item-media">
                         <div class="image-square image-rounded" style="background-image:url('${user.thumbnail || 'img/profile-placeholder.jpg'}')"></div>
                     </div>
