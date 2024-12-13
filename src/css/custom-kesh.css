@@ -678,3 +678,7 @@
     pointer-events: none;
     /* Ensures pseudo-elements don't capture clicks */
 }
+
+.word-wrap {
+    word-wrap: break-word;
+}

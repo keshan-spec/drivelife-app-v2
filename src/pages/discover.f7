@@ -46,7 +46,6 @@
 
                 <div class="tabbar-nav pt-1">
                     <ul>
-                        <!-- <li><a href="#featured" class="tab-link" data-id="featured">Featured</a></li> -->
                         <li><a href="#events" class="tab-link  tab-link-active" data-id="events">Events</a></li>
                         <li><a href="#venues" class="tab-link" data-id="venues">Venues</a></li>
                         <li><a href="#users" class="tab-link" data-id="users">Users</a></li>
@@ -56,45 +55,6 @@
 
                 <div class="container mt-15 mb-15">
                     <div class="tabs">
-                        <div class="tab hidden" id="featured">
-                            <div class="featured-section">
-                                <swiper-container slides-per-view="1" loop="true">
-                                    <swiper-slide>
-                                        <div class="featured-item">
-                                            <div class="featured-img" style="background-image:url('/img/event.jpeg')">
-                                            </div>
-                                            <div class="featured-content">
-                                                <h2>Classic Motor Show</h2>
-                                                <p>8th - 10th November</p>
-                                                <a href="/discover-view-event/62012" class="btn btn-primary ">See
-                                                    More</a>
-                                            </div>
-                                        </div>
-                                    </swiper-slide>
-                                </swiper-container>
-                            </div>
-
-                            <div class="trending-section">
-                                <h2 class="section-title mt-3 mb-2">Trending Events</h2>
-                                <swiper-container class="event-listing" slides-per-view="2" loop="true"
-                                    id="trending-events">
-                                    <div class="infinite-scroll-preloader">
-                                        <div class="preloader"></div>
-                                    </div>
-                                </swiper-container>
-                            </div>
-
-                            <div class="trending-section">
-                                <h2 class="section-title mt-3 mb-2">Trending Venues</h2>
-                                <swiper-container class="event-listing" slides-per-view="2" loop="true"
-                                    id="trending-venues">
-                                    <div class="infinite-scroll-preloader">
-                                        <div class="preloader"></div>
-                                    </div>
-                                </swiper-container>
-                            </div>
-                        </div>
-
                         <div class="tab tab-active" id="events">
                             <div class="filter-bar mb-2">
                                 <div class="filter-item popup-open" data-popup=".filter-bydate-popup">
@@ -112,7 +72,8 @@
                             </div>
 
                             <div class="trending-section">
-                                <div class="grid grid-cols-2 event-listing" id="filtered-events-tab">
+                                <div class="event-venue-listings" id="filtered-events-tab">
+                                    <!-- <div class="grid grid-cols-2 event-listing" > -->
                                     <!-- content populates here -->
                                 </div>
                             </div>
@@ -132,8 +93,9 @@
                                 </div>
                             </div>
                             <div class="trending-section">
-                                <div class="grid grid-cols-2 event-listing" id="filtered-venues-tab">
-
+                                <div class="event-venue-listings" id="filtered-venues-tab">
+                                    <!-- <div class="grid grid-cols-2 event-listing" id="filtered-venues-tab"> -->
+                                    <!-- content populates here -->
                                 </div>
                             </div>
 
@@ -404,8 +366,6 @@
         }
 
         $on('pageInit', () => {
-
-
             //SEARCH BAR
             $('.discover-search').on('click', function (event) {
                 const networkErrors = store.getters.checkPoorNetworkError.value;

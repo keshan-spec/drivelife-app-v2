@@ -43,6 +43,8 @@ function populateEventCard(data = [], isSwiper = true) {
         eventsTabContainer.innerHTML = '';
     }
 
+
+
     data.forEach(event => {
         const startDate = new Date(event.start_date);
         const endDate = new Date(event.end_date);
@@ -50,37 +52,24 @@ function populateEventCard(data = [], isSwiper = true) {
         // const endDate = new Date(event.dates[0].end_date);
 
         let endDateString = '';
-
         if (startDate.getDate() !== endDate.getDate()) {
             endDateString = `
-            <div class="event-date-item">
-                <p>${endDate.toLocaleString('default', { month: 'short' })}</p>
-                <h5>${endDate.getDate()}</h5>
-            </div>
+            <p class="event-date">${endDate.toLocaleString('default', { month: 'short' })} ${endDate.getDate()}</p>
             `;
         }
 
         const card = `
-        <a href="/discover-view-event/${event.id}">
-            <div class="card event-item">
-                <div class="event-image position-relative">
-                    <div class="image-rectangle" style="background-image: url('${event.thumbnail}');"></div>
-                    <div class="event-dates">
-                        <div class="event-date-item">
-                            <p>${startDate.toLocaleString('default', { month: 'short' })}</p>
-                            <h5>${startDate.getDate()}</h5>
-                        </div>
-                        ${endDateString}
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h3 class="event-title">${event.title}</h3>
-                    <p class="event-info">Starts ${startDate.toLocaleString('default', { weekday: 'short' })}, ${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()}</p>
-                    <div class="event-info">
-                        ${event.location}
-                    </div>
-                </div>
+        <a href="/discover-view-event/${event.id}" class="card-row">
+            <div class="card-row-image">
+                <div class="image-rectangle" style="background-image: url('${event.thumbnail}');"></div>
             </div>
+            <div class="card-row-content">
+                <h3 class="event-title word-wrap">${event.title}</h3>
+                <p class="event-date">${startDate.toLocaleString('default', { weekday: 'short' })}, ${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} ${startDate.getFullYear()}</p>
+                <p class="event-date">${endDateString}</p>
+                <div class="event-info">${event.location}</div>
+            </div>
+            <div class="clearfix"></div>
         </a>
         `;
 
@@ -105,23 +94,37 @@ function populateVenueCard(data = [], isSwiper = true) {
         const swiperSlide = document.createElement('swiper-slide');
 
         const card = `
-        <a href="/discover-view-venue/${event.ID}">
-            <div class="card event-item">
-                <div class="event-image position-relative">
-                    <div class="image-rectangle" style="background-image: url('${event.cover_image}');"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="event-title">${event.title}</h3>
-                    <div class="event-info">
-                        ${event.venue_location}
-                    </div>
-                    <div class="event-info">
-                        Apprx. ${event.distance} miles away
-                    </div>
-                </div>
+        <a href="/discover-view-venue/${event.ID}" class="card-row">
+            <div class="card-row-image">
+                <div class="image-rectangle" style="background-image: url('${event.cover_image}');"></div>
             </div>
+            <div class="card-row-content">
+                <h3 class="event-title word-wrap">${event.title}</h3>
+                <p class="event-date">${event.venue_location}</p>
+                <div class="event-info">Apprx. ${event.distance} miles away</div>
+            </div>
+            <div class="clearfix"></div>
         </a>
         `;
+
+        // const card = `
+        // <a href="/discover-view-venue/${event.ID}">
+        //     <div class="card event-item">
+        //         <div class="event-image position-relative">
+        //             <div class="image-rectangle" style="background-image: url('${event.cover_image}');"></div>
+        //         </div>
+        //         <div class="card-content">
+        //             <h3 class="event-title">${event.title}</h3>
+        //             <div class="event-info">
+        //                 ${event.venue_location}
+        //             </div>
+        //             <div class="event-info">
+        //                 Apprx. ${event.distance} miles away
+        //             </div>
+        //         </div>
+        //     </div>
+        // </a>
+        // `;
 
         if (isSwiper) {
             swiperSlide.innerHTML = card;
