@@ -378,7 +378,7 @@
     }
 
     function addDeleteListener() {
-      $(document).off('click', '.delete-mod').on('click', '.delete-mod', function (e) {
+      $('#app').off('click', '.delete-mod').on('click', '.delete-mod', function (e) {
         e.preventDefault();
 
         const modId = $(this).attr('data-mod-id');
