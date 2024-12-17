@@ -218,10 +218,12 @@
     export default (props, { $, $on, $f7 }) => {
         var userId = null;
         var refreshed = false;
+        var pageEl;
 
         const { store } = $f7;
 
         $on('pageInit', async (e, page) => {
+            pageEl = page.$el;
             const networkErrors = store.getters.checkPoorNetworkError.value;
 
             if (networkErrors) {
@@ -287,9 +289,6 @@
                 refreshed = true;
 
                 store.dispatch('removePathData', `/user/${userId}`);
-
-                await renderProfileData(null, userId, page);
-
                 store.dispatch('getUserPosts', {
                     user_id: userId,
                     clear: true
@@ -299,7 +298,7 @@
                     user_id: userId,
                     clear: true
                 });
-
+                await renderProfileData(null, userId, pageEl);
             } catch (error) {
                 console.log('Error refreshing profile page:', error);
             }

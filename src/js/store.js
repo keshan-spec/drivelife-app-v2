@@ -754,7 +754,7 @@ const store = createStore({
 
       let posts = null;
 
-      if (userPathData && userPathData[`user-${user_id}-posts`]) {
+      if (userPathData && userPathData[`user-${user_id}-posts`] && !clear) {
         if (userPathData[`user-${user_id}-posts`].page >= page) {
           posts = userPathData[`user-${user_id}-posts`];
 
@@ -769,10 +769,10 @@ const store = createStore({
 
 
         } else {
-          posts = await getPostsForUser(user_id, page);
+          posts = await getPostsForUser(user_id, page, false, 10, clear);
         }
       } else {
-        posts = await getPostsForUser(user_id, page);
+        posts = await getPostsForUser(user_id, page, false, 10, clear);
       }
 
       let prevUserPosts = {
