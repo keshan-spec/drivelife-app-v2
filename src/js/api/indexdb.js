@@ -1,23 +1,107 @@
 // Utility to open and manage IndexedDB
-export const openDatabase = () => {
+export const openDatabase = (cacheKey) => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('postsCache', 1);
+        const request = indexedDB.open('siteCache', 1);
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('posts')) {
-                db.createObjectStore('posts', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains(cacheKey)) {
+                db.createObjectStore(cacheKey, { keyPath: 'id' }); // Adjust 'id' if your data structure is different
             }
         };
 
-        request.onsuccess = () => {
-            resolve(request.result);
+        request.onsuccess = (event) => {
+            resolve(event.target.result); // Resolve the database connection
         };
 
-        request.onerror = () => {
-            reject('Error opening IndexedDB');
+        request.onerror = (event) => {
+            reject(`Error opening IndexedDB: ${event.target.errorCode}`);
         };
     });
+};
+
+export const saveToDB = async (cacheKey, data) => {
+    try {
+        const db = await openDatabase(cacheKey);
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(cacheKey, 'readwrite');
+            const store = transaction.objectStore(cacheKey);
+
+            const request = store.put(data); // Inserts or updates the record
+            request.onsuccess = () => {
+                resolve('Data saved successfully');
+            };
+            request.onerror = (event) => {
+                reject(`Error saving data: ${event.target.errorCode}`);
+            };
+        });
+    } catch (error) {
+        console.error('Error in saveToDB:', error);
+    }
+};
+
+export const removeFromDB = async (cacheKey, id) => {
+    try {
+        const db = await openDatabase(cacheKey);
+
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(cacheKey, 'readwrite');
+            const store = transaction.objectStore(cacheKey);
+
+            const request = store.delete(id); // Deletes the item with the given `id`
+
+            request.onsuccess = () => {
+                resolve(`Item with id ${id} removed successfully`);
+            };
+
+            request.onerror = (event) => {
+                reject(`Error removing item with id ${id}: ${event.target.error}`);
+            };
+        });
+    } catch (error) {
+        console.error('Error in removeFromDB:', error);
+    }
+};
+
+export const clearDB = async (cacheKey) => {
+    try {
+        const db = await openDatabase(cacheKey);
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(cacheKey, 'readwrite');
+            const store = transaction.objectStore(cacheKey);
+
+            const request = store.clear(); // Clears all records
+            request.onsuccess = () => {
+                resolve('All data cleared successfully');
+            };
+            request.onerror = (event) => {
+                reject(`Error clearing data: ${event.target.errorCode}`);
+            };
+        });
+    } catch (error) {
+        console.error('Error in clearDB:', error);
+    }
+};
+
+export const getFromDB = async (cacheKey) => {
+    try {
+        const db = await openDatabase(cacheKey);
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(cacheKey, 'readonly');
+            const store = transaction.objectStore(cacheKey);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+
+            request.onerror = () => {
+                reject('Error fetching data from IndexedDB');
+            };
+        });
+    } catch (error) {
+        return [];
+    }
 };
 
 export const savePostToDB = async (post) => {

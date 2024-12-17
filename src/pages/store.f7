@@ -15,27 +15,93 @@
           <a href="#" class="link icon-only open-qr-modal">
             <i class="icon f7-icons">qrcode</i>
           </a>
-          <a href="/notifications/" class="link icon-only">
-            <div class="notification-count"></div>
-            <i class="icon f7-icons">bell</i>
+          <a href="/cart/" class="link icon-only">
+            <div class="cart-count"></div>
+            <i class="icon f7-icons">cart</i>
           </a>
         </div>
       </div>
     </div>
 
     <div class="page-content">
-      <div class="store-coming-soon text-center">
-        <i class="icon f7-icons">cart</i>
-        <h2>Coming Soon</h2>
-        <p>We're just putting the finishing touches on our store - Check back soon for a world of automotive merch,
-          clothing and more!</p>
+      <div class="product-grid">
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  export default () => {
+
+  export default (props, { $, $on, $f7 }) => {
+    const { store } = $f7;
+    const productsStore = store.getters.getStoreProducts;
+    const cartStore = store.getters.getCart;
+
+    productsStore.onUpdated((data) => {
+      if (data && data.length) {
+        $('.product-grid').html(renderProducts(data));
+      }
+    });
+
+    $on('pageBeforeIn', async (e, page) => {
+      $('.product-grid').html(renderProducts(productsStore.value));
+    });
+
+    cartStore.onUpdated((data) => {
+      document.querySelectorAll('.cart-count').forEach((el) => {
+        el.innerHTML = data.length;
+        el.style.display = data.length > 0 ? 'flex' : 'none';
+      });
+    });
+
+    $on('pageInit', async (e, page) => {
+      $('#app').on('click', '.add-to-cart', function (e) {
+        e.preventDefault();
+        const id = $(this).data('id');
+        const cart = cartStore.value;
+
+        if (cart.find((item) => item.id == id)) {
+          $f7.toast.create({
+            text: 'Product already in cart',
+            position: 'top',
+            closeTimeout: 2000,
+          }).open();
+          return;
+        }
+
+        const productName = $(this).data('name');
+        store.dispatch('addToCart', id);
+
+        $f7.toast.create({
+          text: `${productName} added to cart`,
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
+
+        // Change text of button
+        $(this).text('Added to Cart');
+      });
+    });
+
+    function renderProducts(data) {
+      let render = '';
+      data.forEach((product) => {
+        render += `
+          <div class="product-card">
+            <img src="${product.image}" alt="${product.name}" />
+            <div class="product-info">
+              <h3>${product.name}</h3>
+              <p class="product-price">£${product.price}</p>
+              <button class="button add-to-cart" data-id="${product.id}" data-name="${product.name}">Add to Cart</button>
+            </div>
+          </div>
+        `;
+      });
+
+      return render;
+    }
+
+
     return $render;
   }
 </script>

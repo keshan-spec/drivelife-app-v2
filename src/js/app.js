@@ -93,6 +93,16 @@ if (window.f7App !== undefined) {
         }
       },
       pageInit: function (page) {
+        if (page.name === 'store') {
+          userStore.onUpdated((data) => {
+            if (data && data.id && !data.refreshed) {
+              store.dispatch('fetchStoreProducts', {
+                page: 1,
+              });
+            }
+          });
+        }
+
         if (page.name === 'profile') {
           userStore.onUpdated((data) => {
             if (data && data.id) {
@@ -189,13 +199,6 @@ $(document).on('page:afterin', '.page[data-name="auth"]', function (e) {
   }, 300);
 });
 
-// Add this to verify when the element is appended to the DOM
-// const observer = new MutationObserver(() => {
-//   // console.log('DOM mutated, check for input-clear-button:', $('.input-clear-button').length);
-//   // Add event listener to the new element
-// });
-// observer.observe(document.body, { childList: true, subtree: true });
-
 $(document).on('page:beforein', function (e) {
   $('.input-clear-button').off('click').on('click', function (e) {
     console.log('clearing input'); // Debugging
@@ -220,6 +223,8 @@ userStore.onUpdated(async (data) => {
       page: 1,
       reset: true
     });
+
+    store.dispatch('loadCart');
 
 
     await registerNotifications();
@@ -387,6 +392,24 @@ CapacitorApp.addListener('appUrlOpen', async (data) => {
   if (isQrCode) {
     const qrCode = path.split('/').slice(-1)[0];
     maybeRedirectToProfile(qrCode);
+    return;
+  }
+
+  // redirect to payment success page
+  const isPaymentSuccess = path.includes('payment-success');
+  if (isPaymentSuccess) {
+    // split by ? and add / before the path
+    const params = path.split('?');
+    path = `${params[0]}/?${params[1]}`;
+
+    // if router has more than 1 history, go back
+    if (view.history.length > 1) {
+      view.router.back(path, {
+        force: true,
+      });
+    } else {
+      view.router.navigate(path);
+    }
     return;
   }
 

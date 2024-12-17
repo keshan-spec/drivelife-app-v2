@@ -2,18 +2,12 @@ import { Geolocation } from '@capacitor/geolocation';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { AndroidSettings, IOSSettings, NativeSettings } from 'capacitor-native-settings';
 import { Device } from '@capacitor/device';
-import { Clipboard } from '@capacitor/clipboard';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Filesystem } from '@capacitor/filesystem';
 
 import store from './store.js';
 import { convertBlobToBase64 } from './utils.js';
 
-const writeToClipboard = async (message) => {
-    await Clipboard.write({
-        string: message,
-    });
-};
 
 /* Geolocation functions */
 export const getCurrentPosition = async () => {

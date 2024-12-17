@@ -56,19 +56,6 @@
         const pathStoreChanges = store.getters.generalPathsUpdated;
         var postId = null;
 
-        // // when pathstore is updated
-        // pathStoreChanges.onUpdated(() => {
-        //     const data = store.getters.getPathData.value;
-
-        //     if (postId) {
-        //         const post = data[`/post/${postId}`];
-        //         if (post) {
-        //             console.log($f7);
-        //             displaySinglePost(post, $f7.views.main.router.currentPageEl.f7Component);
-        //         }
-        //     }
-        // });
-
         $on('pageInit', async (e, page) => {
             const { id } = page.route.params;
 

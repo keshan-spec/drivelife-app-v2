@@ -1,0 +1,326 @@
+<template>
+    <div class="page no-toolbar" data-name="store">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo">
+                        <img src="img/logo-dark.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content" style="padding: 2rem;">
+            <h1>Checkout</h1>
+            <div class="cart-list"></div>
+            <div class="cart-summary">
+            </div>
+
+
+            <div id="payment-element"></div>
+            <button id="submit-button" class="button button-fill">Pay</button>
+
+            <form id="addPaymentMethodForm" style="display: none;">
+                <div id="card-element"></div>
+                <button id="submit-payment-method" class="button button-fill">Add Payment Method</button>
+            </form>
+
+        </div>
+    </div>
+</template>
+
+<script>
+    import { loadStripe } from '@stripe/stripe-js';
+    import { createPaymentIntent, createSetUpIntent, clearSetupIntentId } from '../js/api/drivelife-store.js';
+
+    export default (props, { $, $on, $f7 }) => {
+        const { store } = $f7;
+        const cartStore = store.getters.getCart;
+
+        let paymentElement;
+        let stripe;
+        let elements;
+        let clientSecret;
+        let cardElement;
+
+        let savedPaymentMethods;
+        let selectedPaymentMethod;
+
+        $on('pageBeforeIn', async () => {
+            // Initialize Stripe
+            stripe = await loadStripe('pk_test_51KPRpjHPxUaL4Jbz1Kn3SK5I4T5mL539JGCSyuM81qvXeExgBhxxngXg5FZyb0iqxLjK4FwpyFbG21lXLcinbynl008v1d9eo1');
+
+            // Fetch the clientSecret from your server
+            const cartTotal = calculateTotal(cartStore.value);
+
+            if (!cartTotal) {
+                $f7.dialog.alert('Cart is empty. Please add items to cart first.');
+                return;
+            }
+
+            const cart = cartStore.value;
+            $('.cart-list').html(renderCart(cart));
+
+            await fetchClientSecret(cartTotal);
+
+            $f7.preloader.hide();
+
+            await initElements();
+
+            const submitButton = document.getElementById('submit-button');
+            submitButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                handlePayment();
+            });
+
+            // Handle form submission
+            document.getElementById('addPaymentMethodForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Show loading state
+                document.getElementById('submit-payment-method').disabled = true;
+                document.getElementById('submit-payment-method').innerText = 'Processing...';
+
+                // get setup intent
+                const response = await createSetUpIntent();
+
+                if (!response.clientSecret) {
+                    $f7.dialog.alert('Error creating setup intent. Please try again.');
+                    return;
+                }
+
+                const { error } = await stripe.confirmCardSetup(response.clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                    },
+                });
+
+                if (error) {
+                    // only clear setup intent if the error is not due to incomplete setup
+                    // if error code starts with incomplete, it means the setup intent is still active
+                    if (!error.code.startsWith('incomplete')) {
+                        clearSetupIntentId();
+                    }
+
+                    $f7.dialog.alert(error.message || 'Error adding payment method. Please try again.');
+
+                    // Reset button state
+                    document.getElementById('submit-payment-method').disabled = false;
+                    document.getElementById('submit-payment-method').innerText = 'Add Payment Method';
+                } else {
+                    document.getElementById('submit-payment-method').disabled = false;
+                    document.getElementById('submit-payment-method').innerText = 'Add Payment Method';
+
+                    clearSetupIntentId();
+                    await fetchClientSecret(cartTotal);
+                    initElements();
+                }
+            });
+        });
+
+        async function initElements() {
+            $('#submit-button').show();
+
+            // Initialize Stripe Elements
+            elements = stripe.elements({
+                clientSecret,
+            });
+
+            paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element');
+
+            // Create a Card element without postal code
+            cardElement = elements.create('card', {
+                hidePostalCode: true,
+            });
+            cardElement.mount('#card-element');
+
+            // show add payment method form
+            $('#addPaymentMethodForm').show();
+
+
+            if (savedPaymentMethods && savedPaymentMethods.length) {
+                // Display saved payment methods
+                // clear saved payment methods
+                $('.cart-summary').html('');
+
+                $('.cart-summary').append(renderSavedPaymentMethods(savedPaymentMethods));
+            }
+
+            const selectPaymentMethods = document.querySelectorAll('.use-method');
+
+            $('#app').off('click', '.use-method').on('click', '.use-method', async function (e) {
+                const id = $(this).data('id');
+
+                if (selectedPaymentMethod && selectedPaymentMethod === id) {
+                    // change text to 'Use this method' for all buttons
+                    selectPaymentMethods.forEach((button) => {
+                        button.innerText = 'Select method';
+                    });
+
+                    selectedPaymentMethod = null;
+                    paymentElement.mount('#payment-element');
+                    return;
+                }
+
+                selectedPaymentMethod = id;
+
+                // hide payment element
+                paymentElement.unmount();
+
+                selectPaymentMethods.forEach((button) => {
+                    if (button.dataset.id === id) {
+                        button.innerText = 'Deselect method';
+                    } else {
+                        button.innerText = 'Select method';
+                    }
+                });
+            });
+        }
+
+        function renderSavedPaymentMethods(paymentMethods) {
+            const container = document.createElement('div');
+            container.className = 'saved-payment-methods';
+
+
+            if (paymentMethods.length === 0) {
+                container.innerHTML = '<p>No saved payment methods found.</p>';
+            } else {
+                paymentMethods.forEach(method => {
+                    const cardBrand = method.card.brand;
+                    const last4 = method.card.last4;
+                    const expMonth = method.card.exp_month;
+                    const expYear = method.card.exp_year;
+                    const id = method.id;
+
+                    const methodDiv = document.createElement('div');
+                    methodDiv.className = 'payment-method';
+
+                    methodDiv.innerHTML = `
+                <div class="payment-method-card">
+                    <p><strong>${cardBrand.charAt(0).toUpperCase() + cardBrand.slice(1)}</strong> ending in ${last4}</p>
+                    <p>Expires: ${expMonth}/${expYear}</p>
+                    <div class="actions">
+                        <button class="use-method" data-id="${id}">Select Method</button>
+                    </div>
+                </div>
+            `;
+
+                    container.appendChild(methodDiv);
+                });
+            }
+
+            return container;
+        }
+
+        async function fetchClientSecret(amount) {
+            $('#submit-button').hide();
+            try {
+                $f7.preloader.show();
+
+                const response = await createPaymentIntent(amount, cartStore.value);
+                if (!response.clientSecret) {
+                    throw new Error('Client secret not found');
+                }
+
+                clientSecret = response.clientSecret;
+                savedPaymentMethods = response.savedPaymentMethods;
+                $f7.preloader.hide();
+            } catch (error) {
+                console.error('Error fetching client secret:', error);
+                $f7.preloader.hide();
+
+                $f7.dialog.alert('Error initializing payment. Please try again. ' + error.message);
+                $f7.views.main.router.back();
+            }
+        }
+
+        function calculateTotal(cart) {
+            return cart.reduce((total, item) => total + parseFloat(item.price), 0);
+        }
+
+        function renderCart(cart) {
+            if (!cart.length) return '<div class="cart-empty">Cart is empty</div>';
+
+            let render = '';
+            cart.forEach((item) => {
+                render += `
+                <div class="cart-item" data-id="${item.id}">
+                    <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px;" />
+                    <div class="cart-item-content">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">£${item.price}</div>
+                    </div>
+                </div>
+            `;
+            });
+            return render;
+        }
+
+        async function handlePayment() {
+            $f7.preloader.show();
+
+            let intent;
+
+            // IF payment method is selected
+            if (selectedPaymentMethod) {
+                // Handle payment with saved payment method
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: selectedPaymentMethod,
+                });
+
+                if (error) {
+                    $f7.preloader.hide();
+                    $f7.dialog.alert('Error processing payment. Please try again.');
+                    return;
+                } else {
+                    intent = paymentIntent;
+                }
+            } else {
+                const { error: submitError } = await elements.submit();
+
+                if (submitError) {
+                    $f7.preloader.hide();
+                    $f7.dialog.alert('Error processing payment. Please try again.' + submitError.message);
+                    return;
+                }
+
+                const { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    clientSecret,
+                    redirect: "if_required",
+                    confirmParams: {
+                        return_url: 'https://app.mydrivelife.com/payment-success',
+                    },
+                });
+
+                if (error) {
+                    $f7.preloader.hide();
+                    $f7.dialog.alert('Error processing payment. Please try again.');
+                    return;
+                } else {
+                    intent = paymentIntent;
+                }
+            }
+
+            $f7.preloader.hide();
+            if (intent) {
+                $f7.views.current.router.back(`/payment-success/?payment_intent=${intent.id}&payment_intent_client_secret=${intent.client_secret}`, {
+                    force: true
+                });
+            }
+        }
+
+        $on('pageBeforeOut', async () => {
+            paymentElement.unmount();
+        });
+
+        return $render;
+    };
+</script>

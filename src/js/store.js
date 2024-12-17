@@ -16,11 +16,13 @@ import {
   fetchTrendingVenues,
   fetchEventCats
 } from './api/discover.js';
+import { getStoreProducts } from './api/drivelife-store.js';
 
 import {
   getPostsForGarage,
   getUserGarage
 } from './api/garage.js';
+import { clearDB, getFromDB, removeFromDB, saveToDB } from './api/indexdb.js';
 import { associateDeviceWithUser, setUserAsInactive } from './api/native.js';
 import { getPersistedAuth, persistAuth } from './api/persisted-auth.js';
 
@@ -70,6 +72,8 @@ const DEFAULT_PAGINATED_DATA = {
 
 const store = createStore({
   state: {
+    storeProducts: [],
+    cart: [],
     homeListenersInitialized: false,
     postUploadProgress: 0,
     createPostMedia: null,
@@ -160,6 +164,16 @@ const store = createStore({
     myFollowers: [],
   },
   getters: {
+    getCart({
+      state
+    }) {
+      return state.cart;
+    },
+    getStoreProducts({
+      state
+    }) {
+      return state.storeProducts;
+    },
     getPostUploadProgress({
       state
     }) {
@@ -332,6 +346,78 @@ const store = createStore({
     },
   },
   actions: {
+    async loadCart({
+      state
+    }) {
+      const cart = await getFromDB('cart');
+      state.cart = cart;
+    },
+    addToCart({
+      state
+    }, product_id) {
+      // check if the product is already in the cart
+      const exists = state.cart.find(p => p.id == product_id);
+
+      if (exists) {
+        return;
+      }
+
+      const product = state.storeProducts.find(p => p.id == product_id);
+
+      if (!product) {
+        return;
+      }
+
+      state.cart = [
+        ...state.cart,
+        {
+          quantity: 1,
+          ...product,
+        },
+      ];
+
+      saveToDB('cart', product);
+    },
+    async removeFromCart({
+      state
+    }, product_id) {
+      const response = await removeFromDB('cart', parseInt(product_id));
+      console.log('Remove from cart', response);
+
+      if (!response) {
+        return;
+      }
+
+      const newCart = state.cart.filter(p => p.id != product_id);
+      state.cart = newCart;
+    },
+    clearCart({
+      state
+    }) {
+      state.cart = [];
+      clearDB('cart');
+    },
+    async fetchStoreProducts({
+      state
+    }, {
+      page,
+      force = false,
+    }) {
+      try {
+        const response = await getStoreProducts();
+
+        if (!response || response.success === 0) {
+          state.storeProducts = [];
+          return;
+        }
+
+        const products = response.data;
+        state.storeProducts = products;
+      } catch (error) {
+        console.error('Failed to fetch store products', error);
+        state.storeProducts = [];
+      }
+    },
     setPoorNetworkError({
       state
     }, value) {

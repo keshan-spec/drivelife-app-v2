@@ -36,6 +36,10 @@ import NotFoundPage from '../pages/404.f7';
 import CreatePostPage from '../pages/create-post.f7';
 import CreatePostTagPage from '../pages/create-post-tags.f7';
 
+import CartPage from '../pages/cart.f7';
+import CheckoutPage from '../pages/checkout.f7';
+import PaymentSuccessPage from '../pages/payment-success.f7';
+
 var routes = [
   {
     path: '/',
@@ -113,6 +117,18 @@ var routes = [
   {
     path: '/store/',
     component: StorePage,
+  },
+  {
+    path: '/cart/',
+    component: CartPage,
+  },
+  {
+    path: '/checkout/',
+    component: CheckoutPage,
+  },
+  {
+    path: '/payment-success/',
+    component: PaymentSuccessPage,
   },
   {
     path: '/profile/',

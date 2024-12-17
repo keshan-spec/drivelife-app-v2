@@ -1,0 +1,89 @@
+<template>
+    <div class="page" data-name="store">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-content">
+            <div class="cart-list">
+                <div class="cart-item">
+                    <div class="cart-item-content">
+                        <div class="cart-item-title">Product Title</div>
+                        <div class="cart-item-price">$10.00</div>
+                    </div>
+                    <div class="cart-item-actions">
+                        <a href="#" class="cart-item-remove">Remove</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- goto checkout link -->
+            <div class="checkout-link">
+                <a href="/checkout/" class="button button-fill">Go to Checkout</a>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default (props, { $, $on, $f7 }) => {
+        const { store } = $f7;
+        const productsStore = store.getters.getStoreProducts;
+        const cartStore = store.getters.getCart;
+
+        cartStore.onUpdated((data) => {
+            $('.cart-list').html(renderCart(data));
+        });
+
+
+        $on('pageBeforeIn', async (e, page) => {
+            const cart = cartStore.value;
+            $('.cart-list').html(renderCart(cart));
+
+            $('.cart-list').on('click', '.cart-item-remove', function (e) {
+                e.preventDefault();
+                const id = $(this).closest('.cart-item').data('id');
+                store.dispatch('removeFromCart', id);
+            });
+        });
+
+        $on('pageBeforeOut', async (e, page) => {
+            $('.cart-list').off('click', '.cart-item-remove');
+        });
+
+        function renderCart(cart) {
+            if (!cart.length) return '<div class="cart-empty">Cart is empty</div>';
+
+            let render = '';
+            cart.forEach((item) => {
+                render += `
+                    <div class="cart-item" data-id="${item.id}">
+                        <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px;" />
+                        <div class="cart-item-content">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">£${item.price}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <a href="#" class="cart-item-remove">Remove</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            return render;
+        }
+
+        return $render;
+    }
+</script>

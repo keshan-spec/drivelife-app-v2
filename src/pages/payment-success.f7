@@ -1,0 +1,62 @@
+<template>
+    <div class="page no-toolbar" data-name="store">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-content">
+            <div class="order-complete">
+                <i class="icon f7-icons">checkmark_circle_fill</i>
+                <h1>Order Complete</h1>
+                <p>Thank you for your order. Your order is now complete.</p>
+                <div id="intent"></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default (props, { $, $on, $f7 }) => {
+        const { store } = $f7;
+
+        $on('pageBeforeIn', async (e, page) => {
+            $f7.preloader.hide();
+
+            // get payment intent from url
+            const query = page.route.query;
+
+            const {
+                payment_intent,
+                payment_intent_client_secret,
+            } = query;
+
+            if (!payment_intent) {
+                $f7.dialog.alert('Invalid payment intent');
+                return;
+            }
+
+            $('#intent').html(`
+                <p>Payment Intent: ${payment_intent}</p>
+                <p>Client Secret: ${payment_intent_client_secret}</p>
+            `);
+
+            store.dispatch('clearCart');
+        });
+
+        $on('pageBeforeOut', async (e, page) => {
+        });
+
+        return $render;
+    }
+</script>

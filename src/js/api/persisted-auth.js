@@ -6,7 +6,7 @@ const secret = new TextEncoder().encode('skibiditoilet');
 import { USER_DATA_KEY } from './consts';
 
 // Encode (Sign) User Data
-async function encodeUserData(userData) {
+async function encodeDataToJWT(userData) {
     return await new SignJWT(userData)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -30,7 +30,7 @@ async function decodeUserData(token) {
 export const persistAuth = async (user_data = null) => {
     if (user_data) {
         // If user data exists, update it
-        const encodedUserData = await encodeUserData(user_data);
+        const encodedUserData = await encodeDataToJWT(user_data);
         await Storage.set({
             key: USER_DATA_KEY,
             value: encodedUserData
