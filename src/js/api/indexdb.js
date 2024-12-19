@@ -5,6 +5,8 @@ export const openDatabase = (cacheKey) => {
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
+            console.log('Creating object store:', cacheKey);
+
             if (!db.objectStoreNames.contains(cacheKey)) {
                 db.createObjectStore(cacheKey, { keyPath: 'id' }); // Adjust 'id' if your data structure is different
             }
@@ -60,6 +62,39 @@ export const removeFromDB = async (cacheKey, id) => {
         });
     } catch (error) {
         console.error('Error in removeFromDB:', error);
+    }
+};
+
+export const updateById = async (cacheKey, id, data) => {
+    try {
+        const db = await openDatabase(cacheKey);
+
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(cacheKey, 'readwrite');
+            const store = transaction.objectStore(cacheKey);
+
+            const request = store.get(id);
+
+            request.onsuccess = () => {
+                const existingData = request.result;
+                const updatedData = { ...existingData, ...data };
+                const updateRequest = store.put(updatedData);
+
+                updateRequest.onsuccess = () => {
+                    resolve('Data updated successfully');
+                };
+
+                updateRequest.onerror = (event) => {
+                    reject(`Error updating data: ${event.target.errorCode}`);
+                };
+            };
+
+            request.onerror = (event) => {
+                reject(`Error fetching item with id ${id}: ${event.target.errorCode}`);
+            };
+        });
+    } catch (error) {
+        console.error('Error in updateById:', error);
     }
 };
 

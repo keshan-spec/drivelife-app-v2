@@ -1,5 +1,5 @@
 export const API_URL = 'https://www.carevents.com/uk';
-export const STORE_API_URL = 'https://mydrivelife.com';
+export const STORE_API_URL = process.env.NODE_ENV === 'production' ? 'https://mydrivelife.com' : 'https://www.mydrivelife.com';
 // export const API_URL = 'https://wordpress-889362-4267074.cloudwaysapps.com/uk';
 export const TIMEOUT_MS_LOW = 15 * 1000; // 15 seconds
 export const TIMEOUT_MS_HIGH = 30 * 1000; // 30 seconds

@@ -46,6 +46,14 @@
             $('.cart-list').html(renderCart(data));
         });
 
+        $on('pageInit', async (e, page) => {
+            // on qty change
+            $('#app').on('change', '.cart-item-qty', function (e) {
+                const id = $(this).closest('.cart-item').data('id');
+                const quantity = $(this).val();
+                store.dispatch('updateCartQuantity', { id, quantity });
+            });
+        });
 
         $on('pageBeforeIn', async (e, page) => {
             const cart = cartStore.value;
@@ -69,14 +77,15 @@
             cart.forEach((item) => {
                 render += `
                     <div class="cart-item" data-id="${item.id}">
-                        <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px;" />
+                        <img src="${item.data.image}" alt="${item.data.name}" style="width: 80px; height: 80px;" />
                         <div class="cart-item-content">
-                            <div class="cart-item-title">${item.name}</div>
-                            <div class="cart-item-price">£${item.price}</div>
+                            <div class="cart-item-title">${item.data.name}</div>
+                            <div class="cart-item-price">£${item.data.price} x ${item.quantity}</div>
                         </div>
                         <div class="cart-item-actions">
                             <a href="#" class="cart-item-remove">Remove</a>
-                        </div>
+                            <input type="number" value="${item.quantity}" class="cart-item-qty" />
+                            </div>
                     </div>
                 `;
             });

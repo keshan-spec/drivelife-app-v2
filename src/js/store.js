@@ -22,7 +22,7 @@ import {
   getPostsForGarage,
   getUserGarage
 } from './api/garage.js';
-import { clearDB, getFromDB, removeFromDB, saveToDB } from './api/indexdb.js';
+import { clearDB, getFromDB, removeFromDB, saveToDB, updateById } from './api/indexdb.js';
 import { associateDeviceWithUser, setUserAsInactive } from './api/native.js';
 import { getPersistedAuth, persistAuth } from './api/persisted-auth.js';
 
@@ -349,39 +349,65 @@ const store = createStore({
     async loadCart({
       state
     }) {
-      const cart = await getFromDB('cart');
+      const cart = await getFromDB('storeCart');
       state.cart = cart;
+    },
+    updateCartQuantity({
+      state
+    }, {
+      id,
+      quantity
+    }) {
+      const product = state.cart.find(p => p.id == id);
+
+      if (product) {
+        product.quantity = parseInt(quantity);
+        state.cart = [
+          ...state.cart,
+        ];
+
+        updateById('storeCart', product.id, product);
+      }
     },
     addToCart({
       state
-    }, product_id) {
+    }, {
+      variant_id,
+      data,
+      quantity = 1
+    }) {
       // check if the product is already in the cart
-      const exists = state.cart.find(p => p.id == product_id);
+      const existingProduct = state.cart.find(p => p.id == variant_id);
 
-      if (exists) {
+      if (existingProduct) {
+        // update the quantity of the product
+        existingProduct.quantity += quantity;
+
+        state.cart = [
+          ...state.cart,
+        ];
+
+        updateById('storeCart', existingProduct.id, existingProduct);
         return;
       }
 
-      const product = state.storeProducts.find(p => p.id == product_id);
-
-      if (!product) {
-        return;
-      }
+      const product = {
+        id: variant_id,
+        data: data,
+        quantity: quantity,
+      };
 
       state.cart = [
         ...state.cart,
-        {
-          quantity: 1,
-          ...product,
-        },
+        product,
       ];
 
-      saveToDB('cart', product);
+      saveToDB('storeCart', product);
     },
     async removeFromCart({
       state
     }, product_id) {
-      const response = await removeFromDB('cart', parseInt(product_id));
+      const response = await removeFromDB('storeCart', parseInt(product_id));
       console.log('Remove from cart', response);
 
       if (!response) {

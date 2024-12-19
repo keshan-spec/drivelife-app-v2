@@ -1,0 +1,206 @@
+<template>
+    <div class="page no-toolbar" data-name="product-view">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a class="link back">
+                        <i class="icon icon-back"></i>
+                    </a>
+                </div>
+                <div class="middle">
+                    <div class="header-logo"><img src="img/logo-dark.png" /></div>
+                </div>
+                <div class="right">
+                    <a href="#" class="link icon-only open-qr-modal">
+                        <i class="icon f7-icons">qrcode</i>
+                    </a>
+                    <a href="/cart/" class="link icon-only">
+                        <div class="cart-count"></div>
+                        <i class="icon f7-icons">cart</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="product-view">
+                <div class="loading-fullscreen product-view">
+                    <div class="preloader preloader-central">
+                        <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+                                class="preloader-inner-line"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import { getProductById } from '../js/api/drivelife-store';
+
+    export default (props, { $, $on, $f7 }) => {
+        let productData = null;
+        let productId = null;
+
+        const { store } = $f7;
+
+        const cartStore = store.getters.getCart;
+        const pathStore = store.getters.getPathData;
+
+        $on('pageBeforeIn', async (e, page) => {
+            document.querySelectorAll('.cart-count').forEach((el) => {
+                el.innerHTML = cartStore.value.length;
+                el.style.display = cartStore.value.length > 0 ? 'flex' : 'none';
+            });
+
+            productId = e.detail.route.params.id;
+
+            let data = null;
+            try {
+                if (pathStore && pathStore.value[`/product/${productId}`]) {
+                    data = pathStore.value[`/product/${productId}`];
+                }
+            } catch (error) {
+                console.error('Error fetching cached data:', error);
+            }
+
+            if (data && data.expires < Date.now()) {
+                data = null;
+            }
+
+            if (!data) {
+                $('.loading-fullscreen.product-view').show();
+                const response = await getProductById(productId);
+
+                if (!response || !response.data) {
+                    $f7.dialog.alert('Product not found');
+                    $f7.views.main.router.back();
+                    return;
+                }
+
+                productData = response.data;
+
+                // set expiry time for 5 minutes
+                productData.expires = Date.now() + 300000;
+
+                // Assuming `path` is a dynamic path like '/garage/2'
+                store.dispatch('setPathData', {
+                    path: `/product/${productId}`,
+                    data: productData,
+                });
+            } else {
+                productData = data;
+            }
+
+            $('.page-content .product-view').html(renderMainProduct(productData));
+
+            const variantsHtml = renderVariants(productData.variations);
+            $('#variant-section').html(variantsHtml);
+
+            $('.loading-fullscreen.product-view').hide();
+        });
+
+        $on('pageInit', async (e, page) => {
+            $('#app').off('click', '.add-to-cart').on('click', '.add-to-cart', function (e) {
+                e.preventDefault();
+
+                // get the active variant
+                const color = $('#variant-color').val();
+                const size = $('#variant-size').val();
+
+                // check if the variant is selected
+                if (!color || !size) {
+                    $f7.dialog.alert('Please select a color and size');
+                    return;
+                }
+
+                const variants = productData.variations;
+
+                // get the variant id with the selected color and size
+                const variant = variants.find(v => v.attributes.colour === color && v.attributes.size === size);
+                const productName = `${productData.name}  (${color} - ${size})`;
+
+                const cart = cartStore.value;
+
+                // let quantity = 1;
+                // if (cart.find((item) => item.id == variant.id)) {
+                //     quantity = cart.find((item) => item.id == variant.id).quantity + 1;
+                // }
+
+
+                $f7.store.dispatch('addToCart', {
+                    variant_id: variant.id,
+                    data: {
+                        product_id: productId,
+                        variant_sku: variant.sku,
+                        name: productName,
+                        price: variant.price,
+                        image: variant.image
+                    },
+                    quantity: 1
+                });
+
+                $f7.toast.create({
+                    text: `${productName} added to cart`,
+                    position: 'top',
+                    closeTimeout: 2000,
+                }).open();
+            });
+        });
+
+        function renderMainProduct(product) {
+            return `
+            <div class="container">
+                <div class="product-image text-center">
+                    <swiper-container pagination class="demo-swiper-multiple" space-between="50">
+                    <swiper-slide><img src="${product.image}" alt="${product.name}" style="max-width: 100%; border-radius: 8px;"></swiper-slide>
+                        ${product.gallery.map(img => `<swiper-slide><img src="${img}" alt="${product.name}" style="max-width: 100%; border-radius: 8px;"></swiper-slide>`).join('')}
+                    </swiper-container>
+                </div>
+                <div class="product-details" style="margin-top: 16px;">
+                    <div class="product-name" style="font-size: 24px; font-weight: bold;">${product.name}</div>
+                    <div class="product-description" style="margin-top: 8px; font-size: 14px; color: #555;">${product.description}</div>
+                    <div class="product-price" style="margin-top: 12px; font-size: 20px; font-weight: bold; color: #e63946;">£${parseFloat(product.price).toFixed(2)}</div>
+                    <div id="variant-section"></div>
+                    <button class="add-to-cart button button-fill color-blue" style="margin-top: 16px;">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        function renderVariants(variations) {
+            // Extract unique colors and sizes from variations
+            const colors = [...new Set(variations.map(v => v.attributes.colour))];
+            const sizes = [...new Set(variations.map(v => v.attributes.size))];
+
+            return `
+                <div class="variant-section" style="margin-top: 16px;">
+                    <div class="variant-title" style="font-weight: bold; margin-bottom: 8px;">Select Variants</div>
+                    <div class="variant-dropdowns" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="dropdown">
+                            <label for="variant-color" style="font-weight: bold;">Color:</label>
+                            <select id="variant-color" class="variant-select" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Select Color</option>
+                                ${colors.map(color => `<option value="${color}">${color}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="dropdown">
+                            <label for="variant-size" style="font-weight: bold;">Size:</label>
+                            <select id="variant-size" class="variant-select" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Select Size</option>
+                                ${sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        return $render;
+    }
+</script>

@@ -24,6 +24,16 @@
     </div>
 
     <div class="page-content">
+      <div class="loading-fullscreen store">
+        <div class="preloader preloader-central">
+          <span class="preloader-inner"><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span><span class="preloader-inner-line"></span><span
+              class="preloader-inner-line"></span>
+          </span>
+        </div>
+      </div>
       <div class="product-grid">
       </div>
     </div>
@@ -39,11 +49,18 @@
 
     productsStore.onUpdated((data) => {
       if (data && data.length) {
+        $('.loading-fullscreen.store').show();
         $('.product-grid').html(renderProducts(data));
+        $('.loading-fullscreen.store').hide();
       }
     });
 
     $on('pageBeforeIn', async (e, page) => {
+      document.querySelectorAll('.cart-count').forEach((el) => {
+        el.innerHTML = cartStore.value.length;
+        el.style.display = cartStore.value.length > 0 ? 'flex' : 'none';
+      });
+
       $('.product-grid').html(renderProducts(productsStore.value));
     });
 
@@ -54,36 +71,9 @@
       });
     });
 
-    $on('pageInit', async (e, page) => {
-      $('#app').on('click', '.add-to-cart', function (e) {
-        e.preventDefault();
-        const id = $(this).data('id');
-        const cart = cartStore.value;
-
-        if (cart.find((item) => item.id == id)) {
-          $f7.toast.create({
-            text: 'Product already in cart',
-            position: 'top',
-            closeTimeout: 2000,
-          }).open();
-          return;
-        }
-
-        const productName = $(this).data('name');
-        store.dispatch('addToCart', id);
-
-        $f7.toast.create({
-          text: `${productName} added to cart`,
-          position: 'top',
-          closeTimeout: 2000,
-        }).open();
-
-        // Change text of button
-        $(this).text('Added to Cart');
-      });
-    });
-
     function renderProducts(data) {
+      $('.loading-fullscreen.store').hide();
+
       let render = '';
       data.forEach((product) => {
         render += `
@@ -92,7 +82,7 @@
             <div class="product-info">
               <h3>${product.name}</h3>
               <p class="product-price">£${product.price}</p>
-              <button class="button add-to-cart" data-id="${product.id}" data-name="${product.name}">Add to Cart</button>
+              <a href="/product-view/${product.id}/" class="button">View</a>
             </div>
           </div>
         `;

@@ -186,3 +186,79 @@ export async function createSetUpIntent() {
         return null;
     }
 }
+
+export async function deletePaymentMethod(payment_method_id) {
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
+
+        const response = await fetch(`${STORE_API_URL}/wp-json/app-store/v1/delete-payment-method`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                payment_method_id,
+            }),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error deleting payment method:', error);
+        return null;
+    }
+}
+
+export async function createOrder(payment_intent) {
+    try {
+        const user = await getSessionUser();
+        if (!user || !user.id) return;
+
+        const orderData = {
+            payment_intent, // Replace with actual Payment Intent ID
+            billing_first_name: user.first_name,
+            billing_last_name: user.last_name,
+            billing_email: user.email,
+            billing_phone: user.billing_info.phone || "0000",
+            billing_address: "123 Main St",
+            billing_city: "Springfield",
+            billing_state: "IL",
+            billing_postcode: "62704",
+            billing_country: "US",
+            items: [
+                { id: 1, quantity: 2, price: 29.99 }, // Replace with actual product data
+                { id: 2, quantity: 1, price: 49.99 }
+            ]
+        };
+
+        const response = await fetch(`${STORE_API_URL}/wp-json/app-store/v1/create-order`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
+}
+
+export async function getProductById(productId) {
+    try {
+        const response = await fetch(`${STORE_API_URL}/wp-json/app-store/v1/get-product/${productId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
+}

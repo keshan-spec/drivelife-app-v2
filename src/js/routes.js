@@ -39,6 +39,7 @@ import CreatePostTagPage from '../pages/create-post-tags.f7';
 import CartPage from '../pages/cart.f7';
 import CheckoutPage from '../pages/checkout.f7';
 import PaymentSuccessPage from '../pages/payment-success.f7';
+import ProductViewPage from '../pages/product-view.f7';
 
 var routes = [
   {
@@ -117,6 +118,10 @@ var routes = [
   {
     path: '/store/',
     component: StorePage,
+  },
+  {
+    path: '/product-view/:id',
+    component: ProductViewPage,
   },
   {
     path: '/cart/',

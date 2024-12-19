@@ -771,3 +771,81 @@
 #addPaymentMethodForm {
     margin-block: 2rem;
 }
+
+
+.product-image {
+    text-align: center;
+}
+
+.product-image img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.product-details {
+    margin-top: 16px;
+}
+
+.product-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.product-description {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.product-price {
+    margin-top: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #e63946;
+}
+
+.variant-section {
+    margin-top: 16px;
+}
+
+.variant-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.variant-card {
+    background: #fff;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    flex: 1 0 calc(50% - 12px);
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.variant-card img {
+    max-width: 80%;
+    margin-bottom: 8px;
+}
+
+.variant-info {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.variant-price {
+    color: #e63946;
+    font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    .variant-card {
+        flex: 1 0 100%;
+    }
+}

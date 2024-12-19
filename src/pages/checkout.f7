@@ -37,7 +37,7 @@
 
 <script>
     import { loadStripe } from '@stripe/stripe-js';
-    import { createPaymentIntent, createSetUpIntent, clearSetupIntentId } from '../js/api/drivelife-store.js';
+    import { createPaymentIntent, createSetUpIntent, clearSetupIntentId, deletePaymentMethod, createOrder } from '../js/api/drivelife-store.js';
 
     export default (props, { $, $on, $f7 }) => {
         const { store } = $f7;
@@ -61,10 +61,12 @@
 
             if (!cartTotal) {
                 $f7.dialog.alert('Cart is empty. Please add items to cart first.');
+                $f7.views.main.router.back();
                 return;
             }
 
             const cart = cartStore.value;
+
             $('.cart-list').html(renderCart(cart));
 
             await fetchClientSecret(cartTotal);
@@ -79,7 +81,7 @@
                 handlePayment();
             });
 
-            // Handle form submission
+            // Handle add card form submission
             document.getElementById('addPaymentMethodForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
 
@@ -146,82 +148,101 @@
 
 
             if (savedPaymentMethods && savedPaymentMethods.length) {
-                // Display saved payment methods
                 // clear saved payment methods
                 $('.cart-summary').html('');
-
+                // Display saved payment methods
                 $('.cart-summary').append(renderSavedPaymentMethods(savedPaymentMethods));
             }
 
             const selectPaymentMethods = document.querySelectorAll('.use-method');
 
-            $('#app').off('click', '.use-method').on('click', '.use-method', async function (e) {
-                const id = $(this).data('id');
+            selectPaymentMethods.forEach((button) => {
+                button.addEventListener('click', async (e) => {
+                    const id = button.dataset.id;
 
-                if (selectedPaymentMethod && selectedPaymentMethod === id) {
-                    // change text to 'Use this method' for all buttons
+                    if (selectedPaymentMethod && selectedPaymentMethod === id) {
+                        // change text to 'Use this method' for all buttons
+                        selectPaymentMethods.forEach((button) => {
+                            button.innerText = 'Select method';
+                        });
+
+                        selectedPaymentMethod = null;
+                        paymentElement.mount('#payment-element');
+                        return;
+                    }
+
+                    selectedPaymentMethod = id;
+
+                    // hide payment element
+                    paymentElement.unmount();
+
                     selectPaymentMethods.forEach((button) => {
-                        button.innerText = 'Select method';
+                        if (button.dataset.id === id) {
+                            button.innerText = 'Deselect method';
+                        } else {
+                            button.innerText = 'Select method';
+                        }
                     });
+                });
+            });
 
-                    selectedPaymentMethod = null;
-                    paymentElement.mount('#payment-element');
-                    return;
-                }
+            // $(document).off('click', '.use-method').on('click', '.use-method', async function (e) {
+            //     const id = $(this).data('id');
+            //     console.log(id);
 
-                selectedPaymentMethod = id;
+            //     if (selectedPaymentMethod && selectedPaymentMethod === id) {
+            //         // change text to 'Use this method' for all buttons
+            //         selectPaymentMethods.forEach((button) => {
+            //             button.innerText = 'Select method';
+            //         });
 
-                // hide payment element
-                paymentElement.unmount();
+            //         selectedPaymentMethod = null;
+            //         paymentElement.mount('#payment-element');
+            //         return;
+            //     }
 
-                selectPaymentMethods.forEach((button) => {
-                    if (button.dataset.id === id) {
-                        button.innerText = 'Deselect method';
-                    } else {
-                        button.innerText = 'Select method';
+            //     selectedPaymentMethod = id;
+
+            //     // hide payment element
+            //     paymentElement.unmount();
+
+            //     selectPaymentMethods.forEach((button) => {
+            //         if (button.dataset.id === id) {
+            //             button.innerText = 'Deselect method';
+            //         } else {
+            //             button.innerText = 'Select method';
+            //         }
+            //     });
+            // });
+
+            $(document).off('click', '.delete-method').on('click', '.delete-method', async function (e) {
+                $f7.dialog.confirm('Are you sure you want to delete this payment method?', 'Delete Payment Method', async () => {
+                    const id = $(this).data('id');
+                    try {
+                        $f7.preloader.show();
+                        const response = await deletePaymentMethod(id);
+                        $f7.preloader.hide();
+                        if (!response || !response.success) {
+                            $f7.dialog.alert(response.message || 'Error deleting payment method. Please try again.');
+                            return;
+                        }
+
+                        savedPaymentMethods = savedPaymentMethods.filter(method => method.id !== id);
+                        selectedPaymentMethod = null;
+                        $('.cart-summary').html('');
+                        $('.cart-summary').append(renderSavedPaymentMethods(savedPaymentMethods));
+                        paymentElement.mount('#payment-element');
+                    } catch (error) {
+                        $f7.preloader.hide();
+                        $f7.dialog.alert('Error deleting payment method. Please try again.');
                     }
                 });
             });
         }
 
-        function renderSavedPaymentMethods(paymentMethods) {
-            const container = document.createElement('div');
-            container.className = 'saved-payment-methods';
-
-
-            if (paymentMethods.length === 0) {
-                container.innerHTML = '<p>No saved payment methods found.</p>';
-            } else {
-                paymentMethods.forEach(method => {
-                    const cardBrand = method.card.brand;
-                    const last4 = method.card.last4;
-                    const expMonth = method.card.exp_month;
-                    const expYear = method.card.exp_year;
-                    const id = method.id;
-
-                    const methodDiv = document.createElement('div');
-                    methodDiv.className = 'payment-method';
-
-                    methodDiv.innerHTML = `
-                <div class="payment-method-card">
-                    <p><strong>${cardBrand.charAt(0).toUpperCase() + cardBrand.slice(1)}</strong> ending in ${last4}</p>
-                    <p>Expires: ${expMonth}/${expYear}</p>
-                    <div class="actions">
-                        <button class="use-method" data-id="${id}">Select Method</button>
-                    </div>
-                </div>
-            `;
-
-                    container.appendChild(methodDiv);
-                });
-            }
-
-            return container;
-        }
-
         async function fetchClientSecret(amount) {
-            $('#submit-button').hide();
             try {
+                $('#submit-button').hide();
                 $f7.preloader.show();
 
                 const response = await createPaymentIntent(amount, cartStore.value);
@@ -239,28 +260,6 @@
                 $f7.dialog.alert('Error initializing payment. Please try again. ' + error.message);
                 $f7.views.main.router.back();
             }
-        }
-
-        function calculateTotal(cart) {
-            return cart.reduce((total, item) => total + parseFloat(item.price), 0);
-        }
-
-        function renderCart(cart) {
-            if (!cart.length) return '<div class="cart-empty">Cart is empty</div>';
-
-            let render = '';
-            cart.forEach((item) => {
-                render += `
-                <div class="cart-item" data-id="${item.id}">
-                    <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px;" />
-                    <div class="cart-item-content">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">£${item.price}</div>
-                    </div>
-                </div>
-            `;
-            });
-            return render;
         }
 
         async function handlePayment() {
@@ -311,10 +310,69 @@
 
             $f7.preloader.hide();
             if (intent) {
+                createOrder(intent.id);
                 $f7.views.current.router.back(`/payment-success/?payment_intent=${intent.id}&payment_intent_client_secret=${intent.client_secret}`, {
                     force: true
                 });
             }
+        }
+
+        function calculateTotal(cart) {
+            return cart.reduce((total, item) => total + parseFloat(item.data.price), 0);
+        }
+
+        function renderCart(cart) {
+            if (!cart.length) return '<div class="cart-empty">Cart is empty</div>';
+
+            let render = '';
+            cart.forEach((item) => {
+                render += `
+                <div class="cart-item" data-id="${item.id}">
+                    <img src="${item.data.image}" alt="${item.data.name}" style="width: 80px; height: 80px;" />
+                    <div class="cart-item-content">
+                        <div class="cart-item-title">${item.data.name}</div>
+                        <div class="cart-item-price">£${item.data.price}</div>
+                    </div>
+                </div>
+            `;
+            });
+            return render;
+        }
+
+        function renderSavedPaymentMethods(paymentMethods) {
+            const container = document.createElement('div');
+            container.className = 'saved-payment-methods';
+
+
+            if (paymentMethods.length === 0) {
+                container.innerHTML = '<p>No saved payment methods found.</p>';
+            } else {
+                paymentMethods.forEach(method => {
+                    const cardBrand = method.card.brand;
+                    const last4 = method.card.last4;
+                    const expMonth = method.card.exp_month;
+                    const expYear = method.card.exp_year;
+                    const id = method.id;
+
+                    const methodDiv = document.createElement('div');
+                    methodDiv.className = 'payment-method';
+
+                    methodDiv.innerHTML = `
+                <div class="payment-method-card">
+                    <p><strong>${cardBrand.charAt(0).toUpperCase() + cardBrand.slice(1)}</strong> ending in ${last4}</p>
+                    <p>Expires: ${expMonth}/${expYear}</p>
+                    <div class="actions">
+                        <button class="use-method" data-id="${id}">Select Method</button>
+                        <button class="delete-method" data-id="${id}">Delete Method</button>
+                    </div>
+                </div>
+            `;
+
+                    container.appendChild(methodDiv);
+                });
+            }
+
+            return container;
         }
 
         $on('pageBeforeOut', async () => {
